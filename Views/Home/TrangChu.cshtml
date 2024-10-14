@@ -1,0 +1,222 @@
+﻿<html>
+    <head>
+    <link href="~/font/fontawesome-free-6.6.0-web/css/all.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/main.css" />
+    <script src="~/js/main.js"></script>
+        <title>Trang chủ</title>
+    </head>
+    <body>
+        <div class="header">
+            <div class="header-top">
+            <div class="logo">
+            <img src="~/HinhAnh/LOGO1.jpg" href="" />
+        </div>
+            <form>
+                <div class="search-container">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" name="Timkiem" placeholder="Nhập sản phẩm bạn cần tìm..." />
+                </div>
+            </form>
+
+            <a href="/Home/TrangChu">
+                <i class="fa-solid fa-house"></i>   
+                Trang chủ
+                </a>
+            <a href="">
+                <i class="fa-solid fa-circle-info"></i>
+                Giới thiệu
+                </a>
+            <a href="/Account/Login">
+                <i class="fa-solid fa-user"></i>    
+                Đăng nhập
+                </a>
+            <a href="">
+                <i class="fa-solid fa-cart-shopping"></i>
+                Giỏ hàng
+            </a>
+        </div>
+       <div class="header-center">
+           <hr />
+       </div>
+        <div class="header-bottom">
+            <div class="slideshow-container">
+                <!-- Slide 1 -->
+                <div class="text-slide active">
+                    Công nghệ trong tầm tay, đẳng cấp từng giây
+                </div>
+                <!-- Slide 2 -->
+                <div class="text-slide">
+                    Điện thoại chuẩn công nghệ, dịch vụ chuẩn niềm tin
+                </div>
+                <!-- Slide 3 -->
+                <div class="text-slide">
+                    Khám phá thế giới công nghệ di động
+                </div>
+
+                <!-- Chấm điều hướng -->
+                <div class="dots">
+                    <span class="dot active" onclick="currentSlide(1)"></span>
+                    <span class="dot" onclick="currentSlide(2)"></span>
+                    <span class="dot" onclick="currentSlide(3)"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <div class="slider-content">
+            <div class="slider">
+                <!-- Slide 1 -->
+                <div class="image-slide active">
+                    <img src="~/HinhAnh/banner3.png" alt="Banner 1">
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="image-slide">
+                    <img src="~/HinhAnh/Ip16.jpg" alt="Banner 2">
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="image-slide">
+                    <img src="~/HinhAnh/Airpod.jpg" alt="Banner 3">
+                </div>
+                <div class="image-slide">
+                    <img src="~/HinhAnh/banner4.png" alt="Banner 4">
+                </div>
+            </div>
+
+            <!-- Nút điều hướng -->
+            <button class="prev"  onclick="moveImageSlide(-1)">&#10094;</button>
+            <button class="next" onclick="moveImageSlide(1)">&#10095;</button>
+        </div>
+        <div class="maincontent">
+            <div class="list-product">
+                <ul class="choose">
+                    <li>
+                    <a href="#">
+                        <div class="product-img">
+                        <img src="~/HinhAnh/ip.png" />
+                    </div>
+                    <span>Điện thoại</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <div class="product-img">
+                            <img src="~/HinhAnh/mac.png" />
+                        </div>
+                        <span>Macbook</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <div class="product-img">
+                            <img src="~/HinhAnh/lap.png" style="height:212px;width:212px;" />
+                        </div>
+                        <span>Laptop</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <div class="product-img">
+                            <img src="~/HinhAnh/ipad.png" />
+                        </div>
+                        <span>iPad</span>
+                    </a>
+                </li>
+                </ul>
+            </div>
+        @model List<ProductCategoryViewModel>
+            @foreach(var category in Model)
+            {
+        <div class="product-section">
+            <h2 class="section-title">
+                <i class="fa-brands fa-apple"></i>
+                @category.CategoryName</h2>
+            <div class="carousel-container">
+                <button class="prev-btn">❮</button>
+                <div class="product-list-wrapper">
+                <div class="product-list">
+                    @foreach (var product in category.Products)
+                    {
+                        <div class="product-item">
+                            <div class="product-img">
+                                <img src="@product.Image" alt="@product.NamePro" />
+                            </div>
+                            <div class="product-info">
+                                <span class="new-badge">Mới</span>
+                                <h3>@product.NamePro</h3>
+                                <p class="price">@product.Price.ToString("N0") đ</p>
+                                @if (product.Quantity == 0)
+                                {
+                                    <p class="status">Tạm hết hàng</p>
+                                }
+                                else
+                                {
+                                    <p class="status">Còn hàng</p>
+                                }
+                                        <div class="product-buttons">
+                                            <!-- Nút Xem chi tiết -->
+                                            <a href="@Url.Action("ChiTietSanPham", "Home", new { id = product.Product_ID })" class="btn btn-primary">Xem chi tiết</a>
+
+                                            <!-- Nút Thêm vào giỏ -->
+                                            <form asp-action="AddToCart" asp-controller="Cart" method="post">
+                                                <input type="hidden" name="productId" value="@product.Product_ID" />
+                                                <button type="submit" class="btn btn-success">Thêm vào giỏ</button>
+                                            </form>
+                                        </div>
+
+
+                            </div>
+                        </div>
+                    }
+                </div>
+                </div>
+
+                <button class="next-btn">❯</button>
+            </div>
+        </div>
+        }
+
+
+        
+        <div class="bottom">
+            <div class="bottom-container">
+                <div class="support-info">
+                    <p><strong>Tổng đài</strong></p>
+                <p>Mua hàng: <a href="">1900.1900.00</a></p>
+                <p>Khiếu nại: <a href="">1900.1900.01</a></p>
+                </div>
+            <div class="social-icons">
+                <p><strong>Liên hệ với chúng tôi</strong></p>
+                <div class="icon">
+                <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                <a href="#"><i class="fa-brands fa-google"></i></a>
+                </div>
+            </div>
+            <!-- Cột 2: Hệ thống cửa hàng -->
+            <div class="footer-column">
+                <p><strong>Hệ thống cửa hàng</strong></p>
+                <ul>
+                    <li><a href="#">Nội quy cửa hàng</a></li>
+                    <li><a href="#">Chất lượng phục vụ</a></li>
+                    <li><a href="#">Chính sách bảo hành & đổi trả</a></li>
+                </ul>
+            </div>
+
+            <!-- Cột 3: Hỗ trợ khách hàng -->
+            <div class="footer-column">
+                <p><strong>Hỗ trợ khách hàng</strong></p>
+                <ul>
+                    <li><a href="#">Điều kiện giao dịch chung</a></li>
+                    <li><a href="#">Hướng dẫn mua hàng online</a></li>
+                    <li><a href="#">Chính sách giao hàng</a></li>
+                    <li><a href="#">Hướng dẫn thanh toán</a></li>
+                </ul>
+            </div>
+                    
+                </div>
+            </div>
+
+    </body>
+</html>

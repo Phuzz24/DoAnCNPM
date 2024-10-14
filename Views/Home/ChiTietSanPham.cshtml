@@ -1,0 +1,203 @@
+﻿<html>
+<head>
+    <link href="~/font/fontawesome-free-6.6.0-web/css/all.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/main.css" />
+    <script src="~/js/main.js"></script>
+    <title>Chi tiết sản phẩm</title>
+</head>
+<body>
+    <div class="header">
+        <div class="header-top">
+            <div class="logo">
+                <img src="~/HinhAnh/LOGO1.jpg" href="" />
+            </div>
+            <form>
+                <div class="search-container">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" name="Timkiem" placeholder="Nhập sản phẩm bạn cần tìm..." />
+                </div>
+            </form>
+
+            <a href="/Home/TrangChu">
+                <i class="fa-solid fa-house"></i>
+                Trang chủ
+            </a>
+            <a href="">
+                <i class="fa-solid fa-circle-info"></i>
+                Giới thiệu
+            </a>
+            <a href="">
+                <i class="fa-solid fa-user"></i>
+                Đăng nhập
+            </a>
+            <a href="">
+                <i class="fa-solid fa-cart-shopping"></i>
+                Giỏ hàng
+            </a>
+        </div>
+        <div class="header-center">
+            <hr />
+        </div>
+        <div class="header-bottom">
+            <div class="slideshow-container">
+                <!-- Slide 1 -->
+                <div class="text-slide active">
+                    Công nghệ trong tầm tay, đẳng cấp từng giây
+                </div>
+                <!-- Slide 2 -->
+                <div class="text-slide">
+                    Điện thoại chuẩn công nghệ, dịch vụ chuẩn niềm tin
+                </div>
+                <!-- Slide 3 -->
+                <div class="text-slide">
+                    Khám phá thế giới công nghệ di động
+                </div>
+
+                <!-- Chấm điều hướng -->
+                <div class="dots">
+                    <span class="dot active" onclick="currentSlide(1)"></span>
+                    <span class="dot" onclick="currentSlide(2)"></span>
+                    <span class="dot" onclick="currentSlide(3)"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="product-detail-container">
+        <!-- Phần hình ảnh và video -->
+        <div class="product-media">
+            <img src="@Model.Image" alt="@Model.NamePro" class="main-product-image" />
+            <!-- Hình ảnh sản phẩm nhỏ -->
+            @* <div class="product-thumbnails">
+                <img src="@Model.Image" alt="@Model.NamePro" />
+                <!-- Thêm các hình ảnh khác nếu có -->
+                <img src="URL_IMAGE_1" alt="Hình 1" />
+                <img src="URL_IMAGE_2" alt="Hình 2" />
+            </div> *@
+        </div>
+
+        <!-- Phần thông tin sản phẩm -->
+        <div class="product-info-section">
+            <h1>@Model.NamePro</h1>
+            <p class="price">@Model.Price.ToString("N0") đ</p>
+
+            <!-- Trạng thái sản phẩm -->
+            <p class="status">
+                Trạng thái: @(Model.Quantity > 0 ? "Còn hàng" : "Tạm hết hàng")
+            </p>
+
+            <!-- Mô tả sản phẩm -->
+            <p class="description">@Model.Description</p>
+
+            <!-- Khuyến mãi -->
+            <div class="promotion">
+                <h3>Khuyến mãi</h3>
+                <p>- Phiếu mua hàng trị giá 200,000đ mua sim Mobifone 6MWG125</p>
+                <p>- Thu cũ đổi mới: Giảm thêm đến 2,000,000đ</p>
+            </div>
+
+            <!-- Nút thêm vào giỏ hàng -->
+            <form asp-action="AddToCart" asp-controller="Cart" method="post">
+                <input type="hidden" name="productId" value="@Model.Product_ID" />
+                <button type="submit" class="btn btn-success">Thêm vào giỏ</button>
+            </form>
+        </div>
+    </div>
+    <div class="text-detail">
+        <p>
+            <img src="~/HinhAnh/info-detail1.jpg" />
+            <img src="~/HinhAnh/info-detail.jpg" />
+            <img src="~/HinhAnh/info-detail3.jpg" />
+        </p>
+    </div>
+    <div class="feature">
+        <h2>Nội dung sản phẩm</h2>
+        <p>@Model.Description</p>
+
+    </div>
+    <div class="feedback-box">
+        <p>Bạn có hài lòng với thông tin sản phẩm không?</p>
+        <div class="feedback-options">
+            <button class="feedback-btn happy-btn" onclick="showThankYouMessage()">😊 Hài lòng</button>
+            <button class="feedback-btn sad-btn" onclick="showThankYouMessage()">😟 Không hài lòng</button>
+        </div>
+    </div>
+    <!-- Phần thông báo cảm ơn (ẩn đi ban đầu) -->
+    <div class="thank-you-message" id="thankYouMessage" style="display: none;">
+        <p>Cảm ơn phản hồi của Bạn</p>
+    </div>
+    
+    
+
+
+
+
+
+
+
+        <div class="footer">
+            <div class="text123">
+                <h2>
+                    <i class="fa-regular fa-circle-check"></i>
+                    <br />
+                    Mẫu mã đa dạng, chính hãng
+                </h2>
+            </div>
+
+            <div class="text123">
+                <h2>
+                    <i class="fa-solid fa-truck-fast"></i>
+                    <br />
+                    Giao hàng toàn quốc
+                </h2>
+            </div>
+            <div class="text123">
+                <h2>
+                    <i class="fa-solid fa-shield"></i>
+                    <br />
+                    Bảo hành 12 tháng
+                </h2>
+            </div>
+        </div>
+        <div class="bottom">
+            <div class="bottom-container">
+                <div class="support-info">
+                    <p><strong>Tổng đài</strong></p>
+                    <p>Mua hàng: <a href="">1900.1900.00</a></p>
+                    <p>Khiếu nại: <a href="">1900.1900.01</a></p>
+                </div>
+                <div class="social-icons">
+                    <p><strong>Liên hệ với chúng tôi</strong></p>
+                    <div class="icon">
+                        <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="#"><i class="fa-brands fa-google"></i></a>
+                    </div>
+                </div>
+                <!-- Cột 2: Hệ thống cửa hàng -->
+                <div class="footer-column">
+                    <p><strong>Hệ thống cửa hàng</strong></p>
+                    <ul>
+                        <li><a href="#">Nội quy cửa hàng</a></li>
+                        <li><a href="#">Chất lượng phục vụ</a></li>
+                        <li><a href="#">Chính sách bảo hành & đổi trả</a></li>
+                    </ul>
+                </div>
+
+                <!-- Cột 3: Hỗ trợ khách hàng -->
+                <div class="footer-column">
+                    <p><strong>Hỗ trợ khách hàng</strong></p>
+                    <ul>
+                        <li><a href="#">Điều kiện giao dịch chung</a></li>
+                        <li><a href="#">Hướng dẫn mua hàng online</a></li>
+                        <li><a href="#">Chính sách giao hàng</a></li>
+                        <li><a href="#">Hướng dẫn thanh toán</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+</body>
+</html>
