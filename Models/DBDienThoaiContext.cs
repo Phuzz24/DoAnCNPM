@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace DoAnCNPM.Models
 {
-    public class DBDienThoaiContext : IdentityDbContext<User> // Thay DbContext thành IdentityDbContext<User>
+    public class DBDienThoaiContext : DbContext
     {
         public DBDienThoaiContext(DbContextOptions<DBDienThoaiContext> options)
             : base(options) { }
@@ -11,8 +10,9 @@ namespace DoAnCNPM.Models
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Staff> Staffs { get; set; }
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<User> Users { get; set; }  // Thêm DbSet cho Users
         public DbSet<Brand> Brands { get; set; }
-        public DbSet<Category> Categories { get; set; }  // Thêm DbSet cho Categories
+        public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<Order> Orders { get; set; }
@@ -30,14 +30,20 @@ namespace DoAnCNPM.Models
                 .HasOne(p => p.Brand)
                 .WithMany(b => b.Products)
                 .HasForeignKey(p => p.Brand_ID)
-                .OnDelete(DeleteBehavior.SetNull); // Khi xóa Brand, Brand_ID trong Product sẽ được đặt về null
+                .OnDelete(DeleteBehavior.SetNull);
 
             // Cấu hình quan hệ Product - Category (1 Category có nhiều Product)
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.Category_ID)
-                .OnDelete(DeleteBehavior.SetNull); // Khi xóa Category, Category_ID trong Product sẽ được đặt về null
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // Liên kết một-nhiều giữa User và Customer
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Customers)
+                .WithOne(c => c.User)
+                .HasForeignKey(c => c.User_ID); // Chỉ rõ cột ngoại là User_ID
 
             base.OnModelCreating(modelBuilder);
         }

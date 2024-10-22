@@ -27,11 +27,11 @@ namespace DoAnCNPM.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        //public IActionResult Error()
+        //{
+        //    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        //}
         public IActionResult TrangChu()
         {
             // Lấy danh sách sản phẩm theo từng category_id
@@ -74,10 +74,10 @@ namespace DoAnCNPM.Controllers
         public IActionResult ChiTietSanPham(int id)
         {
             var product = _database.Products.FirstOrDefault(p => p.Product_ID == id);
-            if(product==null)
+            if (product == null)
             {
                 return NotFound();
-            }    
+            }
             return View(product);
         }
     }

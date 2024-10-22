@@ -1,11 +1,14 @@
 ﻿using DoAnCNPM.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class Customer
 {
     [Key]
     public int Customer_ID { get; set; } // Khóa chính
+    [ForeignKey("User")]
+
     public int User_ID { get; set; }
     public string NameCus { get; set; }
     public string AddressCus { get; set; }

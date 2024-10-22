@@ -3,7 +3,7 @@
     <link href="~/font/fontawesome-free-6.6.0-web/css/all.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/main.css" />
     <script src="/js/main.js"></script>
-    <title>Đăng kí</title>
+    <title>Trang chủ</title>
 </head>
 <body>
     <div class="header">
@@ -26,10 +26,27 @@
                 <i class="fa-solid fa-circle-info"></i>
                 Giới thiệu
             </a>
-            <a href="/Account/Login">
-                <i class="fa-solid fa-user"></i>
-                Đăng nhập
-            </a>
+            <!-- Kiểm tra trạng thái đăng nhập từ Session -->
+            @if (Context.Session.GetString("Username") != null)
+            {
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" id="userDropdown">
+                        <i class="fa-solid fa-user"></i> @Context.Session.GetString("Username")
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="/Account/EditInfo">Xem thông tin cá nhân</a>
+                        <a class="dropdown-item" href="/Account/ChangePassword">Đổi mật khẩu</a>
+                        <a class="dropdown-item" href="/Account/Logout">Đăng xuất</a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <a href="/Account/Login">
+                    <i class="fa-solid fa-user"></i>
+                    Đăng nhập
+                </a>
+            }
             <a href="">
                 <i class="fa-solid fa-cart-shopping"></i>
                 Giỏ hàng
@@ -62,60 +79,75 @@
             </div>
         </div>
     </div>
-    <div class="container">
-        <div class="register-form">
-            <h2>Đăng ký</h2>
 
-            @* Hiển thị thông báo lỗi *@
-            @if (ViewBag.Error != null)
-            {
-                <div class="alert alert-danger">
-                    @ViewBag.Error
-                </div>
-            }
+    @model DoAnCNPM.Models.UserInfoViewModel
 
-            @* Hiển thị thông báo đăng ký thành công *@
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <div class="alert alert-success">
-                    @TempData["SuccessMessage"]
-                </div>
-            }
+    <div class="user-info-container">
+        <h2>Chỉnh sửa thông tin cá nhân</h2>
 
-            <form method="post" action="/Account/RegisterPost">
-                @Html.AntiForgeryToken()
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+        }
 
-                <div class="form-group">
-                    <label for="Username">Tên người dùng:</label>
-                    <input type="text" id="Username" name="Username" class="form-control" placeholder="Nhập tên người dùng" />
-                    @Html.ValidationMessage("Username", "", new { @class = "text-danger" })
-                </div>
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["ErrorMessage"]
+            </div>
+        }
 
-                <div class="form-group">
-                    <label for="Email">Email:</label>
-                    <input type="email" id="Email" name="Email" class="form-control" placeholder="Nhập email" />
-                    @Html.ValidationMessage("Email", "", new { @class = "text-danger" })
-                </div>
+        <form method="post" action="/Account/EditInfoPost">
+            @Html.AntiForgeryToken()
 
-                <div class="form-group">
-                    <label for="Password">Mật khẩu:</label>
-                    <input type="password" id="Password" name="Password" class="form-control" placeholder="Nhập mật khẩu" />
-                    @Html.ValidationMessage("Password", "", new { @class = "text-danger" })
-                </div>
+            <!-- Thông tin ẩn của User_ID và Customer_ID -->
 
-                <div class="form-group">
-                    <label for="ConfirmPassword">Xác nhận mật khẩu:</label>
-                    <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="form-control" placeholder="Xác nhận mật khẩu" />
-                    @Html.ValidationMessage("ConfirmPassword", "", new { @class = "text-danger" })
-                </div>
+            <div class="user-info-group">
+                <label for="Username">Tên người dùng:</label>
+                <input type="text" id="Username" name="Username" class="user-info-control" value="@Model.Username" readonly />
+            </div>
 
-                <button type="submit" class="btn-submit">Đăng ký</button>
+            <div class="user-info-group">
+                <label for="NameCus">Tên khách hàng:</label>
+                <input type="text" id="NameCus" name="NameCus" class="user-info-control" value="@Model.NameCus" />
+            </div>
 
-                <h3>Bạn đã có tài khoản?</h3>
-                <a href="/Account/Login">Đăng nhập</a>
-            </form>
-        </div>
+            <div class="user-info-group">
+                <label for="AddressCus">Địa chỉ:</label>
+                <input type="text" id="AddressCus" name="AddressCus" class="user-info-control" value="@Model.AddressCus" />
+            </div>
+
+            <div class="user-info-group">
+                <label for="PhoneCus">Số điện thoại:</label>
+                <input type="text" id="PhoneCus" name="PhoneCus" class="user-info-control" value="@Model.PhoneCus" />
+            </div>
+
+            <div class="user-info-group">
+                <label for="EmailCus">Email:</label>
+                <input type="email" id="EmailCus" name="EmailCus" class="user-info-control" value="@Model.EmailCus" />
+            </div>
+
+            <!-- Đổi mật khẩu -->
+            <h3>Đổi mật khẩu</h3>
+
+            <div class="user-info-group">
+                <label for="NewPasswordField">Mật khẩu mới:</label>
+                <input type="password" id="NewPasswordField" name="NewPassword" class="user-info-control" />
+            </div>
+
+            <div class="user-info-group">
+                <label for="ConfirmNewPassword">Xác nhận mật khẩu:</label>
+                <input type="password" id="ConfirmNewPassword" name="ConfirmPassword" class="user-info-control" />
+            </div>
+
+            <button type="submit" class="user-info-submit">Lưu thay đổi</button>
+        </form>
     </div>
+
+
+
 
 
 
@@ -157,22 +189,6 @@
 
             </div>
         </div>
-    <script>
-        document.querySelector('form').addEventListener('submit', function (e) {
-            const password = document.getElementById('Password').value;
-            const confirmPassword = document.getElementById('ConfirmPassword').value;
 
-            if (password.length < 6) {
-                e.preventDefault();
-                alert('Mật khẩu phải có ít nhất 6 ký tự!');
-            }
-
-            if (password !== confirmPassword) {
-                e.preventDefault();
-                alert('Mật khẩu xác nhận không khớp!');
-            }
-        });
-
-    </script>
 </body>
 </html>

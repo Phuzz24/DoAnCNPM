@@ -2,12 +2,9 @@
 <head>
     <link href="~/font/fontawesome-free-6.6.0-web/css/all.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/main.css" />
-    <script src="~/js/main.js"></script>
+    <script src="/js/main.js"></script>
     <title>Đăng nhập</title>
 </head>
-<style>
-
-</style>
 <body>
     <div class="header">
         <div class="header-top">
@@ -21,7 +18,7 @@
                 </div>
             </form>
 
-            <a href="">
+            <a href="/Home/TrangChu">
                 <i class="fa-solid fa-house"></i>
                 Trang chủ
             </a>
@@ -29,7 +26,7 @@
                 <i class="fa-solid fa-circle-info"></i>
                 Giới thiệu
             </a>
-            <a href="">
+            <a href="/Account/Login">
                 <i class="fa-solid fa-user"></i>
                 Đăng nhập
             </a>
@@ -65,71 +62,107 @@
             </div>
         </div>
     </div>
+    <div class="container">
+        <div class="login-form">
+            <h2>Đăng nhập</h2>
 
-    <div class="login-container">
-        <form class="login-form" method="post" action="/Account/Login">
-            <h2>ĐĂNG NHẬP</h2>
-            <div class="input-group">
-                <label for="username">Tên Đăng Nhập</label>
-                <input type="text" id="username" name="Username" placeholder="Nhập tên đăng nhập" required>
-            </div>
-            <div class="input-group">
-                <label for="password">Mật Khẩu</label>
-                <input type="password" id="password" name="Password" placeholder="Nhập mật khẩu" required>
-            </div>
-            <div class="action-group">
-                <button type="submit" class="btn btn-primary">Đăng Nhập</button>
-                <a href="/signin-google" class="btn btn-google">
-                    <i class="fa-brands fa-google"></i>
-                    Đăng Nhập bằng Google</a>
-            </div>
-            <div class="extra-links">
-                <a href="/Account/ForgotPassword" class="forgot-password">Quên mật khẩu?</a>
-                <p>Nếu bạn chưa có tài khoản? <a href="/Account/Register" class="register-link">Đăng Ký</a></p>
-            </div>
-        </form>
-    </div>
-
-
-        
-        <div class="bottom">
-            <div class="bottom-container">
-                <div class="support-info">
-                    <p><strong>Tổng đài</strong></p>
-                    <p>Mua hàng: <a href="">1900.1900.00</a></p>
-                    <p>Khiếu nại: <a href="">1900.1900.01</a></p>
+            @* Hiển thị thông báo lỗi *@
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger">
+                    @ViewBag.Error
                 </div>
-                <div class="social-icons">
-                    <p><strong>Liên hệ với chúng tôi</strong></p>
-                    <div class="icon">
-                        <a href="#"><i class="fa-brands fa-facebook"></i></a>
-                        <a href="#"><i class="fa-brands fa-youtube"></i></a>
-                        <a href="#"><i class="fa-brands fa-google"></i></a>
-                    </div>
+            }
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["SuccessMessage"]
                 </div>
-                <!-- Cột 2: Hệ thống cửa hàng -->
-                <div class="footer-column">
-                    <p><strong>Hệ thống cửa hàng</strong></p>
-                    <ul>
-                        <li><a href="#">Nội quy cửa hàng</a></li>
-                        <li><a href="#">Chất lượng phục vụ</a></li>
-                        <li><a href="#">Chính sách bảo hành & đổi trả</a></li>
-                    </ul>
+            }
+
+            <form method="post" action="/Account/Login">
+                @Html.AntiForgeryToken()
+
+                <div class="form-group">
+                    <label for="Username">Tên người dùng:</label>
+                    <input type="text" id="Username" name="Username" class="form-control" placeholder="Nhập tên người dùng" />
                 </div>
 
-                <!-- Cột 3: Hỗ trợ khách hàng -->
-                <div class="footer-column">
-                    <p><strong>Hỗ trợ khách hàng</strong></p>
-                    <ul>
-                        <li><a href="#">Điều kiện giao dịch chung</a></li>
-                        <li><a href="#">Hướng dẫn mua hàng online</a></li>
-                        <li><a href="#">Chính sách giao hàng</a></li>
-                        <li><a href="#">Hướng dẫn thanh toán</a></li>
-                    </ul>
+                <div class="form-group">
+                    <label for="Password">Mật khẩu:</label>
+                    <input type="password" id="Password" name="Password" class="form-control" placeholder="Nhập mật khẩu" />
                 </div>
 
-            </div>
+                <button type="submit" class="btn-submit">Đăng nhập</button>
+
+                <h3>Bạn chưa có tài khoản?</h3>
+                <a href="/Account/Register">Đăng ký</a>
+                <div class="google-login">
+                    <a href="/Account/ExternalLogin?provider=Google" class="btn-google">
+                        <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" />
+                        Đăng nhập bằng Google
+                    </a>
+                </div>
+            </form>
         </div>
+    </div>>
 
+
+
+    <div class="bottom">
+        <div class="bottom-container">
+            <div class="support-info">
+                <p><strong>Tổng đài</strong></p>
+                <p>Mua hàng: <a href="">1900.1900.00</a></p>
+                <p>Khiếu nại: <a href="">1900.1900.01</a></p>
+            </div>
+            <div class="social-icons">
+                <p><strong>Liên hệ với chúng tôi</strong></p>
+                <div class="icon">
+                    <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#"><i class="fa-brands fa-google"></i></a>
+                </div>
+            </div>
+            <!-- Cột 2: Hệ thống cửa hàng -->
+            <div class="footer-column">
+                <p><strong>Hệ thống cửa hàng</strong></p>
+                <ul>
+                    <li><a href="#">Nội quy cửa hàng</a></li>
+                    <li><a href="#">Chất lượng phục vụ</a></li>
+                    <li><a href="#">Chính sách bảo hành & đổi trả</a></li>
+                </ul>
+            </div>
+
+            <!-- Cột 3: Hỗ trợ khách hàng -->
+            <div class="footer-column">
+                <p><strong>Hỗ trợ khách hàng</strong></p>
+                <ul>
+                    <li><a href="#">Điều kiện giao dịch chung</a></li>
+                    <li><a href="#">Hướng dẫn mua hàng online</a></li>
+                    <li><a href="#">Chính sách giao hàng</a></li>
+                    <li><a href="#">Hướng dẫn thanh toán</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+    <script>
+        document.querySelector('form').addEventListener('submit', function (e) {
+            const password = document.getElementById('Password').value;
+            const confirmPassword = document.getElementById('ConfirmPassword').value;
+
+            if (password.length < 6) {
+                e.preventDefault();
+                alert('Mật khẩu phải có ít nhất 6 ký tự!');
+            }
+
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Mật khẩu xác nhận không khớp!');
+            }
+        });
+
+    </script>
 </body>
 </html>

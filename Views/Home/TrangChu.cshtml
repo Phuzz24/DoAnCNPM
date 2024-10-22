@@ -2,7 +2,7 @@
     <head>
     <link href="~/font/fontawesome-free-6.6.0-web/css/all.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/main.css" />
-    <script src="~/js/main.js"></script>
+    <script src="/js/main.js"></script>
         <title>Trang chủ</title>
     </head>
     <body>
@@ -26,10 +26,27 @@
                 <i class="fa-solid fa-circle-info"></i>
                 Giới thiệu
                 </a>
-            <a href="/Account/Login">
-                <i class="fa-solid fa-user"></i>    
-                Đăng nhập
+            <!-- Kiểm tra trạng thái đăng nhập từ Session -->
+            @if (Context.Session.GetString("Username") != null)
+            {
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" id="userDropdown">
+                        <i class="fa-solid fa-user"></i> @Context.Session.GetString("Username")
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="/Account/EditInfo">Xem thông tin cá nhân</a>
+                        <a class="dropdown-item" href="/Account/ChangePassword">Đổi mật khẩu</a>
+                        <a class="dropdown-item" href="/Account/Logout">Đăng xuất</a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <a href="/Account/Login">
+                    <i class="fa-solid fa-user"></i>
+                    Đăng nhập
                 </a>
+            }
             <a href="">
                 <i class="fa-solid fa-cart-shopping"></i>
                 Giỏ hàng
@@ -125,7 +142,7 @@
                 </li>
                 </ul>
             </div>
-        @model List<ProductCategoryViewModel>
+        @model List<DoAnCNPM.Models.ProductCategoryViewModel>
             @foreach(var category in Model)
             {
         <div class="product-section">
