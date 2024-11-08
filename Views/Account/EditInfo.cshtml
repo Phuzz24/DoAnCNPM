@@ -1,86 +1,13 @@
-﻿<html>
-<head>
-    <link href="~/font/fontawesome-free-6.6.0-web/css/all.css" rel="stylesheet" />
-    <link rel="stylesheet" href="~/css/main.css" />
-    <script src="/js/main.js"></script>
-    <title>Trang chủ</title>
-</head>
-<body>
-    <div class="header">
-        <div class="header-top">
-            <div class="logo">
-                <img src="~/HinhAnh/LOGO1.jpg" href="" />
-            </div>
-            <form>
-                <div class="search-container">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" name="Timkiem" placeholder="Nhập sản phẩm bạn cần tìm..." />
-                </div>
-            </form>
-
-            <a href="/Home/TrangChu">
-                <i class="fa-solid fa-house"></i>
-                Trang chủ
-            </a>
-            <a href="">
-                <i class="fa-solid fa-circle-info"></i>
-                Giới thiệu
-            </a>
-            <!-- Kiểm tra trạng thái đăng nhập từ Session -->
-            @if (Context.Session.GetString("Username") != null)
-            {
-                <div class="dropdown">
-                    <a href="#" class="dropdown-toggle" id="userDropdown">
-                        <i class="fa-solid fa-user"></i> @Context.Session.GetString("Username")
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="/Account/EditInfo">Xem thông tin cá nhân</a>
-                        <a class="dropdown-item" href="/Account/ChangePassword">Đổi mật khẩu</a>
-                        <a class="dropdown-item" href="/Account/Logout">Đăng xuất</a>
-                    </div>
-                </div>
-            }
-            else
-            {
-                <a href="/Account/Login">
-                    <i class="fa-solid fa-user"></i>
-                    Đăng nhập
-                </a>
-            }
-            <a href="">
-                <i class="fa-solid fa-cart-shopping"></i>
-                Giỏ hàng
-            </a>
-        </div>
-        <div class="header-center">
-            <hr />
-        </div>
-        <div class="header-bottom">
-            <div class="slideshow-container">
-                <!-- Slide 1 -->
-                <div class="text-slide active">
-                    Công nghệ trong tầm tay, đẳng cấp từng giây
-                </div>
-                <!-- Slide 2 -->
-                <div class="text-slide">
-                    Điện thoại chuẩn công nghệ, dịch vụ chuẩn niềm tin
-                </div>
-                <!-- Slide 3 -->
-                <div class="text-slide">
-                    Khám phá thế giới công nghệ di động
-                </div>
-
-                <!-- Chấm điều hướng -->
-                <div class="dots">
-                    <span class="dot active" onclick="currentSlide(1)"></span>
-                    <span class="dot" onclick="currentSlide(2)"></span>
-                    <span class="dot" onclick="currentSlide(3)"></span>
-                </div>
-            </div>
-        </div>
-    </div>
+﻿@{
+    Layout = "_HomeLayout";
+}
 
     @model DoAnCNPM.Models.UserInfoViewModel
+
+    <head>
+        <link rel="stylesheet" href="~/css/editinfo.css" />
+        <script src="~/js/editinfo.js"></script>
+    </head>
 
     <div class="user-info-container">
         <h2>Chỉnh sửa thông tin cá nhân</h2>
@@ -101,8 +28,6 @@
 
         <form method="post" action="/Account/EditInfoPost">
             @Html.AntiForgeryToken()
-
-            <!-- Thông tin ẩn của User_ID và Customer_ID -->
 
             <div class="user-info-group">
                 <label for="Username">Tên người dùng:</label>
@@ -128,18 +53,7 @@
                 <label for="EmailCus">Email:</label>
                 <input type="email" id="EmailCus" name="EmailCus" class="user-info-control" value="@Model.EmailCus" />
             </div>
-
-            <!-- Đổi mật khẩu -->
-            <h3>Đổi mật khẩu</h3>
-
-            <div class="user-info-group">
-                <label for="NewPasswordField">Mật khẩu mới:</label>
-                <input type="password" id="NewPasswordField" name="NewPassword" class="user-info-control" />
-            </div>
-
-            <div class="user-info-group">
-                <label for="ConfirmNewPassword">Xác nhận mật khẩu:</label>
-                <input type="password" id="ConfirmNewPassword" name="ConfirmPassword" class="user-info-control" />
+            
             </div>
 
             <button type="submit" class="user-info-submit">Lưu thay đổi</button>
@@ -151,44 +65,143 @@
 
 
 
-        <div class="bottom">
-            <div class="bottom-container">
-                <div class="support-info">
-                    <p><strong>Tổng đài</strong></p>
-                    <p>Mua hàng: <a href="">1900.1900.00</a></p>
-                    <p>Khiếu nại: <a href="">1900.1900.01</a></p>
-                </div>
-                <div class="social-icons">
-                    <p><strong>Liên hệ với chúng tôi</strong></p>
-                    <div class="icon">
-                        <a href="#"><i class="fa-brands fa-facebook"></i></a>
-                        <a href="#"><i class="fa-brands fa-youtube"></i></a>
-                        <a href="#"><i class="fa-brands fa-google"></i></a>
-                    </div>
-                </div>
-                <!-- Cột 2: Hệ thống cửa hàng -->
-                <div class="footer-column">
-                    <p><strong>Hệ thống cửa hàng</strong></p>
-                    <ul>
-                        <li><a href="#">Nội quy cửa hàng</a></li>
-                        <li><a href="#">Chất lượng phục vụ</a></li>
-                        <li><a href="#">Chính sách bảo hành & đổi trả</a></li>
-                    </ul>
-                </div>
 
-                <!-- Cột 3: Hỗ trợ khách hàng -->
-                <div class="footer-column">
-                    <p><strong>Hỗ trợ khách hàng</strong></p>
-                    <ul>
-                        <li><a href="#">Điều kiện giao dịch chung</a></li>
-                        <li><a href="#">Hướng dẫn mua hàng online</a></li>
-                        <li><a href="#">Chính sách giao hàng</a></li>
-                        <li><a href="#">Hướng dẫn thanh toán</a></li>
-                    </ul>
-                </div>
 
-            </div>
-        </div>
+      
 
-</body>
-</html>
+<style>
+    /* Định dạng container chung */
+    /* Container chung cho form */
+    .user-info-container {
+        max-width: 500px;
+        margin: 40px auto;
+        padding: 30px;
+        border-radius: 10px;
+        background: linear-gradient(to bottom right, #ffffff, #f1f1f1);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+        .user-info-container h2 {
+            text-align: center;
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+    /* Thông báo */
+    .alert {
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .alert-success {
+        background-color: #e7f5e7;
+        color: #28a745;
+        border: 1px solid #c3e6cb;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #dc3545;
+        border: 1px solid #f5c6cb;
+    }
+
+    /* Nhóm các mục nhập dữ liệu */
+    .user-info-group {
+        margin-bottom: 20px;
+    }
+
+        .user-info-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+            font-size: 15px;
+        }
+
+    .user-info-control {
+        width: 100%;
+        padding: 10px;
+        font-size: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        background-color: #f9f9f9;
+    }
+
+        .user-info-control:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+        }
+
+    /* Đổi mật khẩu */
+    h3 {
+        color: #333;
+        font-size: 18px;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    /* Nút Lưu thay đổi */
+    .user-info-submit {
+        display: block;
+        width: 30%;
+        margin: 10px auto;
+        padding: 12px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #fff;
+        background: linear-gradient(to right, #007bff, #0056b3);
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.1s ease;
+    }
+
+        .user-info-submit:hover {
+            background: linear-gradient(to right, #0056b3, #004080);
+            transform: scale(1.03);
+        }
+
+    /* Hiệu ứng cho các trường mật khẩu */
+    .user-info-group input[type="password"] {
+        border: 1px solid #ffcccc;
+    }
+
+        .user-info-group input[type="password"]:focus {
+            border-color: #ff6347;
+            box-shadow: 0 0 8px rgba(255, 99, 71, 0.3);
+        }
+
+
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const newPasswordField = document.getElementById("NewPasswordField");
+        const confirmNewPasswordField = document.getElementById("ConfirmNewPassword");
+
+        newPasswordField.addEventListener("input", checkPasswordMatch);
+        confirmNewPasswordField.addEventListener("input", checkPasswordMatch);
+
+        function checkPasswordMatch() {
+            const newPassword = newPasswordField.value;
+            const confirmPassword = confirmNewPasswordField.value;
+
+            if (newPassword !== "" && confirmPassword !== "" && newPassword !== confirmPassword) {
+                confirmNewPasswordField.setCustomValidity("Mật khẩu xác nhận không khớp.");
+            } else {
+                confirmNewPasswordField.setCustomValidity("");
+            }
+        }
+    });
+
+
+</script>

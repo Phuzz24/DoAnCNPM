@@ -1,0 +1,196 @@
+﻿@{
+    Layout = "_HomeLayout";
+}
+@model List<DoAnCNPM.Models.Cart>
+
+    <title>Thanh toán</title>
+    <link rel="stylesheet" href="~/css/checkout.css" />
+    <!-- Thêm Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <!-- Thêm AOS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+
+    <div class="checkout-container">
+        <h2>Thông Tin Thanh Toán</h2>
+
+<form action="@Url.Action("PlaceOrder", "Order")" method="post">
+            <!-- Thông tin người dùng -->
+            <div class="user-info">
+                <label>Họ và tên người nhận:</label>
+                <input type="text" name="CustomerName" placeholder="Nhập họ và tên người nhận" required />
+
+                <label>Số điện thoại:</label>
+                <input type="text" name="CustomerPhone" placeholder="Nhập số điện thoại" required />
+
+
+                
+            </div>
+
+            <!-- Địa chỉ giao hàng -->
+            <div class="address-info">
+                <label>Tỉnh/Thành phố:</label>
+                <select id="province" name="Province" required>
+                    <option value=""></option>
+                </select>
+
+                <label>Quận/Huyện:</label>
+                <select id="district" name="District" required>
+                    <option value=""></option>
+                </select>
+
+                <label>Xã/Phường:</label>
+                <select id="ward" name="Ward" required>
+                    <option value=""></option>
+                </select
+                <label>Địa chỉ chi tiết:</label>
+                 <input type="text" name="DetailAddress" placeholder="Nhập địa chỉ chi tiết (số nhà, tên đường...)" required />
+
+            </div>
+
+            <!-- Phương thức giao hàng và thanh toán -->
+            <h3>Phương Thức Giao Hàng</h3>
+            <select name="ShippingMethod">
+                <option value="standard">Giao hàng tiêu chuẩn</option>
+                <option value="express">Giao hàng nhanh</option>
+            </select>
+
+            <h3>Phương Thức Thanh Toán</h3>
+<select name="PaymentMethod" required>
+    <option value="COD">Thanh toán khi nhận hàng (COD)</option>
+    <option value="Online">Thanh toán online</option>
+</select>
+
+
+            <!-- Danh sách sản phẩm trong giỏ -->
+            <h3>Sản Phẩm Trong Giỏ Hàng</h3>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Hình ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Số lượng</th>
+                    <th>Giá</th>
+                    <th>Tổng tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <img src="@item.Product.Image" alt="@item.Product.NamePro" />
+                        </td>
+                        <td class="product-name">@item.Product.NamePro</td>
+                        <td class="product-quantity">@item.Quantity</td>
+                        <td class="product-price">@item.Product.Price.ToString("N0") đ</td>
+                        <td class="product-total">@Math.Round(item.Product.Price * item.Quantity).ToString("N0") đ</td>
+                    </tr>
+                }
+            </tbody>
+            </table>
+        <p class="cart-total">Tổng cộng: <span>@Model.Sum(x => x.Product.Price * x.Quantity).ToString("N0") đ</span></p>
+
+            <!-- Nút hoàn tất đặt hàng -->
+            <button type="submit" class="btn btn-primary">Hoàn tất đặt hàng</button>
+        </form>
+    </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Khởi tạo AOS (Animate On Scroll)
+    AOS.init({
+        duration: 800, // Thời gian hiệu ứng (ms)
+        once: true,    // Hiệu ứng chỉ chạy một lần khi cuộn
+    });
+
+    // Xử lý sự kiện khi nhấn "Hoàn tất đặt hàng"
+    $(document).ready(function () {
+        $('form').on('submit', function (event) {
+            event.preventDefault(); // Ngăn chặn việc submit form mặc định
+
+            // Hiển thị thông báo đặt hàng thành công bằng SweetAlert
+            Swal.fire({
+                title: 'Đặt hàng thành công!',
+                text: 'Cảm ơn bạn đã đặt hàng. Đơn hàng của bạn đang được xử lý.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.submit(); // Gửi form sau khi người dùng nhấn OK
+                }
+            });
+        });
+
+        // Lấy danh sách tỉnh/thành phố
+        $.getJSON('https://provinces.open-api.vn/api/?depth=1', function (data) {
+            $('#province').append($('<option>').text('Chọn Tỉnh/Thành phố').attr('value', ''));
+            $.each(data, function (index, value) {
+                $('#province').append($('<option>').text(value.name).attr('value', value.code));
+            });
+        });
+
+        // Khi người dùng chọn tỉnh/thành phố, tải danh sách quận/huyện
+        $('#province').change(function () {
+            var provinceCode = $(this).val();
+            $('#district').empty().append($('<option>').text('Chọn Quận/Huyện').attr('value', ''));
+            $('#ward').empty().append($('<option>').text('Chọn Xã/Phường').attr('value', ''));
+
+            if (provinceCode) {
+                $.getJSON(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`, function (data) {
+                    $.each(data.districts, function (index, value) {
+                        $('#district').append($('<option>').text(value.name).attr('value', value.code));
+                    });
+                });
+            }
+        });
+
+        // Khi người dùng chọn quận/huyện, tải danh sách xã/phường
+        $('#district').change(function () {
+            var districtCode = $(this).val();
+            $('#ward').empty().append($('<option>').text('Chọn Xã/Phường').attr('value', ''));
+
+            if (districtCode) {
+                $.getJSON(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`, function (data) {
+                    $.each(data.wards, function (index, value) {
+                        $('#ward').append($('<option>').text(value.name).attr('value', value.code));
+                    });
+                });
+            }
+        });
+    });
+    $(document).ready(function () {
+        $('#checkoutForm').on('submit', function (event) {
+            event.preventDefault();
+
+            // Lấy giá trị của phương thức thanh toán
+            var paymentMethod = $('#paymentMethod').val();
+
+            if (paymentMethod === 'Online') {
+                // Chuyển hướng tới phương thức thanh toán online
+                $.ajax({
+                    url: '@Url.Action("InitiateOnlinePayment", "Order")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        if (response.paymentUrl) {
+                            window.location.href = response.paymentUrl;
+                        } else {
+                            alert('Không thể khởi tạo thanh toán. Vui lòng thử lại.');
+                        }
+                    },
+                    error: function () {
+                        alert('Có lỗi xảy ra khi xử lý thanh toán.');
+                    }
+                });
+            } else {
+                // Nếu là COD thì submit form bình thường
+                this.submit();
+            }
+        });
+    });
+
+</script>
+
+

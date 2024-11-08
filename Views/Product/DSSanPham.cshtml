@@ -1,0 +1,217 @@
+﻿@model IEnumerable<DoAnCNPM.Models.Product>
+
+@{
+    ViewData["Title"] = "Quản lý Sản phẩm";
+    Layout = "_DashboardLayout";
+}
+
+<h2 class="page-title">Danh sách Sản phẩm</h2>
+
+<!-- Form tìm kiếm -->
+<form method="get" action="@Url.Action("DSSanPham")" class="search-form">
+    <input type="text" name="searchTerm" placeholder="Tìm kiếm sản phẩm..." class="search-input" />
+    <button type="submit" class="btn-search">Tìm kiếm</button>
+</form>
+
+<!-- Chỉ hiển thị nút Thêm sản phẩm nếu người dùng là Admin -->
+@if (User.IsInRole("Admin"))
+{
+    <a href="@Url.Action("Create")" class="btn btn-add">Thêm sản phẩm mới</a>
+}
+
+<div class="table-container">
+    <table class="table-products">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên sản phẩm</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Mô tả</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td>@product.Product_ID</td>
+                    <td>@product.NamePro</td>
+                    <td>@product.Price.ToString("N0") đ</td>
+                    <td>@product.Quantity</td>
+                    <td class="description">@product.Description</td>
+                    <td class="actions">
+                        <a href="@Url.Action("Details", new { id = product.Product_ID })" class="btn btn-view">Xem</a>
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a href="@Url.Action("Edit", new { id = product.Product_ID })" class="btn btn-edit">Sửa</a>
+                            <a href="@Url.Action("Delete", new { id = product.Product_ID })" class="btn btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">Xóa</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+
+<!-- CSS Hiện Đại cho Giao Diện -->
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+    }
+
+    .page-title {
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        color: #007bff;
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .search-form {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .search-input {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        width: 300px;
+        transition: all 0.3s;
+    }
+
+        .search-input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+            outline: none;
+        }
+
+    .btn-search {
+        padding: 10px 15px;
+        border: none;
+        background-color: #28a745;
+        color: white;
+        border-radius: 5px;
+        margin-left: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .btn-search:hover {
+            background-color: #218838;
+        }
+
+    .btn-add {
+        display: block;
+        width: 200px;
+        margin: 0 auto 20px;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        text-align: center;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+
+        .btn-add:hover {
+            background-color: #0056b3;
+        }
+
+    .table-container {
+        overflow-x: auto;
+        padding: 0 20px;
+    }
+
+    .table-products {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: white;
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    }
+
+        .table-products th, .table-products td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table-products th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .table-products tr:hover {
+            background-color: #f1f1f1;
+        }
+
+    .description {
+        max-width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .actions .btn {
+        padding: 7px 12px;
+        border-radius: 5px;
+        text-decoration: none;
+        color: white;
+        margin-right: 5px;
+        transition: background-color 0.3s;
+    }
+
+    .btn-view {
+        background-color: #17a2b8;
+    }
+
+        .btn-view:hover {
+            background-color: #138496;
+        }
+
+    .btn-edit {
+        background-color: #ffc107;
+        color: black;
+    }
+
+        .btn-edit:hover {
+            background-color: #e0a800;
+        }
+
+    .btn-delete {
+        background-color: #dc3545;
+    }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+</style>
+
+<!-- JavaScript để Cải thiện Hiệu ứng -->
+<script>
+    // Nếu muốn thêm các hiệu ứng JavaScript, chẳng hạn như làm nổi bật hàng khi click
+    document.addEventListener("DOMContentLoaded", function () {
+        const rows = document.querySelectorAll(".table-products tr");
+        rows.forEach(row => {
+            row.addEventListener("click", () => {
+                rows.forEach(r => r.classList.remove("highlight"));
+                row.classList.add("highlight");
+            });
+        });
+    });
+</script>

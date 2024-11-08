@@ -1,0 +1,52 @@
+﻿@model DoAnCNPM.Models.Product
+
+@{
+    ViewData["Title"] = "Xóa Sản phẩm";
+    Layout = "_DashboardLayout";
+}
+
+<h2 class="page-title">Xóa Sản phẩm</h2>
+
+<div class="delete-container">
+    <p>Bạn có chắc chắn muốn xóa sản phẩm <strong>@Model.NamePro</strong> không?</p>
+    <form asp-action="DeleteConfirmed" method="post">
+        <input type="hidden" asp-for="Product_ID" />
+        <button type="submit" class="btn-delete">Xóa</button>
+        <a href="@Url.Action("DSSanPham")" class="btn-cancel">Hủy</a>
+    </form>
+</div>
+
+<!-- CSS -->
+<style>
+    .delete-container {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .btn-delete {
+        padding: 10px 15px;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+
+    .btn-cancel {
+        padding: 10px 15px;
+        background-color: #6c757d;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        margin-left: 10px;
+    }
+
+        .btn-cancel:hover {
+            background-color: #5a6268;
+        }
+</style>

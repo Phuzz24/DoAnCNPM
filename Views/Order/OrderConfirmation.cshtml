@@ -1,0 +1,65 @@
+﻿@{
+    Layout = "_HomeLayout";
+}
+<link href="~/css/OrderConfirmation.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="order-confirmation">
+    <h2>Xác nhận đặt hàng</h2>
+
+    <p><strong>Mã đơn hàng:</strong> @Model.Order_ID</p>
+    <p><strong>Ngày đặt:</strong> @Model.OrderDate.ToString("dd/MM/yyyy")</p>
+    <p><strong>Ngày dự kiến giao hàng:</strong> @(Model.DeliveryDate?.ToString("dd/MM/yyyy") ?? "Chưa có")</p>
+    <p><strong>Địa chỉ giao hàng:</strong> @Model.ShippingAddress</p>
+    <p><strong>Mã vận chuyển:</strong> @Model.TrackingNumber</p>
+    <p><strong>Phí giao hàng:</strong> @(Model.ShippingFee.ToString("N0")) đ</p>
+    <p><strong>Trạng thái giao hàng:</strong> @Model.ShipmentStatus</p>
+    <p class="total-summary">
+        <strong>Tổng cộng (bao gồm phí giao hàng):</strong>
+        <span>@((Model.TotalAmount + Model.ShippingFee).ToString("N0")) đ</span>
+    </p>
+
+    <h3>Chi tiết đơn hàng</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Tên sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Đơn giá</th>
+                <th>Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrderDetails)
+            {
+                <tr>
+                    <td>@item.Product.NamePro</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Product.Price.ToString("N0") đ</td>
+                    <td>@((item.Product.Price * item.Quantity).ToString("N0")) đ</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <p class="total-summary">Tổng cộng: <span>@((Model.TotalAmount + Model.ShippingFee).ToString("N0")) đ</span></p>
+    <p class="thank-you">Cảm ơn bạn đã đặt hàng tại cửa hàng của chúng tôi!</p>
+
+    <!-- Nút trở về trang chủ -->
+    <div class="button-container">
+        <a href="@Url.Action("TrangChu", "Home")" class="btn-home">Trở về Trang chủ</a>
+    </div>
+</div>
+@if (TempData["OrderSuccess"] != null && (bool)TempData["OrderSuccess"])
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                title: 'Đặt hàng thành công!',
+                text: 'Cảm ơn bạn đã đặt hàng. Đơn hàng của bạn đang được xử lý.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        });
+    </script>
+}

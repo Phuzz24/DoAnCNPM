@@ -1,15 +1,32 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-public class Feedback
+namespace DoAnCNPM.Models
 {
-    [Key]
-    public int Feedback_ID { get; set; } // Khóa chính
-    public int Customer_ID { get; set; }
-    public int Product_ID { get; set; }
-    public string Comment { get; set; }
-    public DateTime FeedbackDate { get; set; }
+    public class Feedback
+    {
+        [Key]
+        [Column("Feedback_ID")]
 
-    // Navigation properties
-    public Customer Customer { get; set; }
-    public Product Product { get; set; }
+        public int Feedback_ID { get; set; } // Khóa chính
+        [ForeignKey("Customer")]
+        [Column("Customer_ID")]
+
+        public int Customer_ID { get; set; }
+        [ForeignKey("Product")]
+        [Column("Product_ID")]
+
+        public int Product_ID { get; set; }
+        [Column("comment")]
+        [MaxLength(500)] // Đảm bảo độ dài ký tự phù hợp với cơ sở dữ liệu
+
+        public string Comment { get; set; }
+        [Column("feedback_date")]
+
+        public DateTime FeedbackDate { get; set; }
+
+        // Navigation properties
+        public Customer Customer { get; set; }
+        public Product Product { get; set; }
+    }
 }

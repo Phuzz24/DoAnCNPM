@@ -1,0 +1,216 @@
+﻿@model DoAnCNPM.Models.Product
+
+@{
+    ViewData["Title"] = "Thêm Sản phẩm Mới";
+    Layout = "_DashboardLayout";
+    var brands = ViewBag.Brands as List<DoAnCNPM.Models.Brand>;
+    var categories = ViewBag.Categories as List<DoAnCNPM.Models.Category>;
+}
+<link rel="stylesheet" href="/css/custom.css" />
+
+<h2 class="page-title">Thêm Sản phẩm Mới</h2>
+
+<!-- Hiển thị thông báo lỗi nếu có -->
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.Error
+    </div>
+}
+
+<form method="post" action="/Product/CreatePost" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <label for="NamePro">Tên sản phẩm:</label>
+        <input type="text" id="NamePro" name="NamePro" class="form-control" placeholder="Nhập tên sản phẩm" />
+    </div>
+
+    <div class="form-group">
+        <label for="Brand_ID">Thương hiệu:</label>
+        <select id="Brand_ID" name="Brand_ID" class="form-control">
+            <option value="">Chọn thương hiệu</option>
+            @foreach (var brand in ViewBag.Brands)
+            {
+                <option value="@brand.Brand_ID">@brand.BrandName</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="Category_ID">Danh mục:</label>
+        <select id="Category_ID" name="Category_ID" class="form-control">
+            <option value="">Chọn danh mục</option>
+            @foreach (var category in ViewBag.Categories)
+            {
+                <option value="@category.Category_ID">@category.CategoryName</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">    
+        <label for="Price">Giá:</label>
+        <input type="number" step="0.01" id="Price" name="Price" class="form-control" placeholder="Nhập giá sản phẩm" />
+    </div>
+
+    <div class="form-group">
+        <label for="Quantity">Số lượng:</label>
+        <input type="number" id="Quantity" name="Quantity" class="form-control" placeholder="Nhập số lượng sản phẩm" />
+    </div>
+
+
+    <div class="form-group">
+        <label for="Description">Mô tả:</label>
+        <textarea id="Description" name="Description" class="form-control" placeholder="Nhập mô tả sản phẩm"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="ImageFile">Ảnh:</label>
+        <input type="file" id="ImageFile" name="ImageFile" class="form-control" accept="image/*" />
+        <!-- Thẻ img để hiển thị ảnh xem trước -->
+        <img id="image-preview" style="display:none; margin-top:10px; max-width:100%; height:auto; border-radius: 5px;" />
+    </div>
+
+
+    <button type="submit" class="btn-submit">Thêm Sản phẩm</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+<style>
+    form {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Form Title */
+    .page-title {
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #4a4a4a;
+    }
+
+    /* Input fields and select boxes styling */
+    .form-group label {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .form-control {
+        width: 100%;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 15px;
+        transition: border-color 0.3s;
+    }
+
+        .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+            outline: none;
+        }
+
+    /* Preview Image */
+    #image-preview {
+        display: block;
+        margin: 10px 0;
+        width: 100%;
+        height: auto;
+        border-radius: 5px;
+        max-height: 200px; /* Giới hạn chiều cao của ảnh xem trước */
+        object-fit: cover;
+    }
+
+    /* Button styling */
+    button[type="submit"], .btn-secondary {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: none;
+        transition: background-color 0.3s, color 0.3s;
+        margin-top: 10px;
+    }
+
+    button[type="submit"] {
+        background-color: #3498db;
+        color: #fff;
+    }
+
+        button[type="submit"]:hover {
+            background-color: #2980b9;
+        }
+
+    .btn-secondary {
+        background-color: #ddd;
+        color: #333;
+    }
+
+        .btn-secondary:hover {
+            background-color: #ccc;
+            color: #000;
+        }
+
+
+
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const formGroups = document.querySelectorAll('.form-group');
+        let delay = 0;
+
+        // Thêm hiệu ứng trượt vào cho các form-group với độ trễ tăng dần
+        formGroups.forEach(group => {
+            group.style.animationDelay = `${delay}s`;
+            delay += 0.1;
+        });
+
+        // Animation trên nút submit khi hover
+        const submitButton = document.querySelector('button[type="submit"]');
+        submitButton.addEventListener('mouseenter', () => {
+            submitButton.style.transform = 'scale(1.05)';
+        });
+
+        submitButton.addEventListener('mouseleave', () => {
+            submitButton.style.transform = 'scale(1)';
+        });
+
+        // Animation trên nút secondary khi hover
+        const secondaryButton = document.querySelector('.btn-secondary');
+        secondaryButton.addEventListener('mouseenter', () => {
+            secondaryButton.style.transform = 'scale(1.05)';
+        });
+
+        secondaryButton.addEventListener('mouseleave', () => {
+            secondaryButton.style.transform = 'scale(1)';
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Tính năng xem trước hình ảnh khi người dùng chọn ảnh
+            document.getElementById("ImageFile").addEventListener("change", function (event) {
+                const file = event.target.files[0];
+                const preview = document.getElementById("image-preview");
+
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        preview.src = e.target.result;
+                        preview.style.display = "block"; // Hiển thị ảnh khi có ảnh được chọn
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    preview.style.display = "none"; // Ẩn ảnh nếu không có file được chọn
+                    preview.src = "";
+                }
+            });
+        });
+</script>

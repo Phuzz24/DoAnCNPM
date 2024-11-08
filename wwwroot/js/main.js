@@ -3,6 +3,8 @@
     let currentTextSlideIndex = 0;
     const textSlides = document.querySelectorAll('.text-slide');
     const textDots = document.querySelectorAll('.dot');
+    const fadeElements = document.querySelectorAll('.fade-in');
+
     const totalTextSlides = textSlides.length;
 
     function showTextSlide(index) {
@@ -14,6 +16,7 @@
         textSlides[index].style.display = 'flex';
         textDots[index].classList.add('active');
     }
+
 
     function moveTextSlide(step) {
         currentTextSlideIndex = (currentTextSlideIndex + step + totalTextSlides) % totalTextSlides;
@@ -77,51 +80,35 @@
     }
 });
 
-//slide iPhone (cuộn danh sách sản phẩm)
-const prevBtn = document.querySelector('.prev-btn');
-const nextBtn = document.querySelector('.next-btn');
+let scrollAmount = 0;
 const productList = document.querySelector('.product-list');
-const productListWrapper = document.querySelector('.product-list-wrapper');
+const productItemWidth = document.querySelector('.product-item').offsetWidth + 20; // Độ rộng sản phẩm + khoảng cách
+const visibleProducts = 3; // Số lượng sản phẩm muốn hiển thị
 
-if (prevBtn && nextBtn && productList && productListWrapper) {
-    const productItem = document.querySelector('.product-item');
-
-    if (productItem) {
-        let scrollAmount = 0; // Lượng đã cuộn
-        const productItemWidth = productItem.offsetWidth + 30; // Chiều rộng của sản phẩm (cộng với margin)
-        const maxScroll = productList.scrollWidth - productListWrapper.clientWidth; // Độ dài có thể cuộn tối đa
-
-        // Nút "next"
-        nextBtn.addEventListener('click', () => {
-            if (scrollAmount < maxScroll) {
-                scrollAmount += productItemWidth * 4; // Cuộn theo nhóm 4 sản phẩm
-                if (scrollAmount > maxScroll) {
-                    scrollAmount = maxScroll; // Đảm bảo không cuộn quá xa
-                }
-            }
-            productListWrapper.scrollTo({
-                top: 0,
-                left: scrollAmount,
-                behavior: 'smooth' // Hiệu ứng cuộn mượt mà
-            });
-        });
-
-        // Nút "prev"
-        prevBtn.addEventListener('click', () => {
-            if (scrollAmount > 0) {
-                scrollAmount -= productItemWidth * 4; // Cuộn lại nhóm 4 sản phẩm
-                if (scrollAmount < 0) {
-                    scrollAmount = 0; // Đảm bảo không cuộn quá xa về bên trái
-                }
-            }
-            productListWrapper.scrollTo({
-                top: 0,
-                left: scrollAmount,
-                behavior: 'smooth' // Hiệu ứng cuộn mượt mà
-            });
+function nextPage() {
+    if (scrollAmount <= productList.scrollWidth - productList.clientWidth) {
+        scrollAmount += productItemWidth * 4; // Cuộn theo 4 sản phẩm mỗi lần
+        productList.scrollTo({
+            top: 0,
+            left: scrollAmount,
+            behavior: 'smooth' // Hiệu ứng cuộn mượt mà
         });
     }
 }
+
+function prevPage() {
+    if (scrollAmount > 0) {
+        scrollAmount -= productItemWidth * 4; // Cuộn lại 4 sản phẩm
+        if (scrollAmount < 0) scrollAmount = 0; // Không cuộn quá trái
+        productList.scrollTo({
+            top: 0,
+            left: scrollAmount,
+            behavior: 'smooth' // Hiệu ứng cuộn mượt mà
+        });
+    }
+}
+
+
 
 function showThankYouMessage() {
     // Hiển thị thông báo "Cảm ơn phản hồi của bạn"
@@ -133,3 +120,4 @@ function showThankYouMessage() {
         feedbackBox.style.display = 'none';
     }
 }
+

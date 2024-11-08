@@ -1,0 +1,18 @@
+﻿@model DoAnCNPM.Models.Brand
+
+@{
+    ViewData["Title"] = "Chỉnh sửa Thương hiệu";
+    Layout = "_DashboardLayout";
+}
+<link rel="stylesheet" href="/css/quanli.css" />
+<script src="/js/quanli.js"></script>
+
+<h2 class="page-title">Chỉnh sửa Thương hiệu</h2>
+
+<form method="post" action="/Brand/Edit/@Model.Brand_ID">
+    <div class="form-group">
+        <label for="BrandName">Tên Thương hiệu:</label>
+        <input type="text" id="BrandName" name="BrandName" class="form-control" value="@Model.BrandName" />
+    </div>
+    <button type="submit" class="btn-submit">Lưu thay đổi</button>
+</form>

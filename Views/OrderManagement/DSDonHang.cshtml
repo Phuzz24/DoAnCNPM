@@ -1,0 +1,59 @@
+﻿@model IEnumerable<DoAnCNPM.Models.Order>
+@{
+    ViewData["Title"] = "Quản lý Đơn hàng";
+    Layout = "_DashboardLayout";
+}
+<link rel="stylesheet" href="/css/quanli.css" />
+<script src="/js/quanli.js"></script>
+<h2>Danh sách Đơn hàng</h2>
+
+<form method="get" action="@Url.Action("DSDonHang")" class="search-form">
+    <input type="text" name="searchTerm" placeholder="Tìm kiếm đơn hàng..." class="search-input" />
+    <button type="submit" class="btn-search">Tìm kiếm</button>
+</form>
+
+<a href="@Url.Action("Create")" class="btn btn-add">Thêm Đơn hàng mới</a>
+
+<table class="table-products">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>ID Khách hàng</th>
+            <th>Tên người đặt</th>
+            <th>Địa chỉ</th>
+            <th>Số điện thoại</th>
+            <th>Phương thức thanh toán</th>
+            <th>Tình trạng thanh toán</th>
+            <th>Ngày đặt</th>
+            <th>Ngày giao</th>
+            <th>Trạng thái</th>
+            <th>Tổng tiền</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Order_ID</td>
+                <td>@order.Customer_ID</td>
+                <td>@order.CustomerName</td>
+                <td>@order.ShippingAddress</td>
+                <td>@order.CustomerPhone</td>
+                <td>@order.PaymentMethod</td>
+                <td>@order.PaymentStatus</td>
+                <td>@(order.OrderDate.ToString("dd/MM/yyyy") ?? "N/A")</td>
+                <td>@(order.DeliveryDate?.ToString("dd/MM/yyyy") ?? "N/A")</td>
+                <th>@order.Status</th>
+                <td>@order.TotalAmount?.ToString("N0") đ</td>
+                <td class="actions">
+                    <a href="@Url.Action("Edit", new { id = order.Order_ID })" class="btn btn-edit">Sửa</a>
+                    <a href="@Url.Action("Delete", new { id = order.Order_ID })" class="btn btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này?');">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+

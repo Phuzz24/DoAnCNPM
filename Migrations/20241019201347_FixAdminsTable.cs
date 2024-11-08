@@ -51,11 +51,61 @@ namespace DoAnCNPM.Migrations
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                 });
 
-         
 
-            
+            // Đổi tên bảng từ Cart thành Carts
+            migrationBuilder.RenameTable(
+                name: "Cart",
+                newName: "Carts");
 
-           
+            // Đổi tên bảng từ Staff thành Staffs
+            migrationBuilder.RenameTable(
+                name: "Staff",
+                newName: "Staffs");
+
+
+            migrationBuilder.AddColumn<string>(
+                name: "CustomerName",
+                table: "Orders",
+                type: "nvarchar(max)",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "ShippingAddress",
+                table: "Orders",
+                type: "nvarchar(max)",
+                nullable: true);
+
+            migrationBuilder.DropColumn(
+           name: "status",
+           table: "Product");
+
+            migrationBuilder.AddColumn<string>(
+                name: "NamePro",
+                table: "OrderDetails",
+                type: "nvarchar(255)",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "CustomerPhone",
+                table: "Orders",
+                type: "nvarchar(15)",
+                nullable: true);
+            migrationBuilder.AlterColumn<decimal>(
+               name: "total_amount",
+               table: "Orders",
+               type: "decimal(18, 2)",  // Tăng phạm vi lên 18 chữ số với 2 chữ số thập phân
+               nullable: false,
+               oldClrType: typeof(decimal),
+               oldType: "decimal(10, 2)");
+
+            migrationBuilder.AlterColumn<decimal>(
+                name: "ShippingFee",
+                table: "Orders",
+                type: "decimal(18, 2)",  // Tăng phạm vi lên 18 chữ số với 2 chữ số thập phân
+                nullable: false,
+                oldClrType: typeof(decimal),
+                oldType: "decimal(10, 2)");
+
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
@@ -167,58 +217,7 @@ namespace DoAnCNPM.Migrations
 
             
 
-            migrationBuilder.CreateTable(
-                name: "Staffs",
-                columns: table => new
-                {
-                    Staff_ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    User_ID = table.Column<int>(type: "int", nullable: false),
-                    NameStaff = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AddressStaff = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneStaff = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EmailStaff = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Staffs", x => x.Staff_ID);
-                    table.ForeignKey(
-                        name: "FK_Staffs_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Carts",
-                columns: table => new
-                {
-                    Cart_ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Customer_ID = table.Column<int>(type: "int", nullable: false),
-                    Product_ID = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Customer_ID1 = table.Column<int>(type: "int", nullable: false),
-                    Product_ID1 = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Carts", x => x.Cart_ID);
-                    table.ForeignKey(
-                        name: "FK_Carts_Customers_Customer_ID1",
-                        column: x => x.Customer_ID1,
-                        principalTable: "Customers",
-                        principalColumn: "Customer_ID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Carts_Products_Product_ID1",
-                        column: x => x.Product_ID1,
-                        principalTable: "Products",
-                        principalColumn: "Product_ID",
-                        onDelete: ReferentialAction.Cascade);
-                });
+               
 
            
 
@@ -275,12 +274,12 @@ namespace DoAnCNPM.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Carts_Customer_ID1",
+                name: "IX_Carts_Customer_ID",
                 table: "Carts",
                 column: "Customer_ID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Carts_Product_ID1",
+                name: "IX_Carts_Product_ID",
                 table: "Carts",
                 column: "Product_ID");
 
@@ -290,37 +289,37 @@ namespace DoAnCNPM.Migrations
                 column: "User_ID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Feedbacks_Customer_ID1",
+                name: "IX_Feedbacks_Customer_ID",
                 table: "Feedbacks",
                 column: "Customer_ID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Feedbacks_Product_ID1",
+                name: "IX_Feedbacks_Product_ID",
                 table: "Feedbacks",
                 column: "Product_ID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderDetails_Order_ID1",
+                name: "IX_OrderDetails_Order_ID",
                 table: "OrderDetails",
                 column: "order_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderDetails_Product_ID1",
+                name: "IX_OrderDetails_Product_ID",
                 table: "OrderDetails",
                 column: "Product_ID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_Customer_ID1",
+                name: "IX_Orders_Customer_ID",
                 table: "Orders",
                 column: "Customer_ID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Payments_Order_ID1",
+                name: "IX_Payments_Order_ID",
                 table: "Payments",
                 column: "order_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Shipments_Order_ID1",
+                name: "IX_Shipments_Order_ID",
                 table: "Shipments",
                 column: "order_id");
 
@@ -389,6 +388,41 @@ namespace DoAnCNPM.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+            // Đổi tên bảng từ Carts về Cart (rollback nếu cần)
+            migrationBuilder.RenameTable(
+                name: "Carts",
+                newName: "Cart");
+
+            // Đổi tên bảng từ Staffs về Staff (rollback nếu cần)
+            migrationBuilder.RenameTable(
+                name: "Staffs",
+                newName: "Staff");
+
+            migrationBuilder.DropColumn(
+       name: "CustomerName",
+       table: "Orders");
+
+            migrationBuilder.DropColumn(
+                name: "ShippingAddress",
+                table: "Orders");
+
+            migrationBuilder.DropColumn(
+                name: "ShippingFee",
+                table: "Orders");
+
+            migrationBuilder.DropColumn(
+                name: "CustomerPhone",
+                table: "Orders");
+            migrationBuilder.DropColumn(
+                name: "NamePro",
+                table: "OrderDetails");
+            migrationBuilder.AddColumn<string>(
+           name: "status",
+           table: "Product",
+           type: "nvarchar(max)",
+           nullable: false,
+           defaultValue: "");
+
         }
     }
 }

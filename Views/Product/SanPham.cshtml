@@ -1,0 +1,88 @@
+﻿
+@{
+    Layout = "_HomeLayout";
+}
+    <link href="~/font/fontawesome-free-6.6.0-web/css/all.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/product.css" />
+
+    <script src="/js/main.js"></script>
+
+    @model IEnumerable<DoAnCNPM.Models.Product>
+
+    <div class="container1">
+        <h1>Danh Sách Sản Phẩm</h1>
+
+        <!-- Bộ lọc và tìm kiếm -->
+        <div class="filter-section">
+            <input type="text" id="search" placeholder="Tìm kiếm sản phẩm..." onkeyup="searchByName()">
+
+            <select id="brandFilter" onchange="filterProducts()">
+                <option value="">Tất cả thương hiệu</option>
+                @foreach (var brand in ViewBag.Brands)
+                {
+                    <option value="@brand.Brand_ID">@brand.BrandName</option>
+                }
+            </select>
+
+            <select id="categoryFilter" onchange="filterProducts()">
+                <option value="">Tất cả loại</option>
+                @foreach (var category in ViewBag.Categories)
+                {
+                    <option value="@category.Category_ID">@category.CategoryName</option>
+                }
+            </select>
+
+            <select id="priceFilter" onchange="filterProducts()">
+                <option value="">Tất cả mức giá</option>
+                <option value="0-10000000">Dưới 10 triệu</option>
+                <option value="10000000-20000000">10 - 20 triệu</option>
+                <option value="20000000-30000000">20 - 30 triệu</option>
+                <option value="30000000">Trên 30 triệu</option>
+            </select>
+        </div>
+
+        <!-- Danh sách sản phẩm -->
+        <div class="product-grid" id="productGrid">
+            @foreach (var product in Model)
+            {
+                <div class="product-item"
+                     data-brand="@product.Brand_ID"
+                     data-category="@product.Category_ID"
+                     data-price="@product.Price">
+                    <img src="@product.Image" alt="@product.NamePro">
+                    <h3>@product.NamePro</h3>
+                    <p class="price">@product.Price.ToString("N0") đ</p>
+
+                    <!-- Kiểm tra số lượng và hiển thị "Còn hàng" hoặc "Hết hàng" -->
+                    <p class="availability">
+                        @if (product.Quantity > 0)
+                        {
+                            <span class="in-stock">Còn hàng</span>
+                        }
+                        else
+                        {
+                            <span class="out-of-stock">Hết hàng</span>
+                        }
+                    </p>
+
+                    <div class="buttons">
+                        <a href="/Product/ChiTietSanPham/@product.Product_ID" class="btn-details">Xem Chi Tiết</a>
+
+                        <!-- Kiểm tra số lượng trước khi hiển thị nút "Thêm vào Giỏ" -->
+                        @if (product.Quantity > 0)
+                        {
+                            <form action="@Url.Action("AddToCart", "Cart")" method="post">
+                                <input type="hidden" name="productId" value="@product.Product_ID" />
+                                <button type="submit" class="btn-add-cart">Thêm vào Giỏ</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <script src="~/js/product.js"></script>
+    <script>
+    </script>
+

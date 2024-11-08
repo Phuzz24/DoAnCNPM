@@ -1,0 +1,16 @@
+﻿@model DoAnCNPM.Models.Category
+
+@{
+    ViewData["Title"] = "Xóa Loại sản phẩm";
+    Layout = "_DashboardLayout";
+}
+<link rel="stylesheet" href="/css/quanli.css" />
+<script src="/js/quanli.js"></script>
+<h2 class="page-title">Xóa Loại sản phẩm</h2>
+
+<p>Bạn có chắc chắn muốn xóa loại sản phẩm <strong>@Model.CategoryName</strong>?</p>
+
+<form method="post" action="/Category/Delete/@Model.Category_ID">
+    <button type="submit" class="btn-submit">Xóa</button>
+    <a href="@Url.Action("DSCategory")" class="btn btn-cancel">Hủy</a>
+</form>

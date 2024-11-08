@@ -1,0 +1,17 @@
+﻿@model DoAnCNPM.Models.Category
+
+@{
+    ViewData["Title"] = "Chỉnh sửa Loại sản phẩm";
+    Layout = "_DashboardLayout";
+}
+<link rel="stylesheet" href="/css/quanli.css" />
+<script src="/js/quanli.js"></script>
+<h2 class="page-title">Chỉnh sửa Loại sản phẩm</h2>
+
+<form method="post" action="/Category/Edit/@Model.Category_ID">
+    <div class="form-group">
+        <label for="CategoryName">Tên Loại sản phẩm:</label>
+        <input type="text" id="CategoryName" name="CategoryName" class="form-control" value="@Model.CategoryName" />
+    </div>
+    <button type="submit" class="btn-submit">Lưu thay đổi</button>
+</form>

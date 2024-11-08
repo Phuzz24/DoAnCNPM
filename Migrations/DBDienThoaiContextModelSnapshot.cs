@@ -54,7 +54,7 @@ namespace DoAnCNPM.Migrations
 
                     b.HasIndex("Product_ID1");
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", (string)null);
                 });
 
             modelBuilder.Entity("Customer", b =>
@@ -91,7 +91,7 @@ namespace DoAnCNPM.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("Discount", b =>
@@ -124,7 +124,7 @@ namespace DoAnCNPM.Migrations
 
                     b.HasKey("Discount_ID");
 
-                    b.ToTable("Discounts");
+                    b.ToTable("Discounts", (string)null);
                 });
 
             modelBuilder.Entity("DoAnCNPM.Models.Admin", b =>
@@ -161,7 +161,7 @@ namespace DoAnCNPM.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Admins");
+                    b.ToTable("Admins", (string)null);
                 });
 
             modelBuilder.Entity("DoAnCNPM.Models.User", b =>
@@ -266,7 +266,7 @@ namespace DoAnCNPM.Migrations
 
                     b.HasIndex("Product_ID1");
 
-                    b.ToTable("Feedbacks");
+                    b.ToTable("Feedbacks", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -430,7 +430,7 @@ namespace DoAnCNPM.Migrations
 
                     b.HasIndex("Customer_ID1");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("OrderDetail", b =>
@@ -465,7 +465,7 @@ namespace DoAnCNPM.Migrations
 
                     b.HasIndex("Product_ID1");
 
-                    b.ToTable("OrderDetails");
+                    b.ToTable("OrderDetails", (string)null);
                 });
 
             modelBuilder.Entity("Payment", b =>
@@ -500,7 +500,7 @@ namespace DoAnCNPM.Migrations
 
                     b.HasIndex("Order_ID1");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("Product", b =>
@@ -541,7 +541,7 @@ namespace DoAnCNPM.Migrations
 
                     b.HasKey("Product_ID");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("RevenueStatistic", b =>
@@ -566,7 +566,7 @@ namespace DoAnCNPM.Migrations
 
                     b.HasKey("Revenue_ID");
 
-                    b.ToTable("RevenueStatistics");
+                    b.ToTable("RevenueStatistics", (string)null);
                 });
 
             modelBuilder.Entity("Shipment", b =>
@@ -601,7 +601,7 @@ namespace DoAnCNPM.Migrations
 
                     b.HasIndex("Order_ID1");
 
-                    b.ToTable("Shipments");
+                    b.ToTable("Shipments", (string)null);
                 });
 
             modelBuilder.Entity("Staff", b =>
@@ -638,7 +638,7 @@ namespace DoAnCNPM.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Staffs");
+                    b.ToTable("Staffs", (string)null);
                 });
 
             modelBuilder.Entity("Cart", b =>

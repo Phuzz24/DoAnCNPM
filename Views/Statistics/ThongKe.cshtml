@@ -1,0 +1,177 @@
+﻿@{
+    ViewData["Title"] = "Thống kê";
+    Layout = "_DashboardLayout";
+}
+<link rel="stylesheet" href="/css/quanli.css" />
+<script src="/js/quanli.js"></script>
+
+<h2>Thống kê</h2>
+
+<!-- Biểu đồ doanh thu -->
+<div style="width: 100%; max-width: 600px; margin: auto;">
+    <canvas id="revenueChart"></canvas>
+</div>
+
+<!-- Bảng doanh thu -->
+<h3>Doanh thu theo ngày</h3>
+<table id="revenueTable" style="width: 100%; max-width: 600px; margin: auto; margin-top: 10px; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th>Ngày</th>
+            <th>Doanh thu (VNĐ)</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<!-- Biểu đồ khách hàng mua hàng nhiều nhất -->
+<div style="width: 100%; max-width: 600px; margin: auto; margin-top: 20px;">
+    <canvas id="topCustomersChart"></canvas>
+</div>
+
+<!-- Bảng khách hàng mua hàng nhiều nhất -->
+<h3>Khách hàng mua hàng nhiều nhất</h3>
+<table id="topCustomersTable" style="width: 100%; max-width: 600px; margin: auto; margin-top: 10px; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th>Khách hàng</th>
+            <th>Tổng chi tiêu (VNĐ)</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<!-- Biểu đồ sản phẩm tồn kho và đã bán (Top 10) -->
+<div style="width: 100%; max-width: 600px; margin: auto; margin-top: 20px;">
+    <canvas id="productInventoryChart"></canvas>
+</div>
+
+<!-- Bảng sản phẩm bán chạy nhất -->
+<h3>Sản phẩm bán chạy nhất</h3>
+<table id="productInventoryTable" style="width: 100%; max-width: 600px; margin: auto; margin-top: 10px; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th>Sản phẩm</th>
+            <th>Số lượng đã bán</th>
+            <th>Số lượng tồn kho</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Biểu đồ doanh thu theo ngày và bảng doanh thu
+    fetch('/Statistics/Revenue?days=30')
+        .then(response => response.json())
+        .then(data => {
+            const labels = data.map(item => new Date(item.date).toLocaleDateString());
+            const revenue = data.map(item => item.totalRevenue);
+
+            // Hiển thị biểu đồ doanh thu
+            new Chart(document.getElementById('revenueChart'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: revenue,
+                        fill: false,
+                        borderColor: 'blue',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: { type: 'category' },
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Hiển thị bảng doanh thu
+            const revenueTable = document.getElementById('revenueTable').querySelector('tbody');
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${new Date(item.date).toLocaleDateString()}</td><td>${item.totalRevenue.toLocaleString('vi-VN')}</td>`;
+                revenueTable.appendChild(row);
+            });
+        });
+
+    // Biểu đồ và bảng khách hàng mua hàng nhiều nhất
+    fetch('/Statistics/TopCustomers')
+        .then(response => response.json())
+        .then(data => {
+            const labels = data.map(item => item.customerName);
+            const totalSpent = data.map(item => item.totalSpent);
+
+            // Hiển thị biểu đồ khách hàng
+            new Chart(document.getElementById('topCustomersChart'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Tổng chi tiêu (VNĐ)',
+                        data: totalSpent,
+                        backgroundColor: 'purple'
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Hiển thị bảng khách hàng
+            const customersTable = document.getElementById('topCustomersTable').querySelector('tbody');
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${item.customerName}</td><td>${item.totalSpent.toLocaleString('vi-VN')}</td>`;
+                customersTable.appendChild(row);
+            });
+        });
+
+    // Biểu đồ và bảng sản phẩm tồn kho và đã bán (Top 10)
+    fetch('/Statistics/TopProductInventory')
+        .then(response => response.json())
+        .then(data => {
+            const labels = data.map(item => item.productName);
+            const quantitySold = data.map(item => item.quantitySold);
+            const quantityInStock = data.map(item => item.quantityInStock);
+
+            // Hiển thị biểu đồ sản phẩm tồn kho và đã bán
+            new Chart(document.getElementById('productInventoryChart'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Số lượng đã bán',
+                            data: quantitySold,
+                            backgroundColor: 'orange'
+                        },
+                        {
+                            label: 'Số lượng tồn kho',
+                            data: quantityInStock,
+                            backgroundColor: 'purple'
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Hiển thị bảng sản phẩm tồn kho và đã bán
+            const inventoryTable = document.getElementById('productInventoryTable').querySelector('tbody');
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${item.productName}</td><td>${item.quantitySold}</td><td>${item.quantityInStock}</td>`;
+                inventoryTable.appendChild(row);
+            });
+        });
+</script>

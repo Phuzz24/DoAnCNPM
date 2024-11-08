@@ -1,0 +1,179 @@
+﻿@{
+    Layout = "_HomeLayout";
+}
+<link href="~/css/orderhistory.css" rel="stylesheet" />
+
+@model List<DoAnCNPM.Models.Order>
+
+<div class="order-history">
+    <h2>Lịch Sử Đơn Hàng</h2>
+
+    <!-- Bộ lọc và tìm kiếm -->
+    <div class="filter-section">
+        <input type="text" id="orderSearch" placeholder="Tìm kiếm mã đơn hàng" />
+        <label for="statusFilter">Trạng thái:</label>
+        <select id="statusFilter">
+            <option value="">Tất cả</option>
+            <option value="Pending">Pending</option>
+            <option value="Đang xử lý">Đang xử lý</option>
+            <option value="Đang giao">Đang giao</option>
+            <option value="Đã giao">Đã giao</option>
+            <option value="Đã hủy">Đã hủy</option>
+        </select>
+        <label for="startDate">Từ ngày:</label>
+        <input type="date" id="startDate" />
+        <label for="endDate">Đến ngày:</label>
+        <input type="date" id="endDate" />
+        <button id="filterButton" class="btn btn-primary">Lọc</button>
+    </div>
+
+    <!-- Bảng lịch sử đơn hàng -->
+    @if (!Model.Any())
+    {
+        <p>Bạn chưa có đơn hàng nào.</p>
+    }
+    else
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th>Mã Đơn Hàng</th>
+                    <th>Ngày Đặt</th>
+                    <th>Ngày Dự Kiến Giao</th>
+                    <th>Tổng Cộng</th>
+                    <th>Trạng Thái</th>
+                    <th>Chi Tiết Sản Phẩm</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="orderList">
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.Order_ID</td>
+                        <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
+                        <td>@order.DeliveryDate?.ToString("dd/MM/yyyy")</td>
+                        <td>@((order.TotalAmount.GetValueOrDefault() + order.ShippingFee.GetValueOrDefault()).ToString("N0")) đ</td>
+                        <td class="status-bold">@order.Status</td>
+                        <td>
+                            <table class="product-details">
+                                <thead>
+                                    <tr>
+                                        <th>Hình ảnh</th>
+                                        <th>Tên sản phẩm</th>
+                                        <th>Số lượng</th>
+                                        <th>Giá</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in order.OrderDetails)
+                                    {
+                                        <tr>
+                                            <td><img src="@item.Product.Image" alt="@item.Product.NamePro" style="width: 50px; height: 50px;" /></td>
+                                            <td>@item.Product.NamePro</td>
+                                            <td>@item.Quantity</td>
+                                            <td>@item.Product.Price.ToString("N0") đ</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <a href="@Url.Action("OrderConfirmation", "Order", new { id = order.Order_ID })" class="btn btn-info">Xem chi tiết</a>
+                            @if (order.Status == "Pending" || order.Status == "Đang xử lý")
+                            {
+                                <button class="btn btn-danger btn-cancel-order" data-order-id="@order.Order_ID">Hủy đơn hàng</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    $(document).ready(function () {
+        // Xử lý sự kiện khi bấm vào nút Lọc
+        $('#filterButton').on('click', function () {
+            filterOrders();
+        });
+
+        // Sự kiện bấm nút Hủy đơn hàng
+        $('.btn-cancel-order').on('click', function () {
+            const orderId = $(this).data('order-id');
+            cancelOrder(orderId);
+        });
+    });
+
+    function filterOrders() {
+        const search = $('#orderSearch').val();
+        const status = $('#statusFilter').val();
+        const startDate = $('#startDate').val();
+        const endDate = $('#endDate').val();
+
+        $.ajax({
+            url: '@Url.Action("FilterOrders", "Order")',
+            type: 'GET',
+            data: {
+                search,
+                status,
+                startDate,
+                endDate
+            },
+            success: function (result) {
+                if (result.success === false) {
+                    Swal.fire('Lỗi', result.message, 'error');
+                } else {
+                    $('#orderList').html(result);
+                }
+            },
+            error: function () {
+                Swal.fire('Lỗi', 'Có lỗi xảy ra khi lọc đơn hàng. Vui lòng thử lại.', 'error');
+            }
+        });
+    }
+
+
+    function cancelOrder(orderId) {
+        Swal.fire({
+            title: 'Bạn có chắc chắn muốn hủy đơn hàng này không?',
+            text: 'Thao tác này không thể hoàn tác!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Có, hủy ngay!',
+            cancelButtonText: 'Không'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '@Url.Action("CancelOrder", "Order")',
+                    type: 'POST',
+                    data: { id: orderId },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('Thành công', response.message, 'success').then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('Lỗi', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Lỗi', 'Có lỗi xảy ra. Vui lòng thử lại.', 'error');
+                    }
+                });
+            }
+        });
+    }
+</script>
+
+
+
+
+
+
+
+

@@ -1,66 +1,66 @@
 ﻿using DoAnCNPM.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Globalization;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
-builder.Services.AddControllersWithViews(); // Cấu hình MVC và Controller
-
-// Configure DbContext
+// Cấu hình DbContext
 builder.Services.AddDbContext<DBDienThoaiContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DBDienThoaiConnection")));
+builder.Services.AddControllersWithViews()
+    .AddNewtonsoftJson(options =>
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-// Configure Swagger
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-});
 
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
-
+// Cấu hình xác thực dựa trên Cookie
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";  // Đường dẫn tới trang đăng nhập
+        options.AccessDeniedPath = "/Account/AccessDenied";  // Đường dẫn tới trang từ chối truy cập
+    });
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Thời gian session tồn tại
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+var cultureInfo = new CultureInfo("en-US"); // Sử dụng "en-US" để định dạng số với dấu chấm
+cultureInfo.NumberFormat.CurrencyDecimalSeparator = ".";
+cultureInfo.NumberFormat.NumberDecimalSeparator = ".";
+CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+builder.Services.AddHttpClient();
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 10485760; // Giới hạn 10 MB
+});
 
-// Thêm vào Configure
+// Cấu hình các dịch vụ khác
+builder.Services.AddControllersWithViews();
+
 
 var app = builder.Build();
-app.UseSession();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-        c.RoutePrefix = string.Empty;
-    });
-}
-else
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
-// Add Authentication and Authorization middlewares
-app.UseAuthorization();     // Thêm middleware phân quyền
+app.UseAuthentication();  // Phải đặt trước UseAuthorization
+app.UseAuthorization();
 
-app.MapControllers(); // Để xử lý API controllers với [ApiController] attribute
+app.UseSession();
 
-// Map default route
+// Cấu hình các endpoint
+// Đăng ký các endpoint cấp cao nhất
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=TrangChu}/{id?}");
+    pattern: "{controller=Home}/{action=TrangChu}/{id?}"
+);
+
+
+
 
 app.Run();

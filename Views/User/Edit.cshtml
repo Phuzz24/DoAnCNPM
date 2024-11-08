@@ -1,0 +1,37 @@
+﻿<link rel="stylesheet" href="/css/quanli.css" />
+<script src="/js/quanli.js"></script>
+@model DoAnCNPM.Models.User
+
+@{
+    ViewData["Title"] = "Chỉnh sửa Người dùng";
+    Layout = "_DashboardLayout";
+}
+
+<h2 class="page-title">Chỉnh sửa Người dùng</h2>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.Error
+    </div>
+}
+
+<form method="post" action="/User/Edit/@Model.User_ID">
+    <div class="form-group">
+        <label for="Username">Tên đăng nhập:</label>
+        <input type="text" id="Username" name="Username" class="form-control" value="@Model.Username" />
+    </div>
+    <div class="form-group">
+        <label for="Password">Mật khẩu:</label>
+        <input type="password" id="Password" name="Password" class="form-control" value="@Model.Password" />
+    </div>
+    <div class="form-group">
+        <label for="Role">Vai trò:</label>
+        <select id="Role" name="Role" class="form-control">
+            <option value="Admin" @(Model.Role == "Admin" ? "selected" : "")>Admin</option>
+            <option value="Staff" @(Model.Role == "Staff" ? "selected" : "")>Nhân viên</option>
+            <option value="Customer" @(Model.Role == "Customer" ? "selected" : "")>Khách hàng</option>
+        </select>
+    </div>
+    <button type="submit" class="btn-submit">Lưu thay đổi</button>
+</form>

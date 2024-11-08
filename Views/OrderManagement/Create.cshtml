@@ -1,0 +1,37 @@
+﻿@model DoAnCNPM.Models.Order
+@{
+    ViewData["Title"] = "Thêm Đơn hàng mới";
+    Layout = "_DashboardLayout";
+
+}
+<link rel="stylesheet" href="/css/quanli.css" />
+<script src="/js/quanli.js"></script>
+
+<h2>Thêm Đơn hàng mới</h2>
+
+<form method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <label>Customer ID:</label>
+        <input asp-for="Customer_ID" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Order Date:</label>
+        <input asp-for="OrderDate" class="form-control" type="date" />
+    </div>
+    <div class="form-group">
+        <label>Status:</label>
+        <input asp-for="Status" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Total Amount:</label>
+        <input asp-for="TotalAmount" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Shipping Address:</label>
+        <input asp-for="ShippingAddress" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn-submit">Thêm Đơn hàng</button>
+</form>

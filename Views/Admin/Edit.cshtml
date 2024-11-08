@@ -1,0 +1,52 @@
+﻿@model DoAnCNPM.Models.Admin
+
+@{
+    ViewData["Title"] = "Chỉnh sửa Admin";
+    Layout = "_DashboardLayout";
+}
+<link rel="stylesheet" href="/css/quanli.css" />
+<script src="/js/quanli.js"></script>
+<h2 class="page-title">Chỉnh sửa Admin</h2>
+
+@if (ViewBag.ErrorMessages != null && ViewBag.ErrorMessages.Count > 0)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewBag.ErrorMessages)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Admin_ID)
+
+    <div class="form-group">
+        <label for="AdminName">Tên Admin:</label>
+        <input type="text" id="AdminName" name="AdminName" class="form-control" value="@Model.AdminName" />
+        @Html.ValidationMessageFor(model => model.AdminName, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <label for="AddressAd">Địa chỉ:</label>
+        <input type="text" id="AddressAd" name="AddressAd" class="form-control" value="@Model.AddressAd" />
+        @Html.ValidationMessageFor(model => model.AddressAd, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <label for="PhoneAd">Điện thoại:</label>
+        <input type="tel" id="PhoneAd" name="PhoneAd" class="form-control" value="@Model.PhoneAd" />
+        @Html.ValidationMessageFor(model => model.PhoneAd, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <label for="EmailAd">Email:</label>
+        <input type="email" id="EmailAd" name="EmailAd" class="form-control" value="@Model.EmailAd" />
+        @Html.ValidationMessageFor(model => model.EmailAd, "", new { @class = "text-danger" })
+    </div>
+
+    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+</form>

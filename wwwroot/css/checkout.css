@@ -1,0 +1,155 @@
+﻿/* Container chính */
+.checkout-container {
+    width: 80%;
+    max-width: 800px;
+    margin: 50px auto;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1s ease-in-out;
+}
+
+    .checkout-container h2 {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 20px;
+        color: #333;
+        position: relative;
+        font-family:Roboto;
+        padding-bottom: 10px;
+    }
+
+        .checkout-container h2::after {
+            content: "";
+            position: absolute;
+            width: 60px;
+            height: 3px;
+            background-color: #007bff;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+/* Phong cách cho form */
+.user-info, .address-info, .cart-summary {
+    margin-bottom: 25px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fafafa;
+}
+
+    .user-info label, .address-info label {
+        font-weight: bold;
+        color: #555;
+        display: block;
+        margin-bottom: 5px;
+        font-size: 0.95rem;
+    }
+
+    .user-info input, .address-info input, select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 0.95rem;
+        transition: border-color 0.3s;
+    }
+
+        .user-info input:focus, .address-info input:focus, select:focus {
+            border-color: #007bff;
+        }
+
+/* Phần giao hàng và thanh toán */
+.checkout-container h3 {
+    font-size: 1.2rem;
+    margin-top: 20px;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Bảng sản phẩm */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+    table th, table td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+        text-align: center;
+        font-size: 0.95rem;
+    }
+
+    table th {
+        background-color: #f1f1f1;
+        font-weight: bold;
+        color: #555;
+    }
+
+    /* Đặt kích thước tối đa cho hình ảnh sản phẩm */
+    table img {
+        max-width: 100px;
+        max-height: 100px;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+
+/* Nút hành động */
+button[type="submit"], .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #007bff;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+    button[type="submit"]:hover, .btn:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+    }
+
+    button[type="submit"]:active, .btn:active {
+        transform: translateY(0);
+    }
+/* Phần tổng cộng */
+.cart-total {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    text-align: right;
+    padding: 15px 0;
+}
+.product-name {
+    text-align: left;
+    font-weight: 500;
+    color: #333;
+}
+
+/* Số lượng, giá, tổng tiền */
+.product-quantity, .product-price, .product-total {
+    font-weight: bold;
+    color: black;
+}
+
+    .cart-total span {
+        color: #ff0000;
+    }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .checkout-container {
+        width: 95%;
+        padding: 20px;
+    }
+
+    table th, table td {
+        font-size: 0.85rem;
+    }
+}

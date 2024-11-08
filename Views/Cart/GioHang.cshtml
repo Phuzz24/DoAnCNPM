@@ -1,0 +1,73 @@
+﻿@{
+    Layout = "_HomeLayout";
+}
+<link href="/css/cart.css" rel="stylesheet" />
+<script src="~/js/cart.js"></script>
+    @model List<DoAnCNPM.Models.Cart>
+
+    <div class="cart-container">
+        <h2>Giỏ hàng của bạn</h2>
+        @if (Model == null || !Model.Any())
+        {
+            <div class="empty-cart">
+                <p>Giỏ hàng của bạn đang trống. Hãy mua sắm ngay nào!</p>
+                <a href="@Url.Action("SanPham", "Product")" class="btn btn-success">Về trang sản phẩm</a>
+            </div>
+        }
+        else
+        {
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Hình ảnh</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Giá</th>
+                        <th>Tổng tiền</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <img src="@item.Product.Image" alt="@item.Product.NamePro" style="width: 100px; height: 100px;" />
+                            </td>
+                            <td>@item.Product.NamePro</td>
+                            <td>
+                            <form class="quantity-form" action="/Cart/UpdateQuantity" method="post">
+                                <input type="hidden" name="productId" value="@item.Product.Product_ID" />
+                                <input type="number" name="quantity" value="@item.Quantity" min="1" max="@item.Product.Quantity" />
+                                <button type="submit" class="btn btn-primary">Cập nhật</button>
+                            </form>
+                            </td>
+                            <td>@item.Product.Price.ToString("N0") đ</td>
+                            <td>@Math.Round(item.Product.Price * item.Quantity).ToString("N0") đ</td>
+                            <td>
+                                <form action="/Cart/RemoveFromCart" method="post">
+                                    <input type="hidden" name="productId" value="@item.Product.Product_ID" />
+                                    <button type="submit" class="btn btn-danger">Xóa</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div>
+                <h4>Tổng tiền: @Model.Sum(x => x.Product.Price * x.Quantity).ToString("N0") đ</h4>
+            </div>
+            <div class="cart-actions">
+                <a href="@Url.Action("TrangChu", "Home")" class="btn btn-success">Tiếp tục mua hàng</a>
+                <a href="@Url.Action("Checkout", "Order")" class="btn btn-primary">Tiếp tục thanh toán</a>
+            </div>
+        }
+        </div>
+  
+
+    <script>
+
+    </script>
+
+

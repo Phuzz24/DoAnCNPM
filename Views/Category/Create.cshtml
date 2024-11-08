@@ -1,0 +1,18 @@
+﻿@model DoAnCNPM.Models.Category
+
+@{
+    ViewData["Title"] = "Thêm Loại sản phẩm Mới";
+    Layout = "_DashboardLayout";
+}
+<link rel="stylesheet" href="/css/quanli.css" />
+<script src="/js/quanli.js"></script>
+
+<h2 class="page-title">Thêm Loại sản phẩm Mới</h2>
+
+<form method="post" action="/Category/Create">
+    <div class="form-group">
+        <label for="CategoryName">Tên Loại sản phẩm:</label>
+        <input type="text" id="CategoryName" name="CategoryName" class="form-control" placeholder="Nhập tên loại sản phẩm" />
+    </div>
+    <button type="submit" class="btn-submit">Thêm Loại sản phẩm</button>
+</form>

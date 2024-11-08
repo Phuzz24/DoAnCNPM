@@ -1,0 +1,59 @@
+﻿@model IEnumerable<DoAnCNPM.Models.Customer>
+
+@{
+    ViewData["Title"] = "Quản lý Khách hàng";
+    Layout = "_DashboardLayout";
+}
+<link rel="stylesheet" href="/css/quanli.css" />
+<script src="/js/quanli.js"></script>
+
+<h2>Danh sách Khách hàng</h2>
+
+<!-- Form tìm kiếm -->
+<form method="get" action="@Url.Action("DSKhachHang")" class="search-form">
+    <input type="text" name="searchTerm" placeholder="Tìm kiếm khách hàng..." class="search-input" />
+    <button type="submit" class="btn-search">Tìm kiếm</button>
+</form>
+
+@if (User.IsInRole("Admin"))
+{
+    <a href="@Url.Action("Create")" class="btn btn-add">Thêm khách hàng mới</a>
+}
+<table class="table-products">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>User ID</th>
+            <th>Tên khách hàng</th>
+            <th>Địa chỉ</th>
+            <th>Số điện thoại</th>
+            <th>Email</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cus in Model)
+        {
+            <tr>
+                <td>@cus.Customer_ID</td>
+                <td>@cus.User_ID</td>
+                <td>@cus.NameCus</td>
+                <td>@cus.AddressCus</td>
+                <td>@cus.PhoneCus</td>
+                <td>@cus.EmailCus</td>
+                <td class="actions">
+                    <a href="@Url.Action("Details", new { id = cus.Customer_ID })" class="btn btn-view">Xem</a>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a href="@Url.Action("Edit", new { id = cus.Customer_ID })" class="btn btn-edit">Sửa</a>
+                        <a href="@Url.Action("Delete", new { id = cus.Customer_ID })" class="btn btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa khách hàng này?');">Xóa</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- CSS cho giao diện quản lý sản phẩm -->
+

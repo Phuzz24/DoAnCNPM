@@ -26,6 +26,10 @@ namespace DoAnCNPM.Controllers
         {
             return View();
         }
+        public IActionResult GioiThieu()
+        {
+            return View();
+        }
 
         //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         //public IActionResult Error()
@@ -46,7 +50,21 @@ namespace DoAnCNPM.Controllers
             var ipadProducts = _database.Products
                 .Where(p => p.Category_ID == 4) // 3 là category_id của iPad
                 .ToList();
-
+            // Lấy danh sách các sản phẩm bán chạy nhất (top-selling)
+            // Lấy danh sách các sản phẩm bán chạy nhất (top-selling) với số lượng bán > 5 lần
+            var topSellingProducts = _database.Products
+                .Join(_database.OrderDetails, p => p.Product_ID, od => od.Product_ID, (p, od) => new { Product = p, od.Quantity })
+                .GroupBy(x => x.Product)
+                .Select(g => new
+                {
+                    Product = g.Key,
+                    TotalSold = g.Sum(x => x.Quantity)
+                })
+                .Where(x => x.TotalSold > 5) // Điều kiện số lượng bán > 5
+                .OrderByDescending(x => x.TotalSold)
+                .Take(10) // Lấy 10 sản phẩm bán chạy nhất
+                .Select(x => x.Product)
+                .ToList();
             // Tạo danh sách các ProductCategoryViewModel để truyền vào View
             var viewModel = new List<ProductCategoryViewModel>
         {
@@ -68,7 +86,8 @@ namespace DoAnCNPM.Controllers
 
             }
         };
-
+            // Gửi danh sách các sản phẩm nổi bật bán chạy nhất
+            ViewBag.TopSellingProducts = topSellingProducts;
             return View(viewModel);
         }
         public IActionResult ChiTietSanPham(int id)

@@ -1,0 +1,220 @@
+﻿    @model DoAnCNPM.Models.Product
+
+    @{
+        ViewData["Title"] = "Chỉnh sửa Sản phẩm";
+        Layout = "_DashboardLayout";
+        var brands = ViewBag.Brands as List<DoAnCNPM.Models.Brand>;
+        var categories = ViewBag.Categories as List<DoAnCNPM.Models.Category>;
+    }
+    <link rel="stylesheet" href="/css/custom.css" />
+
+    <h2 class="page-title">Chỉnh sửa Sản phẩm</h2>
+
+    <!-- Hiển thị thông báo lỗi nếu có -->
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.Error
+    </div>
+}
+
+<form asp-action="Edit" enctype="multipart/form-data" method="post">
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Product_ID)
+
+    <input type="hidden" asp-for="Product_ID" />
+
+    <div class="form-group">
+        <label for="NamePro">Tên sản phẩm:</label>
+        <input type="text" id="NamePro" name="NamePro" class="form-control" placeholder="Nhập tên sản phẩm" value="@Model.NamePro" />
+                @Html.ValidationMessageFor(model => model.NamePro, "", new { @class = "text-danger" })
+
+    </div>
+
+    <div class="form-group">
+        <label for="Brand_ID">Thương hiệu:</label>
+        <select id="Brand_ID" name="Brand_ID" class="form-control">
+            <option value="">Chọn thương hiệu</option>
+            @foreach (var brand in brands)
+            {
+                <option value="@brand.Brand_ID" @(brand.Brand_ID == Model.Brand_ID ? "selected" : "")>@brand.BrandName</option>
+            }
+        </select>
+                @Html.ValidationMessageFor(model => model.Brand_ID, "", new { @class = "text-danger" })
+
+    </div>
+
+    <div class="form-group">
+        <label for="Category_ID">Danh mục:</label>
+        <select id="Category_ID" name="Category_ID" class="form-control">
+            <option value="">Chọn danh mục</option>
+            @foreach (var category in categories)
+            {
+                <option value="@category.Category_ID" @(category.Category_ID == Model.Category_ID ? "selected" : "")>@category.CategoryName</option>
+            }
+        </select>
+                @Html.ValidationMessageFor(model => model.Category_ID, "", new { @class = "text-danger" })
+
+    </div>
+
+    <div class="form-group">
+        <label for="Price">Giá:</label>
+        <input type="number" step="0.01" id="Price" name="Price" class="form-control" placeholder="Nhập giá sản phẩm" value="@Model.Price" />
+                @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+
+    </div>
+
+    <div class="form-group">
+        <label for="Quantity">Số lượng:</label>
+        <input type="number" id="Quantity" name="Quantity" class="form-control" placeholder="Nhập số lượng sản phẩm" value="@Model.Quantity" />
+                @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
+
+    </div>
+
+
+
+    <div class="form-group">
+        <label for="Description">Mô tả:</label>
+        <textarea id="Description" name="Description" class="form-control" placeholder="Nhập mô tả sản phẩm">@Model.Description</textarea>
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+
+    </div>
+ <div class="form-group">
+        <label for="ImageFile">Ảnh:</label>
+        <input type="file" id="ImageFile" name="ImageFile" class="form-control" accept="image/*" />
+        @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
+
+        @if (!string.IsNullOrEmpty(Model.Image))
+        {
+            <p>Đường dẫn hình ảnh hiện tại: @Model.Image</p>
+            <img id="image-preview" src="@Url.Content(Model.Image.StartsWith("/") ? Model.Image : "/" + Model.Image)"
+                 style="display:block; margin-top:10px; max-width:100%; height:auto; border-radius: 5px;" />
+        }
+        else
+        {
+            <img id="image-preview" style="display:none; margin-top:10px; max-width:100%; height:auto; border-radius: 5px;" />
+        }
+    </div>
+
+
+    <button type="submit" class="btn-submit">Lưu thay đổi</button>
+
+</form>
+ <style>
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #4a4a4a;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .form-control {
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+
+            .form-control:focus {
+                border-color: #3498db;
+                box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+                outline: none;
+            }
+
+        #image-preview {
+            display: block;
+            margin: 10px 0;
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+            max-height: 200px;
+            object-fit: cover;
+        }
+
+        button[type="submit"] {
+            background-color: #3498db;
+            color: #fff;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+            transition: background-color 0.3s, color 0.3s;
+            margin-top: 10px;
+        }
+
+            button[type="submit"]:hover {
+                background-color: #2980b9;
+            }
+    </style
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const formGroups = document.querySelectorAll('.form-group');
+                let delay = 0;
+
+                // Thêm hiệu ứng trượt vào cho các form-group với độ trễ tăng dần
+            formGroups.forEach(group => {
+                group.style.animationDelay = `${delay}s`;
+                delay += 0.1;
+            });
+
+                // Animation trên nút submit khi hover
+                const submitButton = document.querySelector('button[type="submit"]');
+                submitButton.addEventListener('mouseenter', () => {
+                    submitButton.style.transform = 'scale(1.05)';
+                });
+
+                submitButton.addEventListener('mouseleave', () => {
+                    submitButton.style.transform = 'scale(1)';
+                });
+
+                // Animation trên nút secondary khi hover
+                const secondaryButton = document.querySelector('.btn-secondary');
+                secondaryButton.addEventListener('mouseenter', () => {
+                    secondaryButton.style.transform = 'scale(1.05)';
+                });
+
+                secondaryButton.addEventListener('mouseleave', () => {
+                    secondaryButton.style.transform = 'scale(1)';
+                });
+                document.addEventListener("DOMContentLoaded", function () {
+            const fileInput = document.getElementById("ImageFile");
+            const preview = document.getElementById("image-preview");
+
+            fileInput.addEventListener("change", function (event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        preview.src = e.target.result;
+                        preview.style.display = "block";
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    preview.style.display = "none";
+                }
+            });
+        });
+        </script>
+    }

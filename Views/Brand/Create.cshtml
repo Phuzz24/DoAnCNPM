@@ -1,0 +1,25 @@
+﻿@model DoAnCNPM.Models.Brand
+
+@{
+    ViewData["Title"] = "Thêm Thương hiệu Mới";
+    Layout = "_DashboardLayout";
+}
+<link rel="stylesheet" href="/css/quanli.css" />
+<script src="/js/quanli.js"></script>
+
+<h2 class="page-title">Thêm Thương hiệu Mới</h2>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.Error
+    </div>
+}
+
+<form method="post" action="/Brand/Create">
+    <div class="form-group">
+        <label for="BrandName">Tên Thương hiệu:</label>
+        <input type="text" id="BrandName" name="BrandName" class="form-control" placeholder="Nhập tên thương hiệu" />
+    </div>
+    <button type="submit" class="btn-submit">Thêm Thương hiệu</button>
+</form>

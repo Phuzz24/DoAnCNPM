@@ -1,8 +1,143 @@
-﻿<html>
-    <head>
-        
+﻿<!DOCTYPE html>
+<head>
+    <link href="~/font/fontawesome-free-6.6.0-web/css/all.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/main.css" />
+    <script src="/js/main.js"></script>
+        <title>Trang chủ</title>
     </head>
     <body>
+        <div class="header">
+            <div class="header-top">
+            <div class="logo">
+            <img src="~/HinhAnh/LOGO1.jpg" href="" />
+        </div>
+            <form>
+                <div class="search-container">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" name="Timkiem" placeholder="Nhập sản phẩm bạn cần tìm..." />
+                </div>
+            </form>
 
-    </body>
+            <a href="/Home/TrangChu">
+                <i class="fa-solid fa-house"></i>   
+                Trang chủ
+                </a>
+            <a href="">
+                <i class="fa-solid fa-circle-info"></i>
+                Giới thiệu
+                </a>
+            <!-- Kiểm tra trạng thái đăng nhập từ Session -->
+            @if (Context.Session.GetString("Username") != null)
+            {
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" id="userDropdown">
+                        <i class="fa-solid fa-user"></i> @Context.Session.GetString("Username")
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="/Account/EditInfo">Xem thông tin cá nhân</a>
+                        <a class="dropdown-item" href="/Account/ChangePassword">Đổi mật khẩu</a>
+                        <a class="dropdown-item" href="/Account/Logout">Đăng xuất</a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <a href="/Account/Login">
+                    <i class="fa-solid fa-user"></i>
+                    Đăng nhập
+                </a>
+            }
+            <a href="">
+                <i class="fa-solid fa-cart-shopping"></i>
+                Giỏ hàng
+            </a>
+        </div>
+       <div class="header-center">
+           <hr />
+       </div>
+        <div class="header-bottom">
+            <div class="slideshow-container">
+                <!-- Slide 1 -->
+                <div class="text-slide active">
+                    Công nghệ trong tầm tay, đẳng cấp từng giây
+                </div>
+                <!-- Slide 2 -->
+                <div class="text-slide">
+                    Điện thoại chuẩn công nghệ, dịch vụ chuẩn niềm tin
+                </div>
+                <!-- Slide 3 -->
+                <div class="text-slide">
+                    Khám phá thế giới công nghệ di động
+                </div>
+
+                <!-- Chấm điều hướng -->
+                <div class="dots">
+                    <span class="dot active" onclick="currentSlide(1)"></span>
+                    <span class="dot" onclick="currentSlide(2)"></span>
+                    <span class="dot" onclick="currentSlide(3)"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header class="header">
+        <h1>Chào mừng bạn đến với <span>[Tên Cửa Hàng Điện Thoại]</span></h1>
+        <p>Nơi bạn tìm thấy những sản phẩm công nghệ chất lượng cao với dịch vụ tận tâm.</p>
+    </header>
+
+    <section class="mission">
+        <h2>Sứ Mệnh Của Chúng Tôi</h2>
+        <p>[Tên Cửa Hàng Điện Thoại] mang đến sản phẩm công nghệ tiên tiến, chất lượng và giá cả cạnh tranh để khách hàng dễ dàng tiếp cận với công nghệ hiện đại.</p>
+    </section>
+
+    <section class="vision">
+        <h2>Tầm Nhìn</h2>
+        <p>Trở thành hệ thống bán lẻ điện thoại và thiết bị công nghệ hàng đầu tại Việt Nam, với các sản phẩm chất lượng và dịch vụ tốt nhất.</p>
+    </section>
+
+    <section class="values">
+        <h2>Giá Trị Cốt Lõi</h2>
+        <ul>
+            <li><strong>Chất Lượng Uy Tín:</strong> Sản phẩm chính hãng từ các thương hiệu nổi tiếng.</li>
+            <li><strong>Dịch Vụ Chuyên Nghiệp:</strong> Đội ngũ nhân viên tận tâm và giàu kinh nghiệm.</li>
+            <li><strong>Giá Cả Cạnh Tranh:</strong> Giá hợp lý nhất trên thị trường.</li>
+            <li><strong>Hậu Mãi Chu Đáo:</strong> Dịch vụ hậu mãi tận tình và hỗ trợ bảo hành, sửa chữa.</li>
+        </ul>
+    </section>
+
+    <section class="products">
+        <h2>Sản Phẩm Của Chúng Tôi</h2>
+        <p>Đa dạng sản phẩm từ điện thoại di động, máy tính bảng, phụ kiện chính hãng đến các thiết bị thông minh.</p>
+        <ul>
+            <li>Apple: iPhone, iPad, MacBook và phụ kiện.</li>
+            <li>Samsung: Galaxy Series, Galaxy Tab, Galaxy Watch và phụ kiện.</li>
+            <li>Xiaomi: Điện thoại, phụ kiện và thiết bị thông minh.</li>
+            <li>Và nhiều thương hiệu uy tín khác...</li>
+        </ul>
+    </section>
+
+    <section class="why-choose-us">
+        <h2>Lý Do Bạn Nên Chọn [Tên Cửa Hàng Điện Thoại]</h2>
+        <ul>
+            <li>Sản phẩm chính hãng, bảo hành đầy đủ.</li>
+            <li>Mua sắm trực tuyến dễ dàng với dịch vụ giao hàng toàn quốc.</li>
+            <li>Dịch vụ chăm sóc khách hàng 24/7 luôn sẵn sàng hỗ trợ.</li>
+            <li>Nhiều chương trình khuyến mãi hấp dẫn.</li>
+        </ul>
+    </section>
+
+    <section class="contact">
+        <h2>Liên Hệ Với Chúng Tôi</h2>
+        <p><strong>Địa chỉ:</strong> [Địa chỉ của cửa hàng]</p>
+        <p><strong>Hotline:</strong> [Số điện thoại liên hệ]</p>
+        <p><strong>Email:</strong> [Địa chỉ email]</p>
+        <p><strong>Website:</strong> [Tên miền website của cửa hàng]</p>
+        <p><strong>Facebook:</strong> [Link Facebook]</p>
+        <p><strong>Instagram:</strong> [Link Instagram]</p>
+    </section>
+
+    <footer class="footer">
+        <p>© [Năm hiện tại] [Tên Cửa Hàng Điện Thoại] - All rights reserved.</p>
+    </footer>
+</body>
 </html>

@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 namespace DoAnCNPM.Controllers
 {
@@ -69,6 +72,11 @@ namespace DoAnCNPM.Controllers
                     ViewBag.Error = "Email đã tồn tại.";
                     return View("Register");
                 }
+                //if(existingUser && existingEmail !=null)
+                //{
+                //    ViewBag.Error = "Tên đăng nhập và Email đã tồn tại.";
+                //    return View(Register);
+                //}    
 
                 // Tạo người dùng mới
                 var user = new User
@@ -115,37 +123,69 @@ namespace DoAnCNPM.Controllers
             return View();
         }
 
-        // POST: Account/Login
         [HttpPost]
-        public async Task<IActionResult> Login(string Username, string Password)
+        public async Task<IActionResult> LoginPost()
         {
-            if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
+            string username = Request.Form["Username"];
+            string password = Request.Form["Password"];
+            if(string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                ViewBag.Error = "Vui lòng nhập đầy đủ thông tin!";
-                return View();
-            }
+                ViewBag.Error = "Vui lòng nhập đầy đủ thông tin.";
+                return View("Login");
+            }    
+            if(password.Length < 6)
+            {
+                ViewBag.Error = "Mật khẩu phải từ 6 kí tự trở lên.";
+                return View("Login");
+            }    
 
-            var user = _context.Users.FirstOrDefault(u => u.Username == Username && u.Password == Password);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username && u.Password == password);
             if (user != null)
             {
-                // Lưu trạng thái đăng nhập vào Session
-                HttpContext.Session.SetString("Username", user.Username);
-                HttpContext.Session.SetInt32("UserID", user.User_ID);
+                HttpContext.Session.SetString("Username", user.Username); // Lưu tên vào session
+                HttpContext.Session.SetInt32("UserID", user.User_ID); // Lưu ID vào session
+                TempData["SuccessMessage"] = "Đăng nhập thành công!";
 
-                // Chuyển hướng về trang chủ sau khi đăng nhập thành công
+                // Đăng nhập người dùng
+                var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.NameIdentifier, user.User_ID.ToString()),
+            new Claim(ClaimTypes.Role, user.Role)
+        };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+
+                if (user.Role == "Khách hàng")
+                {
+                    return RedirectToAction("TrangChu", "Home");
+                }
+                else if (user.Role == "Admin" || user.Role =="Nhân viên")
+                {
+                    return RedirectToAction("DSSanPham", "Product");
+                }
                 return RedirectToAction("TrangChu", "Home");
             }
-            else
-            {
-                ViewBag.Error = "Tên đăng nhập hoặc mật khẩu không chính xác.";
-                return View();
-            }
+
+            ViewBag.Error = "Tên đăng nhập hoặc mật khẩu không chính xác.";
+            return View("Login");
         }
-        public IActionResult Logout()
+        [HttpGet]
+        public IActionResult AccessDenied()
         {
-            HttpContext.Session.Clear();
+            return View();
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            // Đăng xuất và xóa cookie xác thực
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login", "Account");
         }
+
+
 
 
 
@@ -242,7 +282,48 @@ namespace DoAnCNPM.Controllers
             return RedirectToAction("EditInfo");
         }
 
+        // GET: Hiển thị form đổi mật khẩu
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
 
+        // POST: Xử lý đổi mật khẩu
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // Lấy User hiện tại từ cơ sở dữ liệu (ví dụ: dựa trên Username từ session hoặc context)
+            var username = User.Identity.Name; // Giả sử đã có username trong session
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Người dùng không tồn tại.");
+                return View(model);
+            }
+
+            // Kiểm tra mật khẩu hiện tại
+            if (user.Password != model.CurrentPassword) // So sánh trực tiếp (nếu đã mã hóa, cần giải mã hoặc mã hóa tương tự để so sánh)
+            {
+                ModelState.AddModelError("", "Mật khẩu hiện tại không chính xác.");
+                return View(model);
+            }
+
+            // Đổi mật khẩu
+            user.Password = model.NewPassword; // Lưu ý: Nếu mật khẩu cần mã hóa, hãy áp dụng mã hóa tại đây
+            _context.Update(user);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Đổi mật khẩu thành công!";
+            return RedirectToAction("EditInfo", "Account"); // Chuyển hướng sau khi thành công
+        }
 
 
 

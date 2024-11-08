@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Trang quản lí</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <script src="/js/dashboard.js" defer></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <h2>Dashboard</h2>
+            <ul>
+                <li><a href="/Product/DSSanPham">Sản phẩm</a></li>
+                <li><a href="/OrderManagement/DSDonHang">Đơn hàng</a></li>
+                <li><a href="/User/DSNguoiDung">Người dùng</a></li>
+                <li><a href="/Staff/DSNhanVien">Nhân viên</a></li>
+                <li><a href="/Customer/DSKhachHang">Khách hàng</a></li>
+                <li><a href="/Brand/DSBrand">Brand</a></li>
+                <li><a href="/Category/DSCategory">Category</a></li>
+                <li><a href="/Statistics/ThongKe">Thống kê</a></li>
+
+            </ul>
+        </div>
+        <div class="main-content">
+            <header>
+                <button class="toggle-btn">☰</button>
+                <div class="user-info">
+                    @if (Context.Session.GetString("Username") != null)
+                    {
+                        <div class="dropdown">
+                            <a href="#" class="dropdown-toggle" id="userDropdown">
+                                <i class="fa-solid fa-user"></i> @Context.Session.GetString("Username")
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="userDropdownS">
+                                <a class="dropdown-item" href="/Account/EditInfo">Xem thông tin cá nhân</a>
+                                <a class="dropdown-item" href="/Order/OrderHistory">Xem lịch sử đơn hàng</a>
+                                <a class="dropdown-item" href="/Account/ChangePassword">Đổi mật khẩu</a>
+                                <a class="dropdown-item" href="/Account/Logout">Đăng xuất</a>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <a href="/Account/Login">
+                            <i class="fa-solid fa-user"></i>
+                            Đăng nhập
+                        </a>
+                    }
+                </div>
+            </header>
+           <div class="content">
+                @RenderBody() <!-- This is where the content of the view will be rendered -->
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+@RenderSection("Scripts", required: false)
+

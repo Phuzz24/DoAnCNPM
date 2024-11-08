@@ -1,0 +1,26 @@
+﻿@model DoAnCNPM.Models.Customer
+
+@{
+    ViewData["Title"] = "Xóa Khách hàng";
+    Layout = "_DashboardLayout";
+}
+<link rel="stylesheet" href="/css/quanli.css" />
+<script src="/js/quanli.js"></script>
+<h2 class="page-title">Xóa Khách hàng</h2>
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.ErrorMessage
+    </div>
+}
+
+<p>Bạn có chắc chắn muốn xóa nhân viên <strong>@Model.NameCus</strong> không?</p>
+
+<form asp-action="DeleteConfirmed" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Customer_ID" />
+
+    <button type="submit" class="btn btn-danger">Xóa</button>
+    <a asp-action="DSKhachHang" class="btn btn-secondary">Hủy</a>
+</form>

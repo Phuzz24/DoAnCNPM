@@ -1,0 +1,51 @@
+﻿@model IEnumerable<DoAnCNPM.Models.User>
+
+@{
+    ViewData["Title"] = "Quản lý Người dùng";
+    Layout = "_DashboardLayout";
+}
+<link rel="stylesheet" href="/css/quanli.css" />
+<script src="/js/quanli.js"></script>
+<h2 class="page-title">Danh sách Người dùng</h2>
+
+<form method="get" action="@Url.Action("DSNguoiDung")" class="search-form">
+    <input type="text" name="searchTerm" placeholder="Tìm kiếm người dùng..." class="search-input" />
+    <button type="submit" class="btn-search">Tìm kiếm</button>
+</form>
+
+@if (User.IsInRole("Admin"))
+{
+    <a href="@Url.Action("Create")" class="btn btn-add">Thêm người dùng mới</a>
+}
+
+<div class="table-container">
+    <table class="table-products">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên người dùng</th>
+                <th>Mật khẩu</th>
+                <th>Vai trò</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.User_ID</td>
+                    <td>@user.Username</td>
+                    <td>@user.Password</td>
+                    <td>@user.Role</td>
+                    <td class="actions">
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a href="@Url.Action("Edit", new { id = user.User_ID })" class="btn btn-edit">Sửa</a>
+                            <a href="@Url.Action("Delete", new { id = user.User_ID })" class="btn btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa người dùng này?');">Xóa</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,15 +1,33 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
-public class Cart
+
+namespace DoAnCNPM.Models
 {
-    [Key]
-    public int Cart_ID { get; set; } // Khóa chính
-    public int Customer_ID { get; set; }
-    public int Product_ID { get; set; }
-    public int Quantity { get; set; }
-    public DateTime AddedAt { get; set; }
+    public class Cart
+    {
+        [Key]
+        [Column("cart_id")]
 
-    // Navigation properties
-    public Customer Customer { get; set; }
-    public Product Product { get; set; }
+        public int Cart_ID { get; set; } // Khóa chính
+        [ForeignKey("Customer")]
+        [Column("customer_id")]
+
+        public int Customer_ID { get; set; }
+        [ForeignKey("Product")]
+        [Column("product_id")]
+
+        public int Product_ID { get; set; }
+        [Column("quantity")]
+
+        public int Quantity { get; set; }
+        [Column("added_at")]
+        public DateTime AddedAt { get; set; }
+
+        // Navigation properties
+        [JsonIgnore]
+        public Customer Customer { get; set; }
+        public Product Product { get; set; }
+    }
 }

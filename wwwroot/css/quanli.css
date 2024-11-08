@@ -1,0 +1,229 @@
+﻿body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.page-title {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    color: #007bff;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.search-form {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.search-input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 300px;
+    transition: all 0.3s;
+}
+
+    .search-input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+        outline: none;
+    }
+
+.btn-search {
+    padding: 10px 15px;
+    border: none;
+    background-color: #28a745;
+    color: white;
+    border-radius: 5px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+    .btn-search:hover {
+        background-color: #218838;
+    }
+
+.btn-add {
+    display: block;
+    width: 200px;
+    margin: 0 auto 20px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+    .btn-add:hover {
+        background-color: #0056b3;
+    }
+
+.table-container {
+    overflow-x: auto;
+    padding: 0 20px;
+}
+
+.table-products {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+    .table-products th, .table-products td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .table-products th {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .table-products tr:hover {
+        background-color: #f1f1f1;
+    }
+
+.description {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.actions .btn {
+    padding: 7px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    margin-right: 5px;
+    transition: background-color 0.3s;
+}
+
+.btn-view {
+    background-color: #17a2b8;
+}
+
+    .btn-view:hover {
+        background-color: #138496;
+    }
+
+.btn-edit {
+    background-color: #ffc107;
+    color: black;
+}
+
+    .btn-edit:hover {
+        background-color: #e0a800;
+    }
+
+.btn-delete {
+    background-color: #dc3545;
+}
+
+    .btn-delete:hover {
+        background-color: #c82333;
+    }
+form {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Title */
+.page-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #4a4a4a;
+}
+
+/* Input fields and select boxes styling */
+.form-group label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.form-control {
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 15px;
+    transition: border-color 0.3s;
+}
+
+    .form-control:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        outline: none;
+    }
+
+/* Preview Image */
+#image-preview {
+    display: block;
+    margin: 10px 0;
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    max-height: 200px; /* Giới hạn chiều cao của ảnh xem trước */
+    object-fit: cover;
+}
+
+/* Button styling */
+button[type="submit"], .btn-secondary {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    transition: background-color 0.3s, color 0.3s;
+    margin-top: 10px;
+}
+
+button[type="submit"] {
+    background-color: #3498db;
+    color: #fff;
+}
+
+    button[type="submit"]:hover {
+        background-color: #2980b9;
+    }
+
+.btn-secondary {
+    background-color: #ddd;
+    color: #333;
+}
+
+    .btn-secondary:hover {
+        background-color: #ccc;
+        color: #000;
+    }
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-group {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideIn 0.5s ease forwards;
+}
+
