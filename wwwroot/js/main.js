@@ -80,33 +80,54 @@
     }
 });
 
-let scrollAmount = 0;
-const productList = document.querySelector('.product-list');
-const productItemWidth = document.querySelector('.product-item').offsetWidth + 20; // Độ rộng sản phẩm + khoảng cách
-const visibleProducts = 3; // Số lượng sản phẩm muốn hiển thị
+document.addEventListener("DOMContentLoaded", function () {
+    // Lấy phần tử product-list và các sản phẩm bên trong
+    const productList = document.querySelector('.product-list');
+    const productItems = document.querySelectorAll('.product-item');
 
-function nextPage() {
-    if (scrollAmount <= productList.scrollWidth - productList.clientWidth) {
-        scrollAmount += productItemWidth * 4; // Cuộn theo 4 sản phẩm mỗi lần
-        productList.scrollTo({
-            top: 0,
-            left: scrollAmount,
-            behavior: 'smooth' // Hiệu ứng cuộn mượt mà
-        });
-    }
-}
+    // Kiểm tra sự tồn tại của productList và productItems
+    if (productList && productItems.length > 0) {
+        let scrollAmount = 0;
+        const productItemWidth = productItems[0].offsetWidth + 20; // Độ rộng sản phẩm + khoảng cách
+        const maxScroll = productList.scrollWidth - productList.clientWidth;
 
-function prevPage() {
-    if (scrollAmount > 0) {
-        scrollAmount -= productItemWidth * 4; // Cuộn lại 4 sản phẩm
-        if (scrollAmount < 0) scrollAmount = 0; // Không cuộn quá trái
-        productList.scrollTo({
-            top: 0,
-            left: scrollAmount,
-            behavior: 'smooth' // Hiệu ứng cuộn mượt mà
-        });
+        function nextPage() {
+            if (scrollAmount < maxScroll) {
+                scrollAmount += productItemWidth * 4; // Cuộn theo 4 sản phẩm mỗi lần
+                if (scrollAmount > maxScroll) scrollAmount = maxScroll; // Đảm bảo không cuộn quá phải
+                productList.scrollTo({
+                    top: 0,
+                    left: scrollAmount,
+                    behavior: 'smooth' // Hiệu ứng cuộn mượt mà
+                });
+            }
+        }
+
+        function prevPage() {
+            if (scrollAmount > 0) {
+                scrollAmount -= productItemWidth * 4; // Cuộn lại 4 sản phẩm
+                if (scrollAmount < 0) scrollAmount = 0; // Đảm bảo không cuộn quá trái
+                productList.scrollTo({
+                    top: 0,
+                    left: scrollAmount,
+                    behavior: 'smooth' // Hiệu ứng cuộn mượt mà
+                });
+            }
+        }
+
+        // Gán sự kiện cho các nút next và prev
+        const nextButton = document.querySelector('.next-btn');
+        const prevButton = document.querySelector('.prev-btn');
+        if (nextButton && prevButton) {
+            nextButton.addEventListener('click', nextPage);
+            prevButton.addEventListener('click', prevPage);
+        }
+    } else {
+        console.warn("Không tìm thấy phần tử product-list hoặc product-item.");
     }
-}
+});
+
+
 
 
 

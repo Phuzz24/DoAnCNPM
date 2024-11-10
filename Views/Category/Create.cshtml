@@ -1,18 +1,26 @@
 ﻿@model DoAnCNPM.Models.Category
 
 @{
-    ViewData["Title"] = "Thêm Loại sản phẩm Mới";
+    ViewData["Title"] = "Thêm Loại Mới";
     Layout = "_DashboardLayout";
 }
 <link rel="stylesheet" href="/css/quanli.css" />
 <script src="/js/quanli.js"></script>
 
-<h2 class="page-title">Thêm Loại sản phẩm Mới</h2>
+<h2 class="page-title">Thêm Loại Mới</h2>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.Error
+    </div>
+}
 
 <form method="post" action="/Category/Create">
+    @Html.AntiForgeryToken()
     <div class="form-group">
-        <label for="CategoryName">Tên Loại sản phẩm:</label>
-        <input type="text" id="CategoryName" name="CategoryName" class="form-control" placeholder="Nhập tên loại sản phẩm" />
+        <label for="CategoryName">Tên loại:</label>
+        <input type="text" id="CategoryName" name="CategoryName" class="form-control" placeholder="Nhập tên loại" />
     </div>
-    <button type="submit" class="btn-submit">Thêm Loại sản phẩm</button>
+    <button type="submit" class="btn-submit">Thêm Loại</button>
 </form>

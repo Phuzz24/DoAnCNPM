@@ -1,34 +1,281 @@
-﻿<link rel="stylesheet" href="/css/quanli.css" />
-<script src="/js/quanli.js"></script>
-@model DoAnCNPM.Models.Order
-@{
-    ViewData["Title"] = "Sửa Đơn hàng";
-    Layout = "_DashboardLayout";
+﻿@model DoAnCNPM.Models.Order
 
+@{
+    ViewData["Title"] = "Chỉnh sửa Đơn Hàng";
+    Layout = "_DashboardLayout";
+}
+<link rel="stylesheet" href="/css/quanli.css" />
+<script src="/js/quanli.js"></script>
+<h2>Chỉnh sửa Đơn Hàng @Model.Order_ID</h2>
+@if (ViewBag.ErrorMessages != null)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewBag.ErrorMessages)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
 }
 
-<h2>Sửa Đơn hàng</h2>
-
-<form method="post">
+<!-- Form chỉnh sửa đơn hàng -->
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
+    <input type="hidden" name="Order_ID" value="@Model.Order_ID" />
 
-    <input type="hidden" asp-for="Order_ID" />
+    <!-- Chọn Khách Hàng -->
     <div class="form-group">
-        <label>Customer ID:</label>
-        <input asp-for="Customer_ID" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label>Order Date:</label>
-        <input asp-for="OrderDate" class="form-control" type="date" />
-    </div>
-    <div class="form-group">
-        <label>Status:</label>
-        <input asp-for="Status" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label>Total Amount:</label>
-        <input asp-for="TotalAmount" class="form-control" />
+        <label for="Customer_ID">Chọn Khách Hàng:</label>
+        <select name="Customer_ID" class="form-control">
+            <option value="">Chọn khách hàng</option>
+            @foreach (var customer in ViewBag.Customers)
+            {
+                <option value="@customer.Customer_ID" @(Model.Customer_ID == customer.Customer_ID ? "selected" : "")>
+                    @customer.NameCus
+                </option>
+            }
+        </select>
     </div>
 
-    <button type="submit" class="btn-submit">Lưu thay đổi</button>
+    <!-- Tên Người Nhận -->
+    <div class="form-group">
+        <label for="CustomerName">Tên Người Nhận:</label>
+        <input type="text" name="CustomerName" class="form-control" value="@Model.CustomerName" />
+    </div>
+
+    <!-- Số Điện Thoại -->
+    <div class="form-group">
+        <label for="CustomerPhone">Số Điện Thoại:</label>
+        <input type="text" name="CustomerPhone" class="form-control" pattern="\d+" title="Vui lòng nhập số điện thoại hợp lệ." value="@Model.CustomerPhone" />
+        <span class="text-danger">@ViewData.ModelState["CustomerPhone"]?.Errors?.FirstOrDefault()?.ErrorMessage</span>
+    </div>
+
+    <!-- Địa Chỉ Giao Hàng -->
+    <div class="form-group">
+        <label for="ShippingAddress">Địa Chỉ Giao Hàng:</label>
+        <input type="text" name="ShippingAddress" class="form-control" value="@Model.ShippingAddress" />
+        <span class="text-danger">@ViewData.ModelState["ShippingAddress"]?.Errors?.FirstOrDefault()?.ErrorMessage</span>
+    </div>
+
+    <!-- Phương Thức Giao Hàng -->
+    <div class="form-group">
+        <label for="ShippingMethod">Phương Thức Giao Hàng:</label>
+        <select name="ShippingMethod" class="form-control">
+            <option value="standard" @(Model.ShippingMethod == "standard" ? "selected" : "")>Giao hàng tiêu chuẩn - 30,000 đ</option>
+            <option value="express" @(Model.ShippingMethod == "express" ? "selected" : "")>Giao hàng nhanh - 50,000 đ</option>
+        </select>
+    </div>
+
+    <!-- Phương Thức Thanh Toán -->
+    <!-- Phương Thức Thanh Toán -->
+    <div class="form-group">
+        <label for="PaymentMethod">Phương Thức Thanh Toán:</label>
+        <select name="PaymentMethod" class="form-control">
+            <option value="COD" @(Model.PaymentMethod == "COD" ? "selected" : "")>COD</option>
+            <option value="Online" @(Model.PaymentMethod == "Online" ? "selected" : "")>Online</option>
+        </select>
+        <span class="text-danger">@ViewData.ModelState["PaymentMethod"]?.Errors?.FirstOrDefault()?.ErrorMessage</span>
+    </div>
+
+    <!-- Trạng Thái Thanh Toán -->
+    <div class="form-group">
+        <label for="PaymentStatus">Trạng Thái Thanh Toán:</label>
+        <select name="PaymentStatus" class="form-control">
+            <option value="Đã thanh toán" @(Model.PaymentStatus == "Đã thanh toán" ? "selected" : "")>Đã thanh toán</option>
+            <option value="Chưa thanh toán" @(Model.PaymentStatus == "Chưa thanh toán" ? "selected" : "")>Chưa thanh toán</option>
+        </select>
+        <span class="text-danger">@ViewData.ModelState["PaymentStatus"]?.Errors?.FirstOrDefault()?.ErrorMessage</span>
+    </div>
+
+
+    <!-- Trạng Thái Giao Hàng -->
+    <div class="form-group">
+        <label for="ShipmentStatus">Trạng Thái Giao Hàng:</label>
+        <select name="ShipmentStatus" class="form-control">
+            <option value="Pending" @(Model.ShipmentStatus == "Pending" ? "selected" : "")>Chưa giao</option>
+            <option value="Đang giao" @(Model.ShipmentStatus == "Đang giao" ? "selected" : "")>Đang giao</option>
+            <option value="Đã giao" @(Model.ShipmentStatus == "Đã giao" ? "selected" : "")>Đã giao</option>
+            <option value="Đã hủy" @(Model.ShipmentStatus == "Đã hủy" ? "selected" : "")>Hủy</option>
+        </select>
+    </div>
+
+    <!-- Trạng Thái Thanh Toán -->
+    <div class="form-group">
+        <label for="PaymentStatus">Trạng Thái Thanh Toán:</label>
+        <select name="PaymentStatus" class="form-control">
+            <option value="Đã thanh toán" @(Model.PaymentStatus == "Đã thanh toán" ? "selected" : "")>Đã thanh toán</option>
+            <option value="Chưa thanh toán" @(Model.PaymentStatus == "Chưa thanh toán" ? "selected" : "")>Chưa thanh toán</option>
+        </select>
+        <span class="text-danger">@ViewData.ModelState["PaymentStatus"]?.Errors?.FirstOrDefault()?.ErrorMessage</span>
+    </div>
+
+    <!-- Mã Vận Chuyển -->
+    <div class="form-group">
+        <label for="TrackingNumber">Mã Vận Chuyển:</label>
+        <input type="text" name="TrackingNumber" class="form-control" value="@Model.TrackingNumber" />
+        <span class="text-danger">@ViewData.ModelState["TrackingNumber"]?.Errors?.FirstOrDefault()?.ErrorMessage</span>
+    </div>
+
+    <!-- Thông tin sản phẩm -->
+    <h4>Sản Phẩm Đã Chọn</h4>
+    <div class="product-selection mt-3">
+        <table class="table table-bordered" id="selectedProductsTable">
+            <thead>
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Tổng tiền</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var detail in Model.OrderDetails)
+                {
+                    <tr data-product-id="@detail.Product_ID">
+                        <td>@detail.NamePro</td>
+                        <td>@string.Format("{0:N0}", detail.Price) đ</td>
+                        <td>
+                            <input type="number" name="ProductQuantities[@detail.Product_ID]" class="form-control" value="@detail.Quantity" min="1" onchange="updateTotal()" />
+                        </td>
+                        <td class="total-price">@string.Format("{0:N0}", detail.Price * detail.Quantity) đ</td>
+                        <td>
+                            <button type="button" class="btn btn-danger" onclick="removeProduct(this)">Xóa</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Chọn sản phẩm mới -->
+    <div class="form-group mt-3">
+        <label for="productSelect">Thêm sản phẩm mới:</label>
+        <select id="productSelect" class="form-control">
+            <option value="">Chọn sản phẩm</option>
+            @foreach (var product in ViewBag.Products)
+            {
+                <option value="@product.Product_ID" data-price="@product.Price">@product.NamePro - @string.Format("{0:N0}", product.Price) đ</option>
+            }
+        </select>
+        <button type="button" class="btn btn-primary mt-2" onclick="addProduct()">Thêm sản phẩm</button>
+        <div id="productError" class="text-danger mt-2"></div>
+    </div>
+
+    <!-- Hiển thị tổng tiền -->
+    <div id="totalAmountDisplay" class="mt-3 font-weight-bold">
+        Tổng tiền: @string.Format("{0:N0}", Model.TotalAmount) đ
+    </div>
+
+    <!-- Nút Cập Nhật -->
+    <button type="submit" class="btn btn-primary mt-3">Cập Nhật Đơn Hàng</button>
 </form>
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+
+
+
+<!-- JavaScript -->
+<script>
+    function addProduct() {
+        var productSelect = document.getElementById("productSelect");
+        var selectedProductId = productSelect.value;
+        var selectedProductText = productSelect.options[productSelect.selectedIndex].text;
+        var selectedProductPrice = parseFloat(productSelect.options[productSelect.selectedIndex].getAttribute("data-price"));
+
+        if (!selectedProductId) {
+            document.getElementById("productError").innerText = "Vui lòng chọn sản phẩm.";
+            return;
+        }
+        document.getElementById("productError").innerText = ""; // Clear error message
+
+        // Kiểm tra xem sản phẩm đã được thêm vào chưa
+        var existingRow = document.querySelector(`#selectedProductsTable tbody tr[data-product-id='${selectedProductId}']`);
+        if (existingRow) {
+            alert("Sản phẩm này đã được thêm vào danh sách.");
+            return;
+        }
+
+        // Tạo hàng mới trong bảng sản phẩm
+        var table = document.getElementById("selectedProductsTable").getElementsByTagName('tbody')[0];
+        var row = table.insertRow();
+        row.setAttribute("data-product-id", selectedProductId);
+
+        // Cột tên sản phẩm
+        var cell1 = row.insertCell(0);
+        cell1.innerHTML = selectedProductText;
+
+        // Cột giá
+        var cell2 = row.insertCell(1);
+        cell2.innerHTML = selectedProductPrice.toLocaleString('vi-VN') + " đ";
+
+        // Cột số lượng
+        var cell3 = row.insertCell(2);
+        var quantityInput = document.createElement("input");
+        quantityInput.type = "number";
+        quantityInput.name = "ProductQuantities[" + selectedProductId + "]";
+        quantityInput.value = 1;
+        quantityInput.min = 1;
+        quantityInput.classList.add("form-control");
+        quantityInput.onchange = updateTotal;
+        cell3.appendChild(quantityInput);
+
+        // Cột tổng tiền
+        var cell4 = row.insertCell(3);
+        cell4.className = "total-price";
+        cell4.innerHTML = selectedProductPrice.toLocaleString('vi-VN') + " đ";
+
+        // Cột hành động (Xóa sản phẩm)
+        var cell5 = row.insertCell(4);
+        var removeButton = document.createElement("button");
+        removeButton.classList.add("btn", "btn-danger");
+        removeButton.textContent = "Xóa";
+        removeButton.onclick = function () {
+            table.deleteRow(row.rowIndex - 1);
+            updateTotal();
+        };
+        cell5.appendChild(removeButton);
+
+        updateTotal();
+    }
+
+    function updateTotal() {
+        var table = document.getElementById("selectedProductsTable").getElementsByTagName('tbody')[0];
+        var rows = table.getElementsByTagName("tr");
+        var totalAmount = 0;
+
+        for (var i = 0; i < rows.length; i++) {
+            var priceText = rows[i].cells[1].innerText.replace(/[.,đ]/g, '').trim();
+            var price = parseFloat(priceText);
+            var quantity = parseInt(rows[i].getElementsByTagName("input")[0].value) || 0;
+            var total = price * quantity;
+
+            rows[i].getElementsByClassName("total-price")[0].innerHTML = total.toLocaleString('vi-VN') + " đ";
+            totalAmount += total;
+        }
+
+        document.getElementById("totalAmountDisplay").innerHTML = "Tổng tiền: " + totalAmount.toLocaleString('vi-VN') + " đ";
+    }
+
+</script>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+}
+
+<!-- CSS -->
+<style>
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .product-selection {
+        margin-top: 20px;
+    }
+</style>

@@ -22,6 +22,24 @@ namespace DoAnCNPM.Controllers
             return View(await staffs.ToListAsync());
         }
 
+        // Phương thức loại bỏ dấu tiếng Việt
+        private string RemoveDiacritics(string text)
+        {
+            var normalizedString = text.Normalize(System.Text.NormalizationForm.FormD);
+            var stringBuilder = new System.Text.StringBuilder();
+
+            foreach (var c in normalizedString)
+            {
+                var unicodeCategory = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c);
+                if (unicodeCategory != System.Globalization.UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(c);
+                }
+            }
+
+            return stringBuilder.ToString().Normalize(System.Text.NormalizationForm.FormC);
+        }
+
         [HttpGet]
         public IActionResult Create()
         {
@@ -38,12 +56,14 @@ namespace DoAnCNPM.Controllers
                 return View(staff);
             }
 
-            string uniqueUsername = $"{staff.NameStaff.ToLower().Replace(" ", "")}_{DateTime.Now.Ticks}";
+            // Loại bỏ dấu và rút gọn `Username`
+            string baseUsername = RemoveDiacritics(staff.NameStaff.ToLower().Replace(" ", ""));
+            string uniqueUsername = $"{baseUsername}_{new Random().Next(1000, 9999)}"; // Tạo số ngẫu nhiên 4 chữ số
 
             // Tạo một User mới với các giá trị mặc định
             var newUser = new User
             {
-                Username = uniqueUsername, // Giá trị mặc định
+                Username = uniqueUsername, // Giá trị mặc định, ngắn gọn và không dấu
                 Password = "default_password", // Giá trị mặc định
                 Role = "Nhân viên" // Vai trò mặc định
             };
@@ -60,6 +80,8 @@ namespace DoAnCNPM.Controllers
                 // Thêm Staff vào cơ sở dữ liệu
                 _context.Staffs.Add(staff);
                 await _context.SaveChangesAsync(); // Lưu Staff
+                TempData["SuccessMessage"] = "Thêm nhân viên thành công!";
+
                 return RedirectToAction("DSNhanVien"); // Chuyển hướng về danh sách nhân viên sau khi thêm thành công
             }
             catch (Exception ex)
@@ -68,6 +90,7 @@ namespace DoAnCNPM.Controllers
                 return View(staff);
             }
         }
+
 
 
 
@@ -121,6 +144,7 @@ namespace DoAnCNPM.Controllers
                 // Cập nhật thay đổi vào database
                 _context.Staffs.Update(existingStaff);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Cập nhật nhân viên thành công!";
 
                 return RedirectToAction("DSNhanVien"); // Chuyển hướng về danh sách nhân viên sau khi cập nhật thành công
             }
@@ -131,53 +155,43 @@ namespace DoAnCNPM.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken] // CSRF Protection
         public async Task<IActionResult> Delete(int id)
         {
-            // Tìm kiếm Staff theo ID
-            var staff = await _context.Staffs.FindAsync(id);
-            if (staff == null)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                return NotFound();
-            }
-
-            return View(staff);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            // Tìm kiếm Staff cần xóa
-            var staff = await _context.Staffs.FindAsync(id);
-            if (staff == null)
-            {
-                return NotFound();
-            }
-
-            // Kiểm tra xem User có liên kết với Staff không
-            var user = await _context.Users.FindAsync(staff.User_ID);
-
-            try
-            {
-                // Xóa Staff
-                _context.Staffs.Remove(staff);
-
-                // Nếu không có liên kết khác với User này, xóa luôn User
-                if (user != null && !_context.Staffs.Any(s => s.User_ID == user.User_ID))
+                try
                 {
-                    _context.Users.Remove(user);
-                }
+                    // Tìm user theo ID
+                    var staff = await _context.Staffs.FindAsync(id);
+                    if (staff == null)
+                    {
+                        return Json(new { success = false, message = "Nhân viên không tồn tại." });
+                    }
 
-                await _context.SaveChangesAsync(); // Lưu thay đổi vào cơ sở dữ liệu
-                return RedirectToAction("DSNhanVien"); // Chuyển hướng về danh sách nhân viên sau khi xóa thành công
-            }
-            catch (Exception ex)
-            {
-                ViewBag.ErrorMessage = $"Lỗi khi xóa: {ex.Message}";
-                return View(staff); // Trả lại View với thông báo lỗi nếu có lỗi xảy ra
+                    // Xóa các bản ghi liên quan trong bảng Customer, Staff, Admin nếu tồn tại
+                    var user = await _context.Users.FirstOrDefaultAsync(c => c.User_ID == id);
+
+                    if (user != null) _context.Users.Remove(user);
+
+                    // Xóa người dùng
+                    _context.Staffs.Remove(staff);
+
+                    // Lưu thay đổi và xác nhận giao dịch
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    return Json(new { success = true });
+                }
+                catch (Exception ex)
+                {
+                    // Hoàn tác giao dịch nếu có lỗi
+                    await transaction.RollbackAsync();
+                    return Json(new { success = false, message = "Có lỗi xảy ra khi xóa đối tượng." });
+                }
             }
         }
 
+        }
     }
-}

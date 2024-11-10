@@ -10,68 +10,76 @@ namespace DoAnCNPM.Controllers
     public class StatisticsController : Controller
     {
         private readonly DBDienThoaiContext _context;
+        private static int _visitCount = 0; // Biến đếm số lần truy cập
 
         public StatisticsController(DBDienThoaiContext context)
         {
             _context = context;
         }
 
-        // Tính doanh thu theo khoảng thời gian (1 ngày, 7 ngày, 30 ngày)
-        public async Task<IActionResult> Revenue(int days)
+        public async Task<IActionResult> ThongKe()
         {
-            DateTime startDate = DateTime.Now.AddDays(-days);
-            var revenueData = await _context.Orders
-                .Where(o => o.OrderDate >= startDate && o.Status == "Đã giao")
-                .GroupBy(o => o.OrderDate.Date)
+            // Tăng số lần truy cập mỗi khi trang thống kê được mở
+            _visitCount++;
+
+            var today = DateTime.Today;
+            var startOfWeek = today.AddDays(-7);
+            var startOfMonth = today.AddDays(-30);
+
+            // Lọc doanh thu từ các đơn hàng đã giao và đã thanh toán
+            var revenueToday = await _context.Orders
+                .Where(o => o.OrderDate.Date == today && o.Status == "Đã giao" && o.PaymentStatus == "Đã thanh toán")
+                .SumAsync(o => o.TotalAmount);
+
+            var revenueWeek = await _context.Orders
+                .Where(o => o.OrderDate >= startOfWeek && o.Status == "Đã giao" && o.PaymentStatus == "Đã thanh toán")
+                .SumAsync(o => o.TotalAmount);
+
+            var revenueMonth = await _context.Orders
+                .Where(o => o.OrderDate >= startOfMonth && o.Status == "Đã giao" && o.PaymentStatus == "Đã thanh toán")
+                .SumAsync(o => o.TotalAmount);
+
+            var ordersToday = await _context.Orders
+                .CountAsync(o => o.OrderDate.Date == today && o.Status == "Đã giao" && o.PaymentStatus == "Đã thanh toán");
+
+            var ordersWeek = await _context.Orders
+                .CountAsync(o => o.OrderDate >= startOfWeek && o.Status == "Đã giao" && o.PaymentStatus == "Đã thanh toán");
+
+            var ordersMonth = await _context.Orders
+                .CountAsync(o => o.OrderDate >= startOfMonth && o.Status == "Đã giao" && o.PaymentStatus == "Đã thanh toán");
+
+            // Sản phẩm bán chạy
+            var topProducts = await _context.OrderDetails
+                .Where(od => od.Order.Status == "Đã giao" && od.Order.PaymentStatus == "Đã thanh toán")
+                .GroupBy(od => od.Product_ID)
                 .Select(g => new
                 {
-                    Date = g.Key,
-                    TotalRevenue = g.Sum(o => o.TotalAmount ?? 0)
+                    ProductId = g.Key,
+                    QuantitySold = g.Sum(od => od.Quantity),
+                    ProductName = g.FirstOrDefault().Product.NamePro
                 })
-                .OrderBy(r => r.Date)
+                .OrderByDescending(g => g.QuantitySold)
+                .Take(5)
                 .ToListAsync();
 
-            return Json(revenueData);
-        }
+            //// Người dùng thường xuyên truy cập
+            //var frequentUsers = await _context.Users
+            //    .OrderByDescending(u => u.Customer.Count)
+            //    .Take(5)
+            //    .Select(u => new { u.Username })
+            //    .ToListAsync();
 
-        // Trả về danh sách Top 10 khách hàng mua hàng nhiều nhất
-        public async Task<IActionResult> TopCustomers()
-        {
-            var topCustomers = await _context.Orders
-                .Where(o => o.Status == "Đã giao")
-                .GroupBy(o => o.Customer_ID)
-                .Select(g => new
-                {
-                    CustomerId = g.Key,
-                    CustomerName = _context.Customers.FirstOrDefault(c => c.Customer_ID == g.Key).NameCus,
-                    TotalSpent = g.Sum(o => o.TotalAmount ?? 0)
-                })
-                .OrderByDescending(g => g.TotalSpent)
-                .Take(10)
-                .ToListAsync();
+            // Gửi dữ liệu đến View
+            ViewBag.RevenueToday = revenueToday;
+            ViewBag.RevenueWeek = revenueWeek;
+            ViewBag.RevenueMonth = revenueMonth;
+            ViewBag.OrdersToday = ordersToday;
+            ViewBag.OrdersWeek = ordersWeek;
+            ViewBag.OrdersMonth = ordersMonth;
+            ViewBag.TopProducts = topProducts;
+            //ViewBag.FrequentUsers = frequentUsers;
+            ViewBag.VisitCount = _visitCount; // Truyền số lần truy cập vào View
 
-            return Json(topCustomers);
-        }
-
-        // Thống kê Top 10 sản phẩm bán chạy nhất và còn tồn kho
-        public async Task<IActionResult> TopProductInventory()
-        {
-            var productInventory = await _context.Products
-                .Select(p => new
-                {
-                    ProductName = p.NamePro,
-                    QuantitySold = p.OrderDetails.Sum(od => od.Quantity),
-                    QuantityInStock = p.Quantity
-                })
-                .OrderByDescending(p => p.QuantitySold) // Sắp xếp theo số lượng bán
-                .Take(10) // Lấy top 10 sản phẩm
-                .ToListAsync();
-
-            return Json(productInventory);
-        }
-
-        public IActionResult ThongKe()
-        {
             return View();
         }
     }

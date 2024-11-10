@@ -1,37 +1,227 @@
 ﻿@model DoAnCNPM.Models.Order
 @{
-    ViewData["Title"] = "Thêm Đơn hàng mới";
+    ViewData["Title"] = "Tạo Đơn Hàng Mới";
     Layout = "_DashboardLayout";
-
 }
-<link rel="stylesheet" href="/css/quanli.css" />
-<script src="/js/quanli.js"></script>
 
-<h2>Thêm Đơn hàng mới</h2>
+<!-- Tiêu đề -->
+<h2 class="animate__animated animate__fadeInDown text-center text-primary mb-4">Tạo Đơn Hàng Mới</h2>
 
-<form method="post" enctype="multipart/form-data">
+<form asp-action="Create" method="post" class="order-form animate__animated animate__fadeInUp">
     @Html.AntiForgeryToken()
 
+    <!-- Chọn Khách Hàng -->
     <div class="form-group">
-        <label>Customer ID:</label>
-        <input asp-for="Customer_ID" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label>Order Date:</label>
-        <input asp-for="OrderDate" class="form-control" type="date" />
-    </div>
-    <div class="form-group">
-        <label>Status:</label>
-        <input asp-for="Status" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label>Total Amount:</label>
-        <input asp-for="TotalAmount" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label>Shipping Address:</label>
-        <input asp-for="ShippingAddress" class="form-control" />
+        <label for="Customer_ID">Chọn Khách Hàng:</label>
+        <select name="Customer_ID" asp-for="Customer_ID" class="form-control animate__animated animate__fadeInLeft" required>
+            <option value="">Chọn khách hàng</option>
+            @foreach (var customer in ViewBag.Customers)
+            {
+                <option value="@customer.Customer_ID">@customer.NameCus</option>
+            }
+        </select>
+        <span asp-validation-for="Customer_ID" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn-submit">Thêm Đơn hàng</button>
+    <!-- Tên Người Nhận -->
+    <div class="form-group">
+        <label for="CustomerName">Tên Người Nhận:</label>
+        <input type="text" name="CustomerName" class="form-control animate__animated animate__fadeInLeft" required />
+        <span asp-validation-for="CustomerName" class="text-danger"></span>
+    </div>
+
+    <!-- Số Điện Thoại -->
+    <div class="form-group">
+        <label for="CustomerPhone">Số Điện Thoại:</label>
+        <input type="text" name="CustomerPhone" class="form-control animate__animated animate__fadeInLeft" required pattern="\d+" title="Vui lòng nhập số điện thoại hợp lệ." />
+        <span asp-validation-for="CustomerPhone" class="text-danger"></span>
+    </div>
+
+    <!-- Địa Chỉ Giao Hàng -->
+    <div class="form-group">
+        <label for="ShippingAddress">Địa Chỉ Giao Hàng:</label>
+        <input type="text" name="ShippingAddress" class="form-control animate__animated animate__fadeInLeft" required />
+        <span asp-validation-for="ShippingAddress" class="text-danger"></span>
+    </div>
+
+    <!-- Phương Thức Giao Hàng -->
+    <div class="form-group">
+        <label for="ShippingMethod">Phương Thức Giao Hàng:</label>
+        <select name="ShippingMethod" class="form-control animate__animated animate__fadeInLeft" required>
+            <option value="">Chọn phương thức giao hàng</option>
+            <option value="standard">Giao hàng tiêu chuẩn - 30,000 đ</option>
+            <option value="express">Giao hàng nhanh - 50,000 đ</option>
+        </select>
+        <span asp-validation-for="ShippingMethod" class="text-danger"></span>
+    </div>
+
+    <!-- Phương Thức Thanh Toán -->
+    <div class="form-group">
+        <label for="PaymentMethod">Phương Thức Thanh Toán:</label>
+        <select name="PaymentMethod" class="form-control animate__animated animate__fadeInLeft" required>
+            <option value="">Chọn phương thức thanh toán</option>
+            <option value="COD">Thanh toán khi nhận hàng (COD)</option>
+            <option value="Online">Thanh toán online</option>
+        </select>
+        <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+    </div>
+
+    <!-- Chọn Sản Phẩm -->
+    <h4 class="animate__animated animate__fadeInDown mt-4">Chọn Sản Phẩm</h4>
+    <div class="form-group">
+        <label for="productSelect">Thêm sản phẩm:</label>
+        <select id="productSelect" class="form-control">
+            <option value="">Chọn sản phẩm</option>
+            @foreach (var product in ViewBag.Products)
+            {
+                <option value="@product.Product_ID" data-price="@product.Price">@product.NamePro - @product.Price.ToString("N0") đ</option>
+            }
+        </select>
+        <button type="button" onclick="addProduct()" class="btn btn-secondary mt-2">Thêm sản phẩm</button>
+        <span id="productError" class="text-danger"></span>
+    </div>
+
+    <!-- Danh Sách Sản Phẩm Đã Chọn -->
+    <div class="product-selection mt-3">
+        <table class="table table-bordered" id="selectedProductsTable">
+            <thead>
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Tổng tiền</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Danh sách sản phẩm sẽ được thêm vào đây -->
+            </tbody>
+        </table>
+    </div>
+    <div id="totalAmountDisplay" class="mt-3 font-weight-bold text-primary">Tổng tiền: 0 đ</div>
+
+    <!-- Nút Submit -->
+    <button type="submit" class="btn btn-primary mt-3 submit-btn">Tạo Đơn Hàng</button>
 </form>
+
+<!-- JavaScript -->
+<script>
+    function addProduct() {
+        var productSelect = document.getElementById("productSelect");
+        var selectedProductId = productSelect.value;
+        var selectedProductText = productSelect.options[productSelect.selectedIndex].text;
+        var selectedProductPrice = parseFloat(productSelect.options[productSelect.selectedIndex].getAttribute("data-price"));
+
+        if (!selectedProductId) {
+            document.getElementById("productError").innerText = "Vui lòng chọn sản phẩm.";
+            return;
+        }
+        document.getElementById("productError").innerText = ""; // Clear error message
+
+        var table = document.getElementById("selectedProductsTable").getElementsByTagName('tbody')[0];
+        var row = table.insertRow();
+        row.setAttribute("data-product-id", selectedProductId);
+
+        var cell1 = row.insertCell(0);
+        cell1.innerHTML = selectedProductText;
+
+        var cell2 = row.insertCell(1);
+        cell2.innerHTML = selectedProductPrice.toLocaleString('vi-VN') + " đ";
+
+        var cell3 = row.insertCell(2);
+        var quantityInput = document.createElement("input");
+        quantityInput.type = "number";
+        quantityInput.name = "ProductQuantities[" + selectedProductId + "]";
+        quantityInput.value = 1;
+        quantityInput.min = 1;
+        quantityInput.classList.add("form-control");
+        quantityInput.onchange = updateTotal;
+        cell3.appendChild(quantityInput);
+
+        var cell4 = row.insertCell(3);
+        cell4.className = "total-price";
+        cell4.innerHTML = selectedProductPrice.toLocaleString('vi-VN') + " đ";
+
+        var cell5 = row.insertCell(4);
+        var removeButton = document.createElement("button");
+        removeButton.classList.add("btn", "btn-danger");
+        removeButton.textContent = "Xóa";
+        removeButton.onclick = function () {
+            table.deleteRow(row.rowIndex - 1);
+            updateTotal();
+        };
+        cell5.appendChild(removeButton);
+
+        updateTotal();
+    }
+
+    function updateTotal() {
+        var table = document.getElementById("selectedProductsTable").getElementsByTagName('tbody')[0];
+        var rows = table.getElementsByTagName("tr");
+        var totalAmount = 0;
+
+        for (var i = 0; i < rows.length; i++) {
+            var priceText = rows[i].cells[1].innerText.replace(/[.,đ]/g, '').trim();
+            var price = parseFloat(priceText);
+            var quantity = parseInt(rows[i].getElementsByTagName("input")[0].value) || 0;
+            var total = price * quantity;
+
+            rows[i].getElementsByClassName("total-price")[0].innerHTML = total.toLocaleString('vi-VN') + " đ";
+            totalAmount += total;
+        }
+
+        document.getElementById("totalAmountDisplay").innerHTML = "Tổng tiền: " + totalAmount.toLocaleString('vi-VN') + " đ";
+    }
+</script>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (TempData["ErrorMessages"] != null)
+        {
+            <text>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    html: '@TempData["ErrorMessages"]',
+                    confirmButtonText: 'OK'
+                });
+            </text>
+        }
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: '@TempData["SuccessMessage"]',
+                    confirmButtonText: 'OK'
+                });
+            </text>
+        }
+    </script>
+}
+
+<!-- CSS -->
+<style>
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .product-selection {
+        margin-top: 20px;
+    }
+
+    .submit-btn {
+        background-color: #007bff;
+        border-color: #007bff;
+        font-size: 1.1rem;
+        padding: 10px 20px;
+    }
+
+        .submit-btn:hover {
+            background-color: #0056b3;
+            border-color: #00408d;
+        }
+</style>

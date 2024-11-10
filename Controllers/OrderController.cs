@@ -167,17 +167,20 @@ namespace DoAnCNPM.Controllers
             // Lưu chi tiết từng sản phẩm trong giỏ hàng vào OrderDetail
             foreach (var item in cartItems)
             {
+                // Lấy sản phẩm từ cơ sở dữ liệu
+                var product = await _context.Products.FindAsync(item.Product_ID);
                 var orderDetail = new OrderDetail
                 {
                     Order_ID = order.Order_ID,
                     Product_ID = item.Product_ID,
                     Quantity = item.Quantity,
-                    Price = item.Product.Price
+                    Price = item.Product.Price,
+                            NamePro = product?.NamePro // Gán tên sản phẩm từ Product
+
                 };
                 _context.OrderDetails.Add(orderDetail);
 
                 // Giảm số lượng sản phẩm trong bảng Product
-                var product = await _context.Products.FindAsync(item.Product_ID);
                 if (product != null)
                 {
                     product.Quantity -= item.Quantity;
@@ -226,17 +229,32 @@ namespace DoAnCNPM.Controllers
             return View(order);
         }
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> FilterOrders(string search, string status, DateTime? startDate, DateTime? endDate)
         {
-            var orders = _context.Orders.AsQueryable();
+            // Lấy `User_ID` từ thông tin đăng nhập của người dùng
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Json(new { success = false, message = "Bạn cần đăng nhập để lọc đơn hàng." });
+            }
+
+            // Tìm `Customer_ID` dựa trên `User_ID`
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.User_ID == int.Parse(userId));
+            if (customer == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy khách hàng." });
+            }
+
+            // Lấy danh sách đơn hàng thuộc về `Customer_ID` của người dùng
+            var orders = _context.Orders
+                .Where(o => o.Customer_ID == customer.Customer_ID) // Chỉ lấy đơn hàng của người dùng hiện tại
+                .AsQueryable();
 
             // Lọc theo mã đơn hàng nếu `search` không rỗng
-            if (!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrEmpty(search) && int.TryParse(search, out int orderId))
             {
-                if (int.TryParse(search, out int orderId))
-                {
-                    orders = orders.Where(o => o.Order_ID == orderId);
-                }
+                orders = orders.Where(o => o.Order_ID == orderId);
             }
 
             // Lọc theo trạng thái đơn hàng nếu `status` không rỗng
@@ -267,9 +285,10 @@ namespace DoAnCNPM.Controllers
                 return Json(new { success = false, message = "Không tìm thấy đơn hàng." });
             }
 
-            // Trả về một partial view nếu có đơn hàng được tìm thấy
+            // Trả về partial view nếu có đơn hàng được tìm thấy
             return PartialView("_OrderListPartial", filteredOrders);
         }
+
 
 
 

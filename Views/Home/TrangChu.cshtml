@@ -71,39 +71,39 @@
                 </ul>
             </div>
 
-        <h2>Các sản phẩm bán chạy</h2>
+            <h2>Các sản phẩm bán chạy</h2>
 
-    <div class="product-slider">
+        <div class="product-slider">
 
-        <button class="prev-btn" onclick="prevPage()">&#10094;</button>
-        <div class="product-list">
-            @foreach (var product in ViewBag.TopSellingProducts as List<DoAnCNPM.Models.Product>)
-            {
-                <div class="product-item animate__animated animate__fadeInUp">
+            <button class="prev-btn" onclick="prevPage()">&#10094;</button>
+            <div class="product-list">
+                @foreach (var product in ViewBag.TopSellingProducts as List<DoAnCNPM.Models.Product>)
+                {
+                    <div class="product-item animate__animated animate__fadeInUp">
 
-                    <div class="product-item" data-aos="fade-up">
-                    <div class="product-img">
-                        <img src="@product.Image" alt="@product.NamePro" />
-                    </div>
-                    <div class="product-info">
-                        <h3>@product.NamePro</h3>
-                        <p class="price">@product.Price.ToString("N0") đ</p>
-                        <p class="status">@((product.Quantity > 0) ? "Còn hàng" : "Tạm hết hàng")</p>
-                        <div class="product-buttons">
-                                <a href="@Url.Action("ChiTietSanPham", "Product", new { id = product.Product_ID })" class="btn btn-primary hvr-bounce-to-right">Xem chi tiết</a>
-                            <form action="@Url.Action("AddToCart", "Cart")" method="post">
-                                <input type="hidden" name="productId" value="@product.Product_ID" />
-                                    <button type="submit" class="btn btn-success hvr-bounce-to-right">Thêm vào giỏ</button>
-                            </form>
+                        <div class="product-item" data-aos="fade-up">
+                        <div class="product-img">
+                            <img src="@product.Image" alt="@product.NamePro" />
+                        </div>
+                        <div class="product-info">
+                            <h3>@product.NamePro</h3>
+                            <p class="price">@product.Price.ToString("N0") đ</p>
+                            <p class="status">@((product.Quantity > 0) ? "Còn hàng" : "Tạm hết hàng")</p>
+                            <div class="product-buttons">
+                                    <a href="@Url.Action("ChiTietSanPham", "Product", new { id = product.Product_ID })" class="btn btn-primary hvr-bounce-to-right">Xem chi tiết</a>
+                                <form action="@Url.Action("AddToCart", "Cart")" method="post">
+                                    <input type="hidden" name="productId" value="@product.Product_ID" />
+                                        <button type="submit" class="btn btn-success hvr-bounce-to-right">Thêm vào giỏ</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-                </div>
+                    </div>
 
-            }
+                }
+            </div>
+            <button class="next-btn" onclick="nextPage()">&#10095;</button>
         </div>
-        <button class="next-btn" onclick="nextPage()">&#10095;</button>
-    </div>
 
 
        <div class="check-all">

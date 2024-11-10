@@ -5,9 +5,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Newtonsoft.Json;
 namespace DoAnCNPM.Models
 {
-
-
-
     public class Customer
     {
         [Key]
@@ -16,9 +13,17 @@ namespace DoAnCNPM.Models
         [ForeignKey("User")]
 
         public int User_ID { get; set; }
+        [Required(ErrorMessage = "Vui lòng nhập tên khách hàng.")]
+
         public string NameCus { get; set; }
+        [Required(ErrorMessage = "Vui lòng nhập địa chỉ.")]
+
         public string AddressCus { get; set; }
+        [Required(ErrorMessage = "Vui lòng nhập số điện thoại.")]
+
         public string PhoneCus { get; set; }
+        [Required(ErrorMessage = "Vui lòng nhập email.")]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
         public string EmailCus { get; set; }
 
         // Navigation properties

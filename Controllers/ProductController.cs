@@ -162,6 +162,7 @@ namespace DoAnCNPM.Controllers
             return RedirectToAction("ChiTietSanPham", new { id = productId });
         }
 
+        [Authorize(Roles = "Nhân viên,Admin")]
 
         public async Task<IActionResult> DSSanPham(string searchTerm)
         {
@@ -174,6 +175,7 @@ namespace DoAnCNPM.Controllers
 
             return View(await products.Include(p => p.Brand).Include(p => p.Category).ToListAsync());
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpGet]
         public IActionResult Create()
@@ -182,6 +184,9 @@ namespace DoAnCNPM.Controllers
             ViewBag.Categories = _context.Categories.ToList();
             return View();
         }
+
+        [Authorize(Roles = "Admin")]
+
         [HttpPost]
         public async Task<IActionResult> CreatePost()
         {
@@ -261,7 +266,7 @@ namespace DoAnCNPM.Controllers
             catch (Exception ex)
             {
                 var innerExceptionMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-                ViewBag.Error = "Có lỗi xảy ra trong quá trình thêm sản phẩm. Chi tiết lỗi: " + innerExceptionMessage;
+                TempData["ErrorMessage"] = "Có lỗi xảy ra trong quá trình thêm sản phẩm. Chi tiết lỗi: " + innerExceptionMessage;
                 ViewBag.Brands = _context.Brands.ToList();
                 ViewBag.Categories = _context.Categories.ToList();
                 return View("Create");
@@ -269,6 +274,7 @@ namespace DoAnCNPM.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
 
         [HttpGet]
         public IActionResult Edit(int id)
@@ -283,6 +289,7 @@ namespace DoAnCNPM.Controllers
             ViewBag.Categories = _context.Categories.ToList();
             return View(product); // Trả về view Edit với model sản phẩm
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -321,12 +328,12 @@ namespace DoAnCNPM.Controllers
                         await ImageFile.CopyToAsync(stream);
                     }
 
-                    existingProduct.Image = "/" + relativePath; // Cập nhật ảnh mới
+                    // Cập nhật đường dẫn ảnh mới
+                    existingProduct.Image = "/" + relativePath;
                 }
-
-                // Nếu không có ảnh mới, giữ nguyên ảnh cũ
                 else
                 {
+                    // Nếu không có ảnh mới, giữ nguyên đường dẫn ảnh cũ
                     product.Image = existingProduct.Image;
                 }
 
@@ -352,8 +359,50 @@ namespace DoAnCNPM.Controllers
                 return View(product);
             }
         }
+
+        [Authorize(Roles = "Admin")]
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                var product = await _context.Products.FindAsync(id);
+                if (product == null)
+                {
+                    return Json(new { success = false, message = "Sản phẩm không tồn tại." });
+                }
+
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Có lỗi xảy ra: " + ex.Message });
+            }
+        }
+        [Authorize(Roles = "Admin")]
+
+        // Action xem chi tiết sản phẩm
+        public async Task<IActionResult> Details(int id)
+        {
+            // Tìm sản phẩm dựa vào ID
+            var product = await _context.Products
+                .Include(p => p.Brand)
+                .Include(p => p.Category)
+                .FirstOrDefaultAsync(p => p.Product_ID == id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
+        }
     }
 
-
 }
+
+
 

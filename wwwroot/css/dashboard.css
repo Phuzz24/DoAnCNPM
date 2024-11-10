@@ -71,99 +71,84 @@ header {
     border: none;
     cursor: pointer;
 }
-
 .user-info {
-    position: relative;
-    cursor: pointer;
-}
-
-.user-name {
-    font-size: 16px;
-    margin-right: 20px;
-    font-weight: bold;
-}
-/* Định dạng cho Dropdown */
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-    .dropdown .dropbtn {
-        background-color: #3498db;
-        color: white;
-        padding: 10px;
-        font-size: 16px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-        .dropdown .dropbtn:hover {
-            background-color: #2980b9;
-        }
-
-.dropdown-content {
-    display: none;
+    margin-top:15px;
     position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    z-index: 1;
+    right: 25px; /* Căn lề phải */
+    top: 15px;
+    display: flex;
+    align-items: center;
 }
 
-    .dropdown-content a {
-        color: black;
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-        transition: background-color 0.3s;
-        border-bottom: 1px solid #ddd;
+.user-toggle {
+    display: flex;
+    align-items: center;
+    color: #007bff; /* Màu xanh cho username */
+    font-weight: bold;
+    text-decoration: none; /* Loại bỏ gạch chân */
+    transition: color 0.3s;
+}
+
+    .user-toggle:hover {
+        color: #0056b3; /* Màu khi hover để nổi bật */
+        text-decoration:none;
     }
 
-        .dropdown-content a:hover {
-            background-color: #ddd;
-        }
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-/* Hiệu ứng khi nhấn vào dropdown */
-.dropdown-content a:active {
-    background-color: #3498db;
-    color: white;
+.user-avatar {
+    width: 32px; /* Kích thước nhỏ hơn */
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 8px;
+    border: 2px solid #ddd;
+    object-fit: cover; /* Đảm bảo ảnh vừa với kích thước khung */
 }
 
 .dropdown-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background-color: white;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: 150px;
+    min-width: 200px;
+    padding: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s;
 }
 
-    .dropdown-menu ul {
-        list-style: none;
-        padding: 10px;
+.dropdown-item {
+    color: #333;
+    padding: 10px 20px;
+    transition: background-color 0.3s, color 0.3s;
+    display: flex;
+    align-items: center;
+}
+
+    .dropdown-item i {
+        margin-right: 8px;
+        font-size: 16px;
     }
 
-        .dropdown-menu ul li {
-            padding: 10px 0;
-        }
+    .dropdown-item:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
 
-            .dropdown-menu ul li a {
-                text-decoration: none;
-                color: #333;
-            }
-
-.user-info:hover .dropdown-menu {
-    display: block;
+.logout-item {
+    color: #dc3545;
 }
+
+    .logout-item:hover {
+        background-color: #f8d7da;
+        color: #dc3545;
+    }
+
+.login-link {
+    color: #007bff;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+    .login-link:hover {
+        color: #0056b3;
+    }
+
 
 .content {
     margin-top: 20px;

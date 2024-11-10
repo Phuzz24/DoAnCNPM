@@ -23,8 +23,7 @@ public class OrderDetail
 
         public int Quantity { get; set; }
         [Column("price")]
-
-        public decimal? Price { get; set; }
+        public decimal? Price { get; set; } = 0m;  // Sử dụng kiểu nullable decimal để tránh lỗi
         [Column("NamePro")]
         public string NamePro { get; set; } // Tên sản phẩm
 

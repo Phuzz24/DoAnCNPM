@@ -1,0 +1,51 @@
+﻿@model DoAnCNPM.Models.Order
+@{
+    ViewData["Title"] = "Chi tiết Đơn hàng";
+    Layout = "_DashboardLayout";
+}
+
+<link rel="stylesheet" href="/css/orderdetail.css" />
+
+<div class="order-details-container">
+    <h2 class="page-title">Chi tiết Đơn hàng</h2>
+
+    <div class="order-summary">
+        <div class="order-info">
+            <p><strong>ID Đơn hàng:</strong> @Model.Order_ID</p>
+            <p><strong>Khách hàng:</strong> @Model.CustomerName</p>
+            <p><strong>Địa chỉ giao hàng:</strong> @Model.ShippingAddress</p>
+            <p><strong>Số điện thoại:</strong> @Model.CustomerPhone</p>
+            <p><strong>Phương thức thanh toán:</strong> @Model.PaymentMethod</p>
+            <p><strong>Tình trạng thanh toán:</strong> @Model.PaymentStatus</p>
+            <p><strong>Ngày đặt:</strong> @Model.OrderDate.ToString("dd/MM/yyyy")</p>
+            <p><strong>Ngày giao:</strong> @Model.DeliveryDate?.ToString("dd/MM/yyyy")</p>
+            <p><strong>Trạng thái:</strong> <span class="status @Model.Status.ToLower()">@Model.Status</span></p>
+            <p><strong>Tổng tiền:</strong> @Model.TotalAmount.ToString("N0") đ</p>
+        </div>
+    </div>
+
+    <h3 class="section-title">Chi tiết sản phẩm</h3>
+    <div class="table-container">
+        <table class="product-details-table">
+            <thead>
+                <tr>
+                    <th>Tên sản phẩm</th>
+                    <th>Số lượng</th>
+                    <th>Giá</th>
+                    <th>Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var detail in Model.OrderDetails)
+                {
+                    <tr>
+                        <td>@detail.NamePro</td>
+                        <td>@detail.Quantity</td>
+                        <td>@((detail.Price ?? 0).ToString("N0")) đ</td>
+                        <td>@((detail.Quantity * (detail.Price ?? 0)).ToString("N0")) đ</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

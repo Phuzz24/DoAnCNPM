@@ -1,17 +1,28 @@
 ﻿@model DoAnCNPM.Models.Category
 
 @{
-    ViewData["Title"] = "Chỉnh sửa Loại sản phẩm";
+    ViewData["Title"] = "Chỉnh sửa Loại";
     Layout = "_DashboardLayout";
 }
 <link rel="stylesheet" href="/css/quanli.css" />
 <script src="/js/quanli.js"></script>
-<h2 class="page-title">Chỉnh sửa Loại sản phẩm</h2>
+<h2>Chỉnh sửa Loại</h2>
 
-<form method="post" action="/Category/Edit/@Model.Category_ID">
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="Category_ID" value="@Model.Category_ID" />
+
     <div class="form-group">
-        <label for="CategoryName">Tên Loại sản phẩm:</label>
-        <input type="text" id="CategoryName" name="CategoryName" class="form-control" value="@Model.CategoryName" />
+        <label for="CategoryName">Tên Loại</label>
+        <input type="text" id="CategoryName" name="CategoryName" class="form-control" value="@Model.CategoryName" required />
+        <span class="text-danger">
+            @if (ViewData.ModelState.ContainsKey("CategoryName") && ViewData.ModelState["CategoryName"].Errors.Count > 0)
+            {
+                <span>@ViewData.ModelState["CategoryName"].Errors[0].ErrorMessage</span>
+            }
+        </span>
     </div>
-    <button type="submit" class="btn-submit">Lưu thay đổi</button>
+
+    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
 </form>

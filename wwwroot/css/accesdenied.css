@@ -1,0 +1,84 @@
+﻿/* Căn chỉnh trung tâm cho toàn bộ trang */
+.access-denied-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f8f9fa;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+/* Nội dung chính */
+.access-denied-content {
+    max-width: 500px;
+    padding: 30px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.5s ease;
+}
+
+    /* Biểu tượng */
+    .access-denied-content i {
+        font-size: 4em;
+        color: #e74c3c;
+        margin-bottom: 15px;
+        animation: pulse 1s infinite;
+    }
+
+    /* Tiêu đề */
+    .access-denied-content h1 {
+        font-size: 1.8em;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    /* Đoạn văn bản */
+    .access-denied-content p {
+        font-size: 1.1em;
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+    /* Nút chuyển hướng */
+    .access-denied-content .btn-primary {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 1em;
+        color: #ffffff;
+        background-color: #3498db;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+        .access-denied-content .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+/* Hiệu ứng động khi hiển thị */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hiệu ứng nhịp đập cho biểu tượng */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}

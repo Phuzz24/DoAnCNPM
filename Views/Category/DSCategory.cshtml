@@ -32,8 +32,8 @@
                     <td>@category.Category_ID</td>
                     <td>@category.CategoryName</td>
                     <td class="actions">
-                        <a href="@Url.Action("Edit", new { id = category.Category_ID })" class="btn btn-edit">Sửa</a>
-                        <a href="@Url.Action("Delete", new { id = category.Category_ID })" class="btn btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa loại sản phẩm này?');">Xóa</a>
+                        <a href="@Url.Action("Edit", "Category", new { id = category.Category_ID })" class="btn btn-warning">Sửa</a>
+                        <button type="button" class="btn btn-danger delete-item" data-id="@category.Category_ID" data-url="@Url.Action("Delete", "Category")">Xóa</button>
                     </td>
                 </tr>
             }

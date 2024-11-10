@@ -128,16 +128,16 @@ namespace DoAnCNPM.Controllers
         {
             string username = Request.Form["Username"];
             string password = Request.Form["Password"];
-            if(string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
                 ViewBag.Error = "Vui lòng nhập đầy đủ thông tin.";
                 return View("Login");
-            }    
-            if(password.Length < 6)
+            }
+            if (password.Length < 6)
             {
                 ViewBag.Error = "Mật khẩu phải từ 6 kí tự trở lên.";
                 return View("Login");
-            }    
+            }
 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username && u.Password == password);
             if (user != null)
@@ -162,7 +162,7 @@ namespace DoAnCNPM.Controllers
                 {
                     return RedirectToAction("TrangChu", "Home");
                 }
-                else if (user.Role == "Admin" || user.Role =="Nhân viên")
+                else if (user.Role == "Admin" || user.Role == "Nhân viên")
                 {
                     return RedirectToAction("DSSanPham", "Product");
                 }
@@ -182,12 +182,12 @@ namespace DoAnCNPM.Controllers
         {
             // Đăng xuất và xóa cookie xác thực
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // Xóa session
+            HttpContext.Session.Clear();
+
             return RedirectToAction("Login", "Account");
         }
-
-
-
-
 
         [HttpGet]
         public IActionResult EditInfo()

@@ -17,6 +17,7 @@
 }
 
 <form method="post" action="/Brand/Create">
+    @Html.AntiForgeryToken()
     <div class="form-group">
         <label for="BrandName">Tên Thương hiệu:</label>
         <input type="text" id="BrandName" name="BrandName" class="form-control" placeholder="Nhập tên thương hiệu" />

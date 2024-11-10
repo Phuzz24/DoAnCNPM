@@ -27,7 +27,7 @@ namespace DoAnCNPM.Models
 
         [Column("price")]
         [Range(0, 99999999999999.99, ErrorMessage = "Giá không hợp lệ. Giá trị quá lớn.")]
-        public decimal Price { get; set; }
+        public decimal Price { get; set; } = 0;
 
         [Column("quantity")]
         [Required(ErrorMessage = "Vui lòng nhập số lượng sản phẩm.")]
@@ -41,11 +41,11 @@ namespace DoAnCNPM.Models
         public string Description { get; set; }
 
         [Column("image")]
-        public string Image { get; set; }
+        public string? Image { get; set; }
 
         [NotMapped]
         [ValidateNever]
-        public IFormFile ImageFile { get; set; }
+        public IFormFile? ImageFile { get; set; }
 
         [JsonIgnore]
         [ValidateNever]

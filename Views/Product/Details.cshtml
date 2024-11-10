@@ -1,0 +1,57 @@
+﻿@model DoAnCNPM.Models.Product
+
+@{
+    ViewData["Title"] = "Chi tiết Sản phẩm";
+    Layout = "_DashboardLayout";
+}
+
+<h2 class="page-title">Chi tiết Sản phẩm</h2>
+
+<div class="product-details">
+    <div class="product-image">
+        @if (!string.IsNullOrEmpty(Model.Image))
+        {
+            <img src="@Url.Content(Model.Image.StartsWith("/") ? Model.Image : "/" + Model.Image)" alt="Ảnh sản phẩm" style="max-width: 100%; height: auto; border-radius: 5px;" />
+        }
+        else
+        {
+            <p>Không có hình ảnh</p>
+        }
+    </div>
+
+    <div class="product-info">
+        <p><strong>Tên sản phẩm:</strong> @Model.NamePro</p>
+        <p><strong>Thương hiệu:</strong> @Model.Brand?.BrandName</p>
+        <p><strong>Danh mục:</strong> @Model.Category?.CategoryName</p>
+        <p><strong>Giá:</strong> @Model.Price.ToString("N0") đ</p>
+        <p><strong>Số lượng:</strong> @Model.Quantity</p>
+        <p><strong>Mô tả:</strong> @Model.Description</p>
+    </div>
+</div>
+
+<!-- CSS cho giao diện chi tiết sản phẩm -->
+<style>
+    .product-details {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-image {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .product-info p {
+        font-size: 16px;
+        margin: 10px 0;
+    }
+
+    .product-info strong {
+        font-weight: bold;
+        color: #333;
+    }
+</style>

@@ -4,6 +4,19 @@
     color: #333;
 }
 
+.product-image {
+    width: 50px; /* Đặt chiều rộng phù hợp */
+    height: 50px;
+    border-radius: 5px;
+    object-fit: cover; /* Giữ tỉ lệ và căn giữa hình ảnh */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+.btn btn-delete delete-item {
+    border: none;
+}
+
 .page-title {
     text-align: center;
     margin-top: 20px;
@@ -93,6 +106,106 @@
     .table-products tr:hover {
         background-color: #f1f1f1;
     }
+
+.description {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.actions .btn {
+    padding: 7px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    margin-right: 5px;
+    transition: background-color 0.3s;
+}
+
+.btn-view {
+    background-color: #17a2b8;
+}
+
+    .btn-view:hover {
+        background-color: #138496;
+    }
+
+.btn-edit {
+    background-color: #ffc107;
+    color: black;
+}
+
+    .btn-edit:hover {
+        background-color: #e0a800;
+    }
+
+.btn-delete {
+    background-color: #dc3545;
+}
+
+    .btn-delete:hover {
+        background-color: #c82333;
+    }
+
+    .btn-add:hover {
+        background-color: #0056b3;
+    }
+
+.table-container {
+    overflow-x: auto;
+    padding: 0 20px;
+}
+
+.table-products {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+    .table-products th, .table-products td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .table-products th {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .table-products tr:hover {
+        background-color: #f1f1f1;
+    }
+/* Màu nền cho các trạng thái chỉ áp dụng trên cột trạng thái */
+.status-pending {
+    background-color: #ffeeba; /* Màu vàng cho trạng thái đang xử lý */
+    color: #856404; /* Màu chữ phù hợp cho trạng thái */
+    font-weight: bold;
+}
+
+.status-canceled {
+    background-color: #f8d7da; /* Màu đỏ cho trạng thái đã hủy */
+    color: #721c24;
+    font-weight: bold;
+}
+
+.status-in-transit {
+    background-color: #cce5ff; /* Màu xanh dương cho trạng thái đang giao */
+    color: #004085;
+    font-weight: bold;
+}
+
+.status-delivered {
+    background-color: #d4edda; /* Màu xanh lá cho trạng thái đã giao */
+    color: #155724;
+    font-weight: bold;
+}
+
+
 
 .description {
     max-width: 200px;
@@ -227,3 +340,11 @@ button[type="submit"] {
     animation: slideIn 0.5s ease forwards;
 }
 
+.order-form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}

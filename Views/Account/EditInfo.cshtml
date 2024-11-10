@@ -1,62 +1,62 @@
-﻿@{
+﻿﻿@{
     Layout = "_HomeLayout";
 }
 
     @model DoAnCNPM.Models.UserInfoViewModel
 
-    <head>
-        <link rel="stylesheet" href="~/css/editinfo.css" />
-        <script src="~/js/editinfo.js"></script>
-    </head>
+<head>
+    <link rel="stylesheet" href="~/css/editinfo.css" />
+    <script src="~/js/editinfo.js"></script>
+</head>
 
-    <div class="user-info-container">
-        <h2>Chỉnh sửa thông tin cá nhân</h2>
+<div class="user-info-container">
+    <h2>Chỉnh sửa thông tin cá nhân</h2>
 
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <div class="alert alert-success">
-                @TempData["SuccessMessage"]
-            </div>
-        }
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
 
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <div class="alert alert-danger">
-                @TempData["ErrorMessage"]
-            </div>
-        }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
 
-        <form method="post" action="/Account/EditInfoPost">
-            @Html.AntiForgeryToken()
+    <form method="post" action="/Account/EditInfoPost">
+        @Html.AntiForgeryToken()
 
-            <div class="user-info-group">
-                <label for="Username">Tên người dùng:</label>
-                <input type="text" id="Username" name="Username" class="user-info-control" value="@Model.Username" readonly />
-            </div>
+        <div class="user-info-group">
+            <label for="Username">Tên người dùng:</label>
+            <input type="text" id="Username" name="Username" class="user-info-control" value="@Model.Username" readonly />
+        </div>
 
-            <div class="user-info-group">
-                <label for="NameCus">Tên khách hàng:</label>
-                <input type="text" id="NameCus" name="NameCus" class="user-info-control" value="@Model.NameCus" />
-            </div>
+        <div class="user-info-group">
+            <label for="NameCus">Tên khách hàng:</label>
+            <input type="text" id="NameCus" name="NameCus" class="user-info-control" value="@Model.NameCus" />
+        </div>
 
-            <div class="user-info-group">
-                <label for="AddressCus">Địa chỉ:</label>
-                <input type="text" id="AddressCus" name="AddressCus" class="user-info-control" value="@Model.AddressCus" />
-            </div>
+        <div class="user-info-group">
+            <label for="AddressCus">Địa chỉ:</label>
+            <input type="text" id="AddressCus" name="AddressCus" class="user-info-control" value="@Model.AddressCus" />
+        </div>
 
-            <div class="user-info-group">
-                <label for="PhoneCus">Số điện thoại:</label>
-                <input type="text" id="PhoneCus" name="PhoneCus" class="user-info-control" value="@Model.PhoneCus" />
-            </div>
+        <div class="user-info-group">
+            <label for="PhoneCus">Số điện thoại:</label>
+            <input type="text" id="PhoneCus" name="PhoneCus" class="user-info-control" value="@Model.PhoneCus" />
+        </div>
 
-            <div class="user-info-group">
-                <label for="EmailCus">Email:</label>
-                <input type="email" id="EmailCus" name="EmailCus" class="user-info-control" value="@Model.EmailCus" />
-            </div>
-            
-            </div>
+        <div class="user-info-group">
+            <label for="EmailCus">Email:</label>
+            <input type="email" id="EmailCus" name="EmailCus" class="user-info-control" value="@Model.EmailCus" />
+        </div>
 
-            <button type="submit" class="user-info-submit">Lưu thay đổi</button>
+</div>
+
+<button type="submit" class="user-info-submit">Lưu thay đổi</button>
         </form>
     </div>
 
@@ -67,7 +67,7 @@
 
 
 
-      
+
 
 <style>
     /* Định dạng container chung */
@@ -180,7 +180,6 @@
             border-color: #ff6347;
             box-shadow: 0 0 8px rgba(255, 99, 71, 0.3);
         }
-
 
 </style>
 <script>

@@ -1,5 +1,20 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Không có quyền truy cập";
+    Layout = "_HomeLayout";
 }
+<link href="/css/accesdenied.css" rel="stylesheet" />
+<!-- Phần giao diện không có quyền truy cập -->
+<div class="access-denied-container">
+    <div class="access-denied-content">
+        <i class="fas fa-ban"></i>
+        <h1>Không có quyền truy cập</h1>
+        <p>Bạn không có quyền truy cập vào trang này. Vui lòng liên hệ quản trị viên nếu bạn cần thêm quyền.</p>
+        <a href="@Url.Action("TrangChu", "Home")" class="btn-primary">Quay lại trang chủ</a>
+    </div>
+</div>
+
+<!-- Thêm Font Awesome cho biểu tượng -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMn0sGVl7Xt8eFfQjkxUn/6UtvUjMJ1tVpx4Z6W" crossorigin="anonymous">
+
+<script>
+</script>

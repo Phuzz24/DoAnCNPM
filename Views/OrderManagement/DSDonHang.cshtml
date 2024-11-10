@@ -13,6 +13,7 @@
 </form>
 
 <a href="@Url.Action("Create")" class="btn btn-add">Thêm Đơn hàng mới</a>
+<div class="table-container">
 
 <table class="table-products">
     <thead>
@@ -31,29 +32,48 @@
             <th>Thao tác</th>
         </tr>
     </thead>
-    <tbody>
-        @foreach (var order in Model)
-        {
-            <tr>
-                <td>@order.Order_ID</td>
-                <td>@order.Customer_ID</td>
-                <td>@order.CustomerName</td>
-                <td>@order.ShippingAddress</td>
-                <td>@order.CustomerPhone</td>
-                <td>@order.PaymentMethod</td>
-                <td>@order.PaymentStatus</td>
-                <td>@(order.OrderDate.ToString("dd/MM/yyyy") ?? "N/A")</td>
-                <td>@(order.DeliveryDate?.ToString("dd/MM/yyyy") ?? "N/A")</td>
-                <th>@order.Status</th>
-                <td>@order.TotalAmount?.ToString("N0") đ</td>
-                <td class="actions">
-                    <a href="@Url.Action("Edit", new { id = order.Order_ID })" class="btn btn-edit">Sửa</a>
-                    <a href="@Url.Action("Delete", new { id = order.Order_ID })" class="btn btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này?');">Xóa</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                // Áp dụng màu cho ô dựa trên giá trị trạng thái
+                string statusClass = order.Status switch
+                {
+                    "Pending" => "status-pending",
+                    "Đã hủy" => "status-canceled",
+                    "Đang giao" => "status-in-transit",
+                    "Đã giao" => "status-delivered",
+                    _ => ""
+                };
 
+                <tr>
+                    <td>@order.Order_ID</td>
+                    <td>@order.Customer_ID</td>
+                    <td>@order.CustomerName</td>
+                    <td>@order.ShippingAddress</td>
+                    <td>@order.CustomerPhone</td>
+                    <td>@order.PaymentMethod</td>
+                    <td>@order.PaymentStatus</td>
+                    <td>@(order.OrderDate.ToString("dd/MM/yyyy"))</td>
+                    <td>@(order.DeliveryDate?.ToString("dd/MM/yyyy") ?? "N/A")</td>
+                    <td class="@statusClass">@order.Status</td> <!-- Áp dụng lớp cho cột trạng thái -->
+                    <td>@order.TotalAmount.ToString("N0") đ</td>
+                    <td class="actions">
+                        <a href="@Url.Action("Details", new { id = order.Order_ID })" class="btn btn-view">Xem</a>
+                        <a href="@Url.Action("Edit", new { id = order.Order_ID })" class="btn btn-edit">Sửa</a>
+                        <button type="button" class="btn btn-delete" onclick="confirmDelete('@Url.Action("Delete", new { id = order.Order_ID })')">Xóa</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+
+</table>
+</div>
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
 
 

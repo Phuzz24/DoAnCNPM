@@ -11,6 +11,8 @@
 
 <!-- Form tìm kiếm -->
 <form method="get" action="@Url.Action("DSKhachHang")" class="search-form">
+    @Html.AntiForgeryToken() <!-- CSRF Token cho AJAX -->
+
     <input type="text" name="searchTerm" placeholder="Tìm kiếm khách hàng..." class="search-input" />
     <button type="submit" class="btn-search">Tìm kiếm</button>
 </form>
@@ -47,7 +49,7 @@
                     @if (User.IsInRole("Admin"))
                     {
                         <a href="@Url.Action("Edit", new { id = cus.Customer_ID })" class="btn btn-edit">Sửa</a>
-                        <a href="@Url.Action("Delete", new { id = cus.Customer_ID })" class="btn btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa khách hàng này?');">Xóa</a>
+                        <button type="button" class="btn btn-delete delete-item" data-id="@cus.Customer_ID" data-url="@Url.Action("Delete", "Customer")">Xóa</button>
                     }
                 </td>
             </tr>

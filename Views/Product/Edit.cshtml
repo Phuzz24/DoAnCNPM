@@ -80,21 +80,23 @@
 
     </div>
  <div class="form-group">
-        <label for="ImageFile">Ảnh:</label>
-        <input type="file" id="ImageFile" name="ImageFile" class="form-control" accept="image/*" />
-        @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
+    <label for="ImageFile">Ảnh:</label>
+    <input type="file" id="ImageFile" name="ImageFile" class="form-control" accept="image/*" />
+    @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
 
-        @if (!string.IsNullOrEmpty(Model.Image))
-        {
-            <p>Đường dẫn hình ảnh hiện tại: @Model.Image</p>
-            <img id="image-preview" src="@Url.Content(Model.Image.StartsWith("/") ? Model.Image : "/" + Model.Image)"
-                 style="display:block; margin-top:10px; max-width:100%; height:auto; border-radius: 5px;" />
-        }
-        else
-        {
-            <img id="image-preview" style="display:none; margin-top:10px; max-width:100%; height:auto; border-radius: 5px;" />
-        }
-    </div>
+    @if (!string.IsNullOrEmpty(Model.Image))
+    {
+        <p>Đường dẫn hình ảnh hiện tại: @Model.Image</p>
+        <img id="image-preview" src="@Url.Content(Model.Image.StartsWith("/") ? Model.Image : "/" + Model.Image)"
+             style="display:block; margin-top:10px; max-width:100%; height:auto; border-radius: 5px;" />
+    }
+    else
+    {
+        <p>Không có hình ảnh hiện tại</p>
+        <img id="image-preview" style="display:none; margin-top:10px; max-width:100%; height:auto; border-radius: 5px;" />
+    }
+</div>
+
 
 
     <button type="submit" class="btn-submit">Lưu thay đổi</button>

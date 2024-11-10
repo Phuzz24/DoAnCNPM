@@ -53,7 +53,7 @@
                         <td>@order.Order_ID</td>
                         <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
                         <td>@order.DeliveryDate?.ToString("dd/MM/yyyy")</td>
-                        <td>@((order.TotalAmount.GetValueOrDefault() + order.ShippingFee.GetValueOrDefault()).ToString("N0")) đ</td>
+                        <td>@((order.TotalAmount + order.ShippingFee).ToString("N0")) đ</td>
                         <td class="status-bold">@order.Status</td>
                         <td>
                             <table class="product-details">
@@ -128,7 +128,7 @@
                 if (result.success === false) {
                     Swal.fire('Lỗi', result.message, 'error');
                 } else {
-                    $('#orderList').html(result);
+                    $('#orderList').html(result); // Cập nhật danh sách đơn hàng từ partial view
                 }
             },
             error: function () {
@@ -136,6 +136,7 @@
             }
         });
     }
+
 
 
     function cancelOrder(orderId) {

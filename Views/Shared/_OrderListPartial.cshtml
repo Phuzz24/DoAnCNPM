@@ -1,56 +1,56 @@
-﻿@model List<DoAnCNPM.Models.Order>
+﻿    @model List<DoAnCNPM.Models.Order>
 
-<!-- Bảng lịch sử đơn hàng -->
-@if (!Model.Any())
-{
-    <p>Bạn chưa có đơn hàng nào.</p>
-}
-else
-{
-    <table>
+    <!-- Bảng lịch sử đơn hàng -->
+    @if (!Model.Any())
+    {
+        <p>Bạn chưa có đơn hàng nào.</p>
+    }
+    else
+    {
+        <table>
         
-        <tbody id="orderList">
-            @foreach (var order in Model)
-            {
-                <tr>
-                    <td>@order.Order_ID</td>
-                    <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
-                    <td>@order.DeliveryDate?.ToString("dd/MM/yyyy")</td>
-                    <td>@((order.TotalAmount.GetValueOrDefault() + order.ShippingFee.GetValueOrDefault()).ToString("N0")) đ</td>
-                    <td class="status-bold">@order.Status</td>
-                    <td>
-                        <table class="product-details">
-                            <thead>
-                                <tr>
-                                    <th>Hình ảnh</th>
-                                    <th>Tên sản phẩm</th>
-                                    <th>Số lượng</th>
-                                    <th>Giá</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in order.OrderDetails)
-                                {
+            <tbody id="orderList">
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.Order_ID</td>
+                        <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
+                        <td>@order.DeliveryDate?.ToString("dd/MM/yyyy")</td>
+                        <td>@((order.TotalAmount + order.ShippingFee).ToString("N0")) đ</td>
+                        <td class="status-bold">@order.Status</td>
+                        <td>
+                            <table class="product-details">
+                                <thead>
                                     <tr>
-                                        <td><img src="@item.Product.Image" alt="@item.Product.NamePro" style="width: 50px; height: 50px;" /></td>
-                                        <td>@item.Product.NamePro</td>
-                                        <td>@item.Quantity</td>
-                                        <td>@item.Product.Price.ToString("N0") đ</td>
+                                        <th>Hình ảnh</th>
+                                        <th>Tên sản phẩm</th>
+                                        <th>Số lượng</th>
+                                        <th>Giá</th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </td>
-                    <td>
-                        <a href="@Url.Action("OrderConfirmation", "Order", new { id = order.Order_ID })" class="btn btn-info">Xem chi tiết</a>
-                        @if (order.Status == "Pending" || order.Status == "Đang xử lý")
-                        {
-                            <button class="btn btn-danger btn-cancel-order" data-order-id="@order.Order_ID">Hủy đơn hàng</button>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-</div>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in order.OrderDetails)
+                                    {
+                                        <tr>
+                                            <td><img src="@item.Product.Image" alt="@item.Product.NamePro" style="width: 50px; height: 50px;" /></td>
+                                            <td>@item.Product.NamePro</td>
+                                            <td>@item.Quantity</td>
+                                            <td>@item.Product.Price.ToString("N0") đ</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <a href="@Url.Action("OrderConfirmation", "Order", new { id = order.Order_ID })" class="btn btn-info">Xem chi tiết</a>
+                            @if (order.Status == "Pending" || order.Status == "Đang xử lý")
+                            {
+                                <button class="btn btn-danger btn-cancel-order" data-order-id="@order.Order_ID">Hủy đơn hàng</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    </div>

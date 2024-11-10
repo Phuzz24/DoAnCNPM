@@ -21,6 +21,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Account/Login";  // Đường dẫn tới trang đăng nhập
         options.AccessDeniedPath = "/Account/AccessDenied";  // Đường dẫn tới trang từ chối truy cập
     });
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("RequireEmployeeRole", policy => policy.RequireRole("Nhân viên"));
+});
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);

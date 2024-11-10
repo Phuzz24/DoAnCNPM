@@ -24,6 +24,7 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Hình ảnh</th>
                 <th>Tên sản phẩm</th>
                 <th>Giá</th>
                 <th>Số lượng</th>
@@ -36,19 +37,33 @@
             {
                 <tr>
                     <td>@product.Product_ID</td>
+                    <td>
+                        <!-- Hiển thị ảnh sản phẩm -->
+                        @if (!string.IsNullOrEmpty(product.Image))
+                        {
+                            <img src="@Url.Content(product.Image)" alt="Hình ảnh sản phẩm" class="product-image">
+                        }
+                        else
+                        {
+                            <span>Không có ảnh</span>
+                        }
+                    </td>
                     <td>@product.NamePro</td>
                     <td>@product.Price.ToString("N0") đ</td>
                     <td>@product.Quantity</td>
                     <td class="description">@product.Description</td>
+                    <!-- Ví dụ trong danh sách sản phẩm -->
                     <td class="actions">
                         <a href="@Url.Action("Details", new { id = product.Product_ID })" class="btn btn-view">Xem</a>
 
                         @if (User.IsInRole("Admin"))
                         {
                             <a href="@Url.Action("Edit", new { id = product.Product_ID })" class="btn btn-edit">Sửa</a>
-                            <a href="@Url.Action("Delete", new { id = product.Product_ID })" class="btn btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">Xóa</a>
+                            <button type="button" class="btn btn-delete delete-item" data-id="@product.Product_ID" data-url="@Url.Action("Delete", "Product")">Xóa</button>
                         }
                     </td>
+
+
                 </tr>
             }
         </tbody>
@@ -70,6 +85,19 @@
         color: #333;
     }
 
+    .product-image {
+        width: 50px; /* Đặt chiều rộng phù hợp */
+        height: 50px;
+        border-radius: 5px;
+        object-fit: cover; /* Giữ tỉ lệ và căn giữa hình ảnh */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+
+    .btn btn-delete delete-item
+    {
+        border:none;
+    }
     .page-title {
         text-align: center;
         margin-top: 20px;
