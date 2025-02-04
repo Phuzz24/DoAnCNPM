@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace DoAnCNPM.Controllers
 {
@@ -72,11 +74,7 @@ namespace DoAnCNPM.Controllers
                     ViewBag.Error = "Email đã tồn tại.";
                     return View("Register");
                 }
-                //if(existingUser && existingEmail !=null)
-                //{
-                //    ViewBag.Error = "Tên đăng nhập và Email đã tồn tại.";
-                //    return View(Register);
-                //}    
+               
 
                 // Tạo người dùng mới
                 var user = new User
@@ -310,14 +308,14 @@ namespace DoAnCNPM.Controllers
             }
 
             // Kiểm tra mật khẩu hiện tại
-            if (user.Password != model.CurrentPassword) // So sánh trực tiếp (nếu đã mã hóa, cần giải mã hoặc mã hóa tương tự để so sánh)
+            if (user.Password != model.CurrentPassword) 
             {
                 ModelState.AddModelError("", "Mật khẩu hiện tại không chính xác.");
                 return View(model);
             }
 
             // Đổi mật khẩu
-            user.Password = model.NewPassword; // Lưu ý: Nếu mật khẩu cần mã hóa, hãy áp dụng mã hóa tại đây
+            user.Password = model.NewPassword;
             _context.Update(user);
             await _context.SaveChangesAsync();
 
@@ -325,6 +323,40 @@ namespace DoAnCNPM.Controllers
             return RedirectToAction("EditInfo", "Account"); // Chuyển hướng sau khi thành công
         }
 
+        public IActionResult ExternalLogin(string provider)
+        {
+            var redirectUrl = Url.Action("ExternalLoginCallback", "Account");
+            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+            return Challenge(properties, provider);
+        }
+
+        public async Task<IActionResult> ExternalLoginCallback()
+        {
+            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!result.Succeeded)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var claims = result.Principal.Identities.FirstOrDefault()?.Claims;
+            if (claims == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Lấy tên và email từ Google Claims
+            var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var name = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+
+            // Đảm bảo rằng User.Identity.Name có tên người dùng sau khi đăng nhập
+            var claimsIdentity = new ClaimsIdentity(result.Principal.Identity);
+            claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, name ?? email));
+
+            // Đăng nhập người dùng
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+
+            return RedirectToAction("TrangChu", "Home");
+        }
 
 
 

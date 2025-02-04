@@ -1,0 +1,141 @@
+﻿/* Container chính cho trang xác nhận */
+.order-confirmation {
+    background-color: #ffffff;
+    padding: 30px;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    font-family: Arial, sans-serif;
+    color: #333;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Hiệu ứng fadeIn */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Tiêu đề chính */
+.order-confirmation h2 {
+    color: #4CAF50;
+    font-size: 26px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+    .order-confirmation h2::after {
+        content: "";
+        position: absolute;
+        width: 80px;
+        height: 4px;
+        background-color: #4CAF50;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 2px;
+    }
+
+/* Thông tin đơn hàng */
+.order-confirmation p {
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 8px 0;
+    color: #555;
+}
+
+    .order-confirmation p strong {
+        color: #333;
+        font-weight: bold;
+    }
+
+/* Bảng chi tiết đơn hàng */
+.order-confirmation table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+    .order-confirmation table thead th {
+        background-color: #4CAF50;
+        color: #fff;
+        padding: 12px;
+        font-weight: bold;
+        text-align: left;
+    }
+
+    .order-confirmation table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .order-confirmation table th,
+    .order-confirmation table td {
+        padding: 15px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+/* Tổng kết đơn hàng */
+.order-confirmation .total-summary {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    text-align: right;
+    padding: 15px 0;
+    margin-top: 20px;
+    border-top: 2px solid #4CAF50;
+}
+
+    .order-confirmation .total-summary span {
+        color: #4CAF50;
+    }
+
+/* Cảm ơn */
+.order-confirmation .thank-you {
+    text-align: center;
+    font-size: 16px;
+    color: #666;
+    margin-top: 30px;
+    font-style: italic;
+}
+
+/* Nút trở về trang chủ */
+.button-container {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.btn-home {
+    display: inline-block;
+    padding: 12px 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #4CAF50;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+    .btn-home:hover {
+        background-color: #388E3C;
+        transform: translateY(-2px);
+    }
+
+    .btn-home:active {
+        transform: translateY(0);
+    }

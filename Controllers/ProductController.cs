@@ -9,20 +9,25 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System.Threading.Tasks;
-
-
+using Microsoft.AspNetCore.Antiforgery;
+using DoAnCNPM.Helpers;
+using DoAnCNPM.Filters;
 
 namespace DoAnCNPM.Controllers
 {
+
     public class ProductController : Controller
     {
         public readonly DBDienThoaiContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment; // Khai báo _webHostEnvironment
+        private readonly IAntiforgery _antiforgery;
 
-        public ProductController(DBDienThoaiContext context, IWebHostEnvironment webHostEnvironment)
+
+        public ProductController(DBDienThoaiContext context, IWebHostEnvironment webHostEnvironment, IAntiforgery antiforgery)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+            _antiforgery = antiforgery;
         }
         //Trang sản phẩm cho khách hàng xem
         public IActionResult SanPham(string searchTerm = "", int? brandId = null, int? categoryId = null, string priceRange = "")
@@ -73,8 +78,8 @@ namespace DoAnCNPM.Controllers
             .ToList();
             return View("SearchResults", products); // Hiển thị kết quả tìm kiếm
         }
+
         //Chi tiết sản phẩm về Trang Sản phẩm
-        // Phương thức để hiển thị chi tiết sản phẩm và danh sách bình luận
         public async Task<IActionResult> ChiTietSanPham(int id)
         {
             var product = await _context.Products
@@ -122,7 +127,7 @@ namespace DoAnCNPM.Controllers
 
                             // Thêm bình luận vào DbContext và lưu vào cơ sở dữ liệu
                             _context.Feedbacks.Add(feedback);
-                            await _context.SaveChangesAsync(); // Gọi SaveChangesAsync() để lưu dữ liệu
+                            await _context.SaveChangesAsync(); 
 
                             // Sau khi thêm bình luận thành công, chuyển hướng về trang chi tiết sản phẩm
                             return RedirectToAction("ChiTietSanPham", new { id = productId });
@@ -135,8 +140,10 @@ namespace DoAnCNPM.Controllers
             return RedirectToAction("Login", "Account");
         }
 
+
+        //Xóa bình luận
         [HttpPost]
-        [Authorize] // Chỉ cho phép người dùng đã đăng nhập xóa bình luận
+        [Authorize] 
         public async Task<IActionResult> DeleteComment(int commentId, int productId)
         {
             // Lấy bình luận theo ID
@@ -153,7 +160,6 @@ namespace DoAnCNPM.Controllers
                     _context.Feedbacks.Remove(feedback); // Xóa bình luận
                     await _context.SaveChangesAsync();
 
-                    // Sau khi xóa, chuyển hướng lại trang chi tiết sản phẩm
                     return RedirectToAction("ChiTietSanPham", new { id = productId });
                 }
             }
@@ -162,19 +168,52 @@ namespace DoAnCNPM.Controllers
             return RedirectToAction("ChiTietSanPham", new { id = productId });
         }
 
+
+        //Trang quản lí sản phẩm
         [Authorize(Roles = "Nhân viên,Admin")]
-
-        public async Task<IActionResult> DSSanPham(string searchTerm)
+        public IActionResult DSSanPham(string searchTerm = "", string priceRange = "", int page = 1, int pageSize = 10)
         {
-            var products = from p in _context.Products select p;
+            ViewBag.SearchTerm = searchTerm;
+            ViewBag.PriceRange = priceRange;
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
 
+            var products = _context.Products.AsQueryable();
+
+            // Lọc sản phẩm theo từ khóa
             if (!string.IsNullOrEmpty(searchTerm))
             {
                 products = products.Where(p => p.NamePro.Contains(searchTerm));
             }
 
-            return View(await products.Include(p => p.Brand).Include(p => p.Category).ToListAsync());
+            // Lọc sản phẩm theo khoảng giá
+            if (!string.IsNullOrEmpty(priceRange))
+            {
+                var priceParts = priceRange.Split('-');
+                if (priceParts.Length == 2 && int.TryParse(priceParts[0], out int minPrice) && int.TryParse(priceParts[1], out int maxPrice))
+                {
+                    products = products.Where(p => p.Price >= minPrice && p.Price <= maxPrice);
+                }
+                else if (priceParts.Length == 1 && priceRange == "30000000")
+                {
+                    products = products.Where(p => p.Price >= 30000000);
+                }
+            }
+
+            // Tổng số sản phẩm
+            int totalItems = products.Count();
+            ViewBag.TotalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            // Phân trang
+            var paginatedProducts = products
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return View(paginatedProducts);
         }
+
+
         [Authorize(Roles = "Admin")]
 
         [HttpGet]
@@ -382,23 +421,61 @@ namespace DoAnCNPM.Controllers
                 return Json(new { success = false, message = "Có lỗi xảy ra: " + ex.Message });
             }
         }
+
+        //Chi tiết sản phẩm
         [Authorize(Roles = "Admin")]
 
-        // Action xem chi tiết sản phẩm
-        public async Task<IActionResult> Details(int id)
+        public IActionResult Details(int id)
         {
-            // Tìm sản phẩm dựa vào ID
-            var product = await _context.Products
-                .Include(p => p.Brand)
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(p => p.Product_ID == id);
+            var product = _context.Products
+                .Where(p => p.Product_ID == id)
+                .Select(p => new
+                {
+                    Name = p.NamePro,
+                    Price = p.Price,
+                    Quantity = p.Quantity,
+                    Description = p.Description,
+                    Image = p.Image
+                })
+                .FirstOrDefault();
 
             if (product == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Sản phẩm không tồn tại." });
             }
 
-            return View(product);
+            return Json(product); // Trả về dữ liệu JSON
+        }
+
+        //Xóa nhiều sản phẩm cùng lúc
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteMultiple([FromBody] List<int> ids)
+        {
+            try
+            {
+                if (ids == null || ids.Count == 0)
+                {
+                    return Json(new { success = false, message = "Không có sản phẩm nào được chọn để xóa." });
+                }
+
+                var productsToDelete = await _context.Products.Where(p => ids.Contains(p.Product_ID)).ToListAsync();
+
+                if (productsToDelete.Count > 0)
+                {
+                    _context.Products.RemoveRange(productsToDelete);
+                    await _context.SaveChangesAsync();
+                    return Json(new { success = true, message = "Đã xóa các sản phẩm được chọn thành công." });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Không tìm thấy sản phẩm nào để xóa." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Có lỗi xảy ra: {ex.Message}" });
+            }
         }
     }
 

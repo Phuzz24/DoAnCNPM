@@ -1,4 +1,5 @@
 ﻿using DoAnCNPM.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,70 +18,79 @@ namespace DoAnCNPM.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> ThongKe()
+        [Authorize(Roles = "Admin,Nhân viên")]
+        public IActionResult ThongKe()
         {
-            // Tăng số lần truy cập mỗi khi trang thống kê được mở
-            _visitCount++;
-
             var today = DateTime.Today;
-            var startOfWeek = today.AddDays(-7);
-            var startOfMonth = today.AddDays(-30);
 
-            // Lọc doanh thu từ các đơn hàng đã giao và đã thanh toán
-            var revenueToday = await _context.Orders
-                .Where(o => o.OrderDate.Date == today && o.Status == "Đã giao" && o.PaymentStatus == "Đã thanh toán")
-                .SumAsync(o => o.TotalAmount);
+            // Đơn hàng hôm nay
+            var ordersToday = _context.Orders
+                .Where(o => o.OrderDate.Date == today)
+                .Count();
 
-            var revenueWeek = await _context.Orders
-                .Where(o => o.OrderDate >= startOfWeek && o.Status == "Đã giao" && o.PaymentStatus == "Đã thanh toán")
-                .SumAsync(o => o.TotalAmount);
+            // Doanh thu hôm nay (chỉ tính trạng thái "Đã giao")
+            var revenueToday = _context.Orders
+                .Where(o => o.Status == "Đã giao" && o.OrderDate.Date == today)
+                .Sum(o => o.TotalAmount);
 
-            var revenueMonth = await _context.Orders
-                .Where(o => o.OrderDate >= startOfMonth && o.Status == "Đã giao" && o.PaymentStatus == "Đã thanh toán")
-                .SumAsync(o => o.TotalAmount);
+            // Số lượng hàng tồn kho
+            var inventoryData = _context.Products
+                .Select(p => new
+                {
+                    NamePro = p.NamePro,
+                    Quantity = p.Quantity
+                })
+                .ToList();
 
-            var ordersToday = await _context.Orders
-                .CountAsync(o => o.OrderDate.Date == today && o.Status == "Đã giao" && o.PaymentStatus == "Đã thanh toán");
+            // Tổng số sản phẩm tồn kho
+            var totalInventory = inventoryData.Sum(i => i.Quantity);
 
-            var ordersWeek = await _context.Orders
-                .CountAsync(o => o.OrderDate >= startOfWeek && o.Status == "Đã giao" && o.PaymentStatus == "Đã thanh toán");
-
-            var ordersMonth = await _context.Orders
-                .CountAsync(o => o.OrderDate >= startOfMonth && o.Status == "Đã giao" && o.PaymentStatus == "Đã thanh toán");
-
-            // Sản phẩm bán chạy
-            var topProducts = await _context.OrderDetails
-                .Where(od => od.Order.Status == "Đã giao" && od.Order.PaymentStatus == "Đã thanh toán")
-                .GroupBy(od => od.Product_ID)
+            // Số lượng đơn hàng theo trạng thái
+            var orderStatusData = _context.Orders
+                .GroupBy(o => o.Status)
                 .Select(g => new
                 {
-                    ProductId = g.Key,
-                    QuantitySold = g.Sum(od => od.Quantity),
-                    ProductName = g.FirstOrDefault().Product.NamePro
+                    Status = g.Key,
+                    Count = g.Count()
                 })
-                .OrderByDescending(g => g.QuantitySold)
+                .ToList();
+
+            // Doanh thu từng tháng (chỉ tính trạng thái "Đã giao")
+            var monthlyRevenue = _context.Orders
+                .Where(o => o.Status == "Đã giao")
+                .GroupBy(o => o.OrderDate.Month)
+                .Select(g => new
+                {
+                    Month = g.Key,
+                    Revenue = g.Sum(o => o.TotalAmount)
+                })
+                .ToList();
+
+            // Sản phẩm bán chạy nhất
+            var topSellingProducts = _context.OrderDetails
+                .GroupBy(od => od.Product.NamePro)
+                .Select(g => new
+                {
+                    ProductName = g.Key,
+                    TotalSold = g.Sum(od => od.Quantity)
+                })
+                .OrderByDescending(p => p.TotalSold)
                 .Take(5)
-                .ToListAsync();
+                .ToList();
 
-            //// Người dùng thường xuyên truy cập
-            //var frequentUsers = await _context.Users
-            //    .OrderByDescending(u => u.Customer.Count)
-            //    .Take(5)
-            //    .Select(u => new { u.Username })
-            //    .ToListAsync();
-
-            // Gửi dữ liệu đến View
-            ViewBag.RevenueToday = revenueToday;
-            ViewBag.RevenueWeek = revenueWeek;
-            ViewBag.RevenueMonth = revenueMonth;
             ViewBag.OrdersToday = ordersToday;
-            ViewBag.OrdersWeek = ordersWeek;
-            ViewBag.OrdersMonth = ordersMonth;
-            ViewBag.TopProducts = topProducts;
-            //ViewBag.FrequentUsers = frequentUsers;
-            ViewBag.VisitCount = _visitCount; // Truyền số lần truy cập vào View
+            ViewBag.RevenueToday = revenueToday;
+            ViewBag.Inventory = inventoryData;
+            ViewBag.TotalInventory = totalInventory;
+            ViewBag.OrderStatusData = orderStatusData;
+            ViewBag.MonthlyRevenue = monthlyRevenue;
+            ViewBag.TopSellingProducts = topSellingProducts;
 
             return View();
         }
+
+
+
+
     }
 }

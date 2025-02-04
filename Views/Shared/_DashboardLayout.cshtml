@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>Trang quản lí</title>
-    <link rel="stylesheet" href="/css/dashboard.css">
     <script src="/js/dashboard.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Thư viện SweetAlert -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
@@ -15,6 +14,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery for CSRF token -->
+    <link rel="stylesheet" href="/css/dashboard.css">
 
 
 </head>
@@ -23,48 +23,65 @@
         <div class="sidebar">
             <h2>Dashboard</h2>
             <ul>
-                <li><a href="/Product/DSSanPham">Sản phẩm</a></li>
-                <li><a href="/OrderManagement/DSDonHang">Đơn hàng</a></li>
-                <li><a href="/User/DSNguoiDung">Người dùng</a></li>
-                <li><a href="/Staff/DSNhanVien">Nhân viên</a></li>
-                <li><a href="/Customer/DSKhachHang">Khách hàng</a></li>
-                <li><a href="/Brand/DSBrand">Thương hiệu</a></li>
-                <li><a href="/Category/DSCategory">Loại</a></li>
-                <li><a href="/Statistics/ThongKe">Thống kê</a></li>
-
+                <li><a href="/Product/DSSanPham"  class="menu-item" data-menu-item="sanpham"><i class="fas fa-box"></i> Sản phẩm</a></li>
+                <li><a href="/OrderManagement/DSDonHang" class="menu-item" data-menu-item="donhang"><i class="fas fa-shopping-cart"></i> Đơn hàng</a></li>
+                <li><a href="/User/DSNguoiDung" class="menu-item" data-menu-item="nguoidung"><i class="fas fa-users"></i> Người dùng</a></li>
+                <li><a href="/Staff/DSNhanVien" class="menu-item" data-menu-item="nhanvien"><i class="fas fa-user-tie"></i> Nhân viên</a></li>
+                <li><a href="/Customer/DSKhachHang" class="menu-item" data-menu-item="khachhang"><i class="fas fa-user"></i> Khách hàng</a></li>
+                <li><a href="/Brand/DSBrand" class="menu-item" data-menu-item="thuonghieu"><i class="fas fa-tags"></i> Thương hiệu</a></li>
+                <li><a href="/Category/DSCategory" class="menu-item" data-menu-item="loai"><i class="fas fa-th"></i> Loại</a></li>
+                <li><a href="/Statistics/ThongKe" class="menu-item" data-menu-item="thongke"><i class="fas fa-chart-bar"></i> Thống kê</a></li>
             </ul>
         </div>
+
+
         <div class="main-content">
-            <header>
-                <button class="toggle-btn">☰</button>
-                <div class="user-info">
-                    @if (Context.Session.GetString("Username") != null)
-                    {
-                        <div class="dropdown">
-                            <a href="#" class="dropdown-toggle user-toggle" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <!-- Thêm avatar mặc định -->
-                                <img src="/HinhAnh/avatar.png" alt="Avatar" class="user-avatar">
-                                <span>@Context.Session.GetString("Username")</span>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right animate__animated animate__fadeIn" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="/Account/EditInfo"><i class="fas fa-info-circle"></i> Xem thông tin cá nhân</a>
-                                <a class="dropdown-item" href="/Account/ChangePassword"><i class="fas fa-key"></i> Đổi mật khẩu</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item logout-item" href="/Account/Logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+            <header class="header">
+                <button class="toggle-btn"><i class="fas fa-bars"></i></button>
+                <div class="header-actions">
+                    <!-- Notification Icon -->
+                    <div class="notification-icon">
+                        <button class="btn btn-notification" id="notificationButton">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-count" id="notificationCount">0</span>
+                        </button>
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <p class="notification-header">Thông báo</p>
+                            <div class="notification-content" id="notificationContent">
+                                <!-- Nội dung thông báo sẽ hiển thị ở đây -->
+                                <p class="notification-empty">Không có thông báo nào.</p>
                             </div>
                         </div>
-                    }
-                    else
-                    {
-                        <a href="/Account/Login" class="login-link">
-                            <i class="fa-solid fa-user"></i>
-                            Đăng nhập
-                        </a>
-                    }
+                    </div>
+
+
+
+                    <!-- User Info -->
+                    <div class="user-info">
+                        @if (Context.Session.GetString("Username") != null)
+                        {
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle user-toggle" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <img src="/HinhAnh/avatar.png" alt="Avatar" class="user-avatar">
+                                    <span>@Context.Session.GetString("Username")</span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="/Account/EditInfo"><i class="fas fa-info-circle"></i> Thông tin cá nhân</a>
+                                    <a class="dropdown-item" href="/Account/ChangePassword"><i class="fas fa-key"></i> Đổi mật khẩu</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="/Account/Logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <a href="/Account/Login" class="login-link"><i class="fa-solid fa-user"></i> Đăng nhập</a>
+                        }
+                    </div>
                 </div>
-
-
             </header>
+
+
            <div class="content">
                 @RenderBody() <!-- This is where the content of the view will be rendered -->
             </div>
@@ -99,6 +116,34 @@
                     });
             </text>
         }
+        });
+       
+        
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const menuItems = document.querySelectorAll(".menu-item");
+
+            // Lấy trạng thái được lưu trước đó từ Local Storage
+            const activeMenu = localStorage.getItem("activeMenu");
+            if (activeMenu) {
+                menuItems.forEach(item => item.classList.remove("active"));
+                const currentItem = document.querySelector(`[data-menu-item="${activeMenu}"]`);
+                if (currentItem) {
+                    currentItem.classList.add("active");
+                }
+            }
+
+            // Lắng nghe sự kiện click để thay đổi trạng thái active
+            menuItems.forEach(item => {
+                item.addEventListener("click", function () {
+                    menuItems.forEach(i => i.classList.remove("active"));
+                    this.classList.add("active");
+
+                    // Lưu trạng thái vào Local Storage
+                    const menuKey = this.getAttribute("data-menu-item");
+                    localStorage.setItem("activeMenu", menuKey);
+                });
+            });
         });
 
         document.addEventListener("DOMContentLoaded", function () {

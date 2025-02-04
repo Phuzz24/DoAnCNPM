@@ -168,18 +168,20 @@ namespace DoAnCNPM.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> RemoveFromCart([FromBody] int productId)
+        public async Task<IActionResult> RemoveFromCart(int productId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
             {
-                return Json(new { success = false, message = "Bạn cần đăng nhập để thực hiện thao tác này." });
+                TempData["ErrorMessage"] = "Bạn cần đăng nhập để thực hiện thao tác này.";
+                return RedirectToAction("Login", "Account");
             }
 
             var customer = await _context.Customers.FirstOrDefaultAsync(c => c.User_ID == int.Parse(userId));
             if (customer == null)
             {
-                return Json(new { success = false, message = "Không tìm thấy khách hàng." });
+                TempData["ErrorMessage"] = "Không tìm thấy khách hàng.";
+                return RedirectToAction("Login", "Account");
             }
 
             // Tìm sản phẩm trong giỏ hàng dựa trên productId
@@ -190,13 +192,16 @@ namespace DoAnCNPM.Controllers
                 // Xóa sản phẩm khỏi giỏ hàng
                 _context.Carts.Remove(cartItem);
                 await _context.SaveChangesAsync();
-                return Json(new { success = true, message = "Sản phẩm đã được xóa khỏi giỏ hàng!" });
+                TempData["SuccessMessage"] = "Sản phẩm đã được xóa khỏi giỏ hàng!";
             }
             else
             {
-                return Json(new { success = false, message = "Sản phẩm không tồn tại trong giỏ hàng." });
+                TempData["ErrorMessage"] = "Sản phẩm không tồn tại trong giỏ hàng.";
             }
+
+            return RedirectToAction("GioHang");
         }
+
 
     }
 }

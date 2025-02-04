@@ -13,14 +13,20 @@
     <div class="checkout-container">
         <h2>Thông Tin Thanh Toán</h2>
 
-<form action="@Url.Action("PlaceOrder", "Order")" method="post">
+<form id="checkoutForm" action="@Url.Action("PlaceOrder", "Order")" method="post">
             <!-- Thông tin người dùng -->
             <div class="user-info">
-                <label>Họ và tên người nhận:</label>
-                <input type="text" name="CustomerName" placeholder="Nhập họ và tên người nhận" required />
+              <label>Tên người nhận:</label>
+<input type="text" name="CustomerName" placeholder="Nhập họ và tên người nhận" required
+       pattern="^[A-Za-zÀ-ỹà-ỹ\s]+(?:\s[A-Za-zÀ-ỹà-ỹ\s]+)+$"
+       title="Họ và tên phải có ít nhất 2 từ và chỉ chứa chữ cái, khoảng trắng." />
 
-                <label>Số điện thoại:</label>
-                <input type="text" name="CustomerPhone" placeholder="Nhập số điện thoại" required />
+
+               <label>Số điện thoại:</label>
+<input type="text" name="CustomerPhone" placeholder="Nhập số điện thoại" required
+       pattern="^0[0-9]{9,10}$"
+       title="Số điện thoại phải bắt đầu bằng số 0, gồm 10-11 chữ số." />
+
 
 
                 
@@ -47,7 +53,6 @@
 
             </div>
 
-            <!-- Phương thức giao hàng và thanh toán -->
             <h3>Phương Thức Giao Hàng</h3>
             <select name="ShippingMethod">
                 <option value="standard">Giao hàng tiêu chuẩn</option>
@@ -105,6 +110,32 @@
         once: true,    // Hiệu ứng chỉ chạy một lần khi cuộn
     });
 
+    //Check giá trị nhập
+    $(document).ready(function () {
+    $('#checkoutForm').on('submit', function (event) {
+        // Lấy giá trị của các trường nhập liệu
+        var customerName = $('input[name="CustomerName"]').val().trim();
+        var customerPhone = $('input[name="CustomerPhone"]').val().trim();
+
+        // Kiểm tra tên người nhận
+        if (!/^[A-Za-zÀ-ỹà-ỹ\s]+(?:\s[A-Za-zÀ-ỹà-ỹ\s]+)+$/.test(customerName)) {
+            alert('Tên người nhận phải có ít nhất 2 từ và chỉ chứa chữ cái, khoảng trắng.');
+            event.preventDefault();
+            return false;
+        }
+
+        // Kiểm tra số điện thoại
+        if (!/^0[0-9]{9,10}$/.test(customerPhone)) {
+            alert('Số điện thoại phải bắt đầu bằng số 0, gồm 10-11 chữ số.');
+            event.preventDefault();
+            return false;
+        }
+
+        return true; 
+    });
+});
+
+
     // Xử lý sự kiện khi nhấn "Hoàn tất đặt hàng"
     $(document).ready(function () {
         $('form').on('submit', function (event) {
@@ -118,7 +149,7 @@
                 confirmButtonText: 'OK'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    this.submit(); // Gửi form sau khi người dùng nhấn OK
+                    this.submit();
                 }
             });
         });
@@ -160,15 +191,12 @@
             }
         });
     });
-    $(document).ready(function () {
+   $(document).ready(function () {
         $('#checkoutForm').on('submit', function (event) {
             event.preventDefault();
-
-            // Lấy giá trị của phương thức thanh toán
             var paymentMethod = $('#paymentMethod').val();
 
             if (paymentMethod === 'Online') {
-                // Chuyển hướng tới phương thức thanh toán online
                 $.ajax({
                     url: '@Url.Action("InitiateOnlinePayment", "Order")',
                     type: 'POST',
@@ -185,7 +213,6 @@
                     }
                 });
             } else {
-                // Nếu là COD thì submit form bình thường
                 this.submit();
             }
         });

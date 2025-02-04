@@ -27,7 +27,7 @@
     <!-- Chọn Khách Hàng -->
     <div class="form-group">
         <label for="Customer_ID">Chọn Khách Hàng:</label>
-        <select name="Customer_ID" class="form-control">
+        <select name="Customer_ID" class="form-control" disabled>
             <option value="">Chọn khách hàng</option>
             @foreach (var customer in ViewBag.Customers)
             {
@@ -36,46 +36,45 @@
                 </option>
             }
         </select>
+        <input type="hidden" name="Customer_ID" value="@Model.Customer_ID" /> <!-- Đảm bảo gửi giá trị lên server -->
     </div>
 
     <!-- Tên Người Nhận -->
     <div class="form-group">
         <label for="CustomerName">Tên Người Nhận:</label>
-        <input type="text" name="CustomerName" class="form-control" value="@Model.CustomerName" />
+        <input type="text" name="CustomerName" class="form-control" value="@Model.CustomerName" readonly />
     </div>
 
     <!-- Số Điện Thoại -->
     <div class="form-group">
         <label for="CustomerPhone">Số Điện Thoại:</label>
-        <input type="text" name="CustomerPhone" class="form-control" pattern="\d+" title="Vui lòng nhập số điện thoại hợp lệ." value="@Model.CustomerPhone" />
-        <span class="text-danger">@ViewData.ModelState["CustomerPhone"]?.Errors?.FirstOrDefault()?.ErrorMessage</span>
+        <input type="text" name="CustomerPhone" class="form-control" value="@Model.CustomerPhone" readonly />
     </div>
 
     <!-- Địa Chỉ Giao Hàng -->
     <div class="form-group">
         <label for="ShippingAddress">Địa Chỉ Giao Hàng:</label>
-        <input type="text" name="ShippingAddress" class="form-control" value="@Model.ShippingAddress" />
-        <span class="text-danger">@ViewData.ModelState["ShippingAddress"]?.Errors?.FirstOrDefault()?.ErrorMessage</span>
+        <input type="text" name="ShippingAddress" class="form-control" value="@Model.ShippingAddress" readonly />
     </div>
 
     <!-- Phương Thức Giao Hàng -->
     <div class="form-group">
         <label for="ShippingMethod">Phương Thức Giao Hàng:</label>
-        <select name="ShippingMethod" class="form-control">
+        <select name="ShippingMethod" class="form-control" disabled>
             <option value="standard" @(Model.ShippingMethod == "standard" ? "selected" : "")>Giao hàng tiêu chuẩn - 30,000 đ</option>
             <option value="express" @(Model.ShippingMethod == "express" ? "selected" : "")>Giao hàng nhanh - 50,000 đ</option>
         </select>
+        <input type="hidden" name="ShippingMethod" value="@Model.ShippingMethod" />
     </div>
 
     <!-- Phương Thức Thanh Toán -->
-    <!-- Phương Thức Thanh Toán -->
     <div class="form-group">
         <label for="PaymentMethod">Phương Thức Thanh Toán:</label>
-        <select name="PaymentMethod" class="form-control">
+        <select name="PaymentMethod" class="form-control" disabled>
             <option value="COD" @(Model.PaymentMethod == "COD" ? "selected" : "")>COD</option>
             <option value="Online" @(Model.PaymentMethod == "Online" ? "selected" : "")>Online</option>
         </select>
-        <span class="text-danger">@ViewData.ModelState["PaymentMethod"]?.Errors?.FirstOrDefault()?.ErrorMessage</span>
+        <input type="hidden" name="PaymentMethod" value="@Model.PaymentMethod" />
     </div>
 
     <!-- Trạng Thái Thanh Toán -->
@@ -85,9 +84,7 @@
             <option value="Đã thanh toán" @(Model.PaymentStatus == "Đã thanh toán" ? "selected" : "")>Đã thanh toán</option>
             <option value="Chưa thanh toán" @(Model.PaymentStatus == "Chưa thanh toán" ? "selected" : "")>Chưa thanh toán</option>
         </select>
-        <span class="text-danger">@ViewData.ModelState["PaymentStatus"]?.Errors?.FirstOrDefault()?.ErrorMessage</span>
     </div>
-
 
     <!-- Trạng Thái Giao Hàng -->
     <div class="form-group">
@@ -100,20 +97,13 @@
         </select>
     </div>
 
-    <!-- Trạng Thái Thanh Toán -->
-    <div class="form-group">
-        <label for="PaymentStatus">Trạng Thái Thanh Toán:</label>
-        <select name="PaymentStatus" class="form-control">
-            <option value="Đã thanh toán" @(Model.PaymentStatus == "Đã thanh toán" ? "selected" : "")>Đã thanh toán</option>
-            <option value="Chưa thanh toán" @(Model.PaymentStatus == "Chưa thanh toán" ? "selected" : "")>Chưa thanh toán</option>
-        </select>
-        <span class="text-danger">@ViewData.ModelState["PaymentStatus"]?.Errors?.FirstOrDefault()?.ErrorMessage</span>
-    </div>
+
+    
 
     <!-- Mã Vận Chuyển -->
     <div class="form-group">
         <label for="TrackingNumber">Mã Vận Chuyển:</label>
-        <input type="text" name="TrackingNumber" class="form-control" value="@Model.TrackingNumber" />
+        <input type="text" name="TrackingNumber" class="form-control" value="@Model.TrackingNumber"  readonly/>
         <span class="text-danger">@ViewData.ModelState["TrackingNumber"]?.Errors?.FirstOrDefault()?.ErrorMessage</span>
     </div>
 
@@ -183,6 +173,29 @@
 
 <!-- JavaScript -->
 <script>
+    function updateOrderStatus(orderId, newStatus) {
+        $.ajax({
+            url: '/Order/UpdateStatus',
+            type: 'POST',
+            data: {
+                id: orderId,
+                status: newStatus
+            },
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire("Thành công!", response.message, "success").then(() => {
+                        location.reload(); // Tải lại trang để hiển thị trạng thái mới
+                    });
+                } else {
+                    Swal.fire("Lỗi!", response.message, "error");
+                }
+            },
+            error: function () {
+                Swal.fire("Lỗi!", "Không thể cập nhật trạng thái.", "error");
+            }
+        });
+    }
+
     function addProduct() {
         var productSelect = document.getElementById("productSelect");
         var selectedProductId = productSelect.value;

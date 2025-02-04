@@ -40,18 +40,19 @@ namespace DoAnCNPM.Controllers
         {
             // Lấy danh sách sản phẩm theo từng category_id
             var iphoneProducts = _database.Products
-                .Where(p => p.Category_ID == 1) // 1 là category_id của iPhone
+                .Where(p => p.Category_ID == 1) 
             .ToList();
 
             var macbookProducts = _database.Products
-                .Where(p => p.Category_ID == 3) // 2 là category_id của MacBook
+                .Where(p => p.Category_ID == 3) 
             .ToList();
 
             var ipadProducts = _database.Products
-                .Where(p => p.Category_ID == 4) // 3 là category_id của iPad
+                .Where(p => p.Category_ID == 4) 
                 .ToList();
-            // Lấy danh sách các sản phẩm bán chạy nhất (top-selling)
-            // Lấy danh sách các sản phẩm bán chạy nhất (top-selling) với số lượng bán > 5 lần
+
+            // Lấy danh sách các sản phẩm bán chạy với số lượng bán > 5 lần
+
             var topSellingProducts = _database.Products
                 .Join(_database.OrderDetails, p => p.Product_ID, od => od.Product_ID, (p, od) => new { Product = p, od.Quantity })
                 .GroupBy(x => x.Product)
@@ -60,11 +61,12 @@ namespace DoAnCNPM.Controllers
                     Product = g.Key,
                     TotalSold = g.Sum(x => x.Quantity)
                 })
-                .Where(x => x.TotalSold > 5) // Điều kiện số lượng bán > 5
+                .Where(x => x.TotalSold > 5) 
                 .OrderByDescending(x => x.TotalSold)
                 .Take(10) // Lấy 10 sản phẩm bán chạy nhất
                 .Select(x => x.Product)
                 .ToList();
+
             // Tạo danh sách các ProductCategoryViewModel để truyền vào View
             var viewModel = new List<ProductCategoryViewModel>
         {

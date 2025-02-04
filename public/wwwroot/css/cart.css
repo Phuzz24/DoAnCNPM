@@ -1,0 +1,150 @@
+﻿/* Container chính cho giỏ hàng */
+.cart-container {
+    width: 80%;
+    max-width: 1200px;
+    margin: 50px auto;
+    background-color: #fdfdfd;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+    .cart-container:hover {
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .cart-container h2 {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 20px;
+        color: #2c3e50;
+    }
+
+/* Bảng sản phẩm trong giỏ hàng */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    margin-top: 20px;
+}
+
+    .table th,
+    .table td {
+        padding: 20px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+        transition: background-color 0.2s ease;
+    }
+
+    .table tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .table th {
+        background-color: #f1f1f1;
+        font-weight: bold;
+        font-size: 1rem;
+        color: #555;
+    }
+
+    .table td img {
+        max-width: 80px;
+        height: auto;
+        border-radius: 6px;
+    }
+
+    .table td {
+        font-weight:bold;
+        font-size: 1rem;
+        color: #333;
+    }
+
+    /* Nút hành động */
+    .table .btn {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+        transition: background-color 0.2s ease;
+    }
+
+    .table .btn-primary {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+    }
+
+        .table .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+    .table .btn-danger {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 4px;
+    }
+
+        .table .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+/* Phần tổng tiền */
+.cart-summary {
+    text-align: right;
+    margin-top: 30px;
+    font-size: 1.5rem;
+    color: #007bff;
+    font-weight: bold;
+}
+
+h4 {
+    text-align: right;
+    margin-top: 20px;
+    font-size: 1.4rem;
+    color: #007bff;
+}
+
+/* Cảnh báo */
+.alert,
+.alert-danger {
+    padding: 15px;
+    text-align: center;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    color: #fff;
+    font-weight: bold;
+}
+
+.alert {
+    background-color: #28a745;
+}
+
+.alert-danger {
+    background-color: #dc3545;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .cart-container {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .table th,
+    .table td {
+        padding: 10px;
+    }
+
+    h4 {
+        font-size: 1.2rem;
+    }
+
+    .cart-summary {
+        font-size: 1.2rem;
+    }
+
+    .table td img {
+        max-width: 60px;
+    }
+}

@@ -30,12 +30,13 @@ namespace DoAnCNPM.Models
 
         public string CustomerName { get; set; } // Tên người dùng (người đặt hàng)
         [Required(ErrorMessage = "Số điện thoại là bắt buộc")]
+        [RegularExpression(@"^0[0-9]{9,10}$", ErrorMessage = "Số điện thoại phải bắt đầu bằng số 0, gồm 10-11 chữ số và không chứa ký tự chữ.")]
+        public string CustomerPhone { get; set; } // Số điện thoại người nhận
 
-        public string CustomerPhone { get; set; }       // Số điện thoại người nhận
 
 
 
-            [Required]
+        [Required]
             [StringLength(50)]
             [Column("status")]
 

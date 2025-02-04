@@ -35,40 +35,36 @@ namespace DoAnCNPM.Controllers
         }
 
         // Lấy danh sách tỉnh/thành phố
-        [HttpGet]
-        public async Task<IActionResult> GetProvinces()
+        private async Task<string> GetProvinceName(string provinceCode)
         {
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetStringAsync("https://provinces.open-api.vn/api/?depth=1");
-            var provinces = JsonConvert.DeserializeObject<List<Location>>(response);
-            return Json(provinces);
+            var response = await client.GetStringAsync($"https://provinces.open-api.vn/api/p/{provinceCode}");
+            var province = JsonConvert.DeserializeObject<Location>(response);
+            return province?.Name;
         }
 
         // Lấy danh sách quận/huyện theo mã tỉnh
-        [HttpGet]
-        public async Task<IActionResult> GetDistricts(string provinceCode)
+        private async Task<string> GetDistrictName(string districtCode)
         {
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetStringAsync($"https://provinces.open-api.vn/api/p/{provinceCode}?depth=2");
-            var province = JsonConvert.DeserializeObject<dynamic>(response);
-            var districts = JsonConvert.DeserializeObject<List<Location>>(province["districts"].ToString());
-            return Json(districts);
+            var response = await client.GetStringAsync($"https://provinces.open-api.vn/api/d/{districtCode}");
+            var district = JsonConvert.DeserializeObject<Location>(response);
+            return district?.Name;
         }
 
         // Lấy danh sách xã/phường theo mã quận/huyện
-        [HttpGet]
-        public async Task<IActionResult> GetWards(string districtCode)
+        private async Task<string> GetWardName(string wardCode)
         {
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetStringAsync($"https://provinces.open-api.vn/api/d/{districtCode}?depth=2");
-            var district = JsonConvert.DeserializeObject<dynamic>(response);
-            var wards = JsonConvert.DeserializeObject<List<Location>>(district["wards"].ToString());
-            return Json(wards);
+            var response = await client.GetStringAsync($"https://provinces.open-api.vn/api/w/{wardCode}");
+            var ward = JsonConvert.DeserializeObject<Location>(response);
+            return ward?.Name;
         }
 
 
-    // Hiển thị trang thanh toán
-    public async Task<IActionResult> Checkout()
+
+        // Hiển thị trang thanh toán
+        public async Task<IActionResult> Checkout()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
@@ -132,8 +128,14 @@ namespace DoAnCNPM.Controllers
             // Tính phí giao hàng dựa trên phương thức giao hàng
             decimal shippingFee = ShippingMethod == "express" ? 50000 : 30000;
 
-            // Tạo địa chỉ giao hàng đầy đủ
-            string fullAddress = $"{DetailAddress}, {Ward}, {District}, {Province}";
+
+            // Lấy tên của địa phương
+            string provinceName = await GetProvinceName(Province);
+            string districtName = await GetDistrictName(District);
+            string wardName = await GetWardName(Ward);
+
+            //Địa chỉ giao hàng
+            string fullAddress = $"{DetailAddress}, {wardName}, {districtName}, {provinceName}";
 
             // Tạo ngày đặt hàng và ngày giao hàng
             DateTime orderDate = DateTime.Now;
@@ -158,11 +160,32 @@ namespace DoAnCNPM.Controllers
                 PaymentMethod = PaymentMethod,
                 ShippingFee = shippingFee,
                 TotalAmount = totalAmount + shippingFee,
-                PaymentDate = PaymentMethod == "Online" ? DateTime.Now : null // Đặt ngày thanh toán nếu là Online Payment
+                PaymentDate = PaymentMethod == "Online" ? DateTime.Now : null
             };
+            // Lưu đơn hàng trong cơ sở dữ liệu nếu là COD
+            if (PaymentMethod == "COD")
+            {
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
+            }
+            // Nếu phương thức thanh toán là Online, chuyển hướng đến trang thanh toán
+            else if (PaymentMethod == "Online")
+            {
+                // Tạo thông tin thanh toán và URL
+                var paymentRequest = new
+                {
+                    amount = order.TotalAmount,
+                    currency = "VND",
+                    returnUrl = Url.Action("PaymentCallback", "Order", new { orderId = order.Order_ID }, Request.Scheme),
+                    orderId = order.Order_ID.ToString(),
+                    description = "Thanh toán đơn hàng tại 102 STORE"
+                };
 
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
+                // Tạo URL thanh toán
+                var paymentUrl = GeneratePaymentUrl(paymentRequest);
+                return Redirect(paymentUrl); // Chuyển hướng đến URL thanh toán
+            }
+
 
             // Lưu chi tiết từng sản phẩm trong giỏ hàng vào OrderDetail
             foreach (var item in cartItems)
@@ -228,6 +251,9 @@ namespace DoAnCNPM.Controllers
 
             return View(order);
         }
+        
+
+        //Tìm kiếm đơn hàng
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> FilterOrders(string search, string status, DateTime? startDate, DateTime? endDate)
@@ -251,25 +277,22 @@ namespace DoAnCNPM.Controllers
                 .Where(o => o.Customer_ID == customer.Customer_ID) // Chỉ lấy đơn hàng của người dùng hiện tại
                 .AsQueryable();
 
-            // Lọc theo mã đơn hàng nếu `search` không rỗng
+            //Lọc theo id
             if (!string.IsNullOrEmpty(search) && int.TryParse(search, out int orderId))
             {
                 orders = orders.Where(o => o.Order_ID == orderId);
             }
-
-            // Lọc theo trạng thái đơn hàng nếu `status` không rỗng
+            //Lọc theo trạng thái
             if (!string.IsNullOrEmpty(status))
             {
                 orders = orders.Where(o => o.Status == status);
             }
-
-            // Lọc theo ngày bắt đầu nếu `startDate` có giá trị
+            //Lọc theo ngày
             if (startDate.HasValue)
             {
                 orders = orders.Where(o => o.OrderDate >= startDate.Value);
             }
 
-            // Lọc theo ngày kết thúc nếu `endDate` có giá trị
             if (endDate.HasValue)
             {
                 orders = orders.Where(o => o.OrderDate <= endDate.Value);
@@ -340,7 +363,8 @@ namespace DoAnCNPM.Controllers
             // Tìm đơn hàng theo ID và kiểm tra quyền sở hữu
             var order = await _context.Orders
                 .Include(o => o.Customer)
-                .FirstOrDefaultAsync(o => o.Order_ID == id && o.Customer.User_ID == int.Parse(userId));
+                .Include(o => o.OrderDetails)
+        .FirstOrDefaultAsync(o => o.Order_ID == id && o.Customer.User_ID == int.Parse(userId));
 
             if (order == null)
             {
@@ -355,6 +379,17 @@ namespace DoAnCNPM.Controllers
 
             // Cập nhật trạng thái đơn hàng thành "Đã hủy"
             order.Status = "Đã hủy";
+
+            //Cập nhật số lượng về kho
+            foreach (var detail in order.OrderDetails)
+            {
+                var product = await _context.Products.FindAsync(detail.Product_ID);
+                if(product !=null)
+                {
+                    product.Quantity += detail.Quantity; //Hoàn trả số lượng
+                    _context.Products.Update(product);
+                }    
+            }    
             await _context.SaveChangesAsync();
             Console.WriteLine("Order status updated to 'Đã hủy' for Order_ID: " + id);
 
@@ -390,7 +425,6 @@ namespace DoAnCNPM.Controllers
             var orderedParams = parameters.OrderBy(p => p.Key).ToList();
             string paramString = string.Join("&", orderedParams.Select(p => $"{p.Key}={p.Value}"));
 
-            // Tạo checksum bằng cách kết hợp paramString và checksumKey với thuật toán SHA256
             using (var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(checksumKey)))
             {
                 var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(paramString));
@@ -422,19 +456,7 @@ namespace DoAnCNPM.Controllers
 
 
 
-        // Phương thức để xử lý callback sau khi thanh toán
-        public IActionResult PaymentCallback(string orderId, string status)
-        {
-            if (status == "success")
-            {
-                ViewBag.Message = "Thanh toán thành công!";
-            }
-            else
-            {
-                ViewBag.Message = "Thanh toán không thành công!";
-            }
-            return View();
-        }
+        
         private decimal CalculateTotalAmount(int currentCustomerId)
         {
             var cartItems = _context.Carts.Where(c => c.Customer_ID == currentCustomerId).ToList();
@@ -447,6 +469,74 @@ namespace DoAnCNPM.Controllers
 
             return totalAmount;
         }
+        // Phương thức để xử lý callback sau khi thanh toán
+        [HttpPost]
+        public async Task<IActionResult> PaymentCallback([FromBody] dynamic payload)
+        {
+            try
+            {
+                // Chuyển đổi payload thành JSON để lấy các trường cần thiết
+                string receivedSignature = payload.signature;
+                string orderCode = payload.data.orderCode;
+                string status = payload.data.code;
+                string description = payload.data.desc;
+
+                // Xác thực chữ ký
+                bool isValidSignature = VerifySignature(payload, receivedSignature);
+                if (!isValidSignature)
+                {
+                    return BadRequest("Chữ ký không hợp lệ.");
+                }
+
+                // Tìm đơn hàng theo Order_ID (orderCode)
+                var order = await _context.Orders.FirstOrDefaultAsync(o => o.Order_ID.ToString() == orderCode);
+                if (order == null)
+                {
+                    return NotFound("Không tìm thấy đơn hàng.");
+                }
+
+                // Kiểm tra trạng thái giao dịch
+                if (status == "00") // "00" có thể là mã thành công, xác nhận lại với tài liệu PayOS
+                {
+                    order.PaymentStatus = "Đã thanh toán";
+                    order.Status = "Đang xử lý";
+                    order.PaymentDate = DateTime.Now;
+                    ViewBag.Message = "Thanh toán thành công!";
+                }
+                else
+                {
+                    order.PaymentStatus = "Thanh toán thất bại";
+                    order.Status = "Chưa thanh toán";
+                    ViewBag.Message = "Thanh toán không thành công!";
+                }
+
+                // Lưu vào cơ sở dữ liệu
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Trạng thái thanh toán đã được cập nhật." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Có lỗi xảy ra: {ex.Message}");
+            }
+        }
+
+        // Phương thức xác thực chữ ký
+        private bool VerifySignature(dynamic payload, string receivedSignature)
+        {
+            // Tạo chuỗi dữ liệu cần ký (loại bỏ trường 'signature')
+            string dataString = JsonConvert.SerializeObject(payload.data);
+
+            // Tạo chữ ký với checksumKey
+            using (var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(ChecksumKey)))
+            {
+                var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(dataString));
+                var computedSignature = BitConverter.ToString(hash).Replace("-", "").ToLower();
+                return computedSignature == receivedSignature;
+            }
+        }
+
+
 
 
 

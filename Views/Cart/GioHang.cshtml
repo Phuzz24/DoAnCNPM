@@ -45,10 +45,11 @@
                             <td>@item.Product.Price.ToString("N0") đ</td>
                             <td>@Math.Round(item.Product.Price * item.Quantity).ToString("N0") đ</td>
                             <td>
-                                <form action="/Cart/RemoveFromCart" method="post">
-                                    <input type="hidden" name="productId" value="@item.Product.Product_ID" />
-                                    <button type="submit" class="btn btn-danger">Xóa</button>
-                                </form>
+                            <form action="/Cart/RemoveFromCart" method="post">
+                                <input type="hidden" name="productId" value="@item.Product.Product_ID" />
+                                <button type="submit" class="btn btn-danger">Xóa</button>
+                            </form>
+
                             </td>
                         </tr>
                     }

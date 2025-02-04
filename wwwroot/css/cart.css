@@ -55,7 +55,7 @@
     }
 
     .table td {
-        font-weight:bold;
+        font-weight: bold;
         font-size: 1rem;
         color: #333;
     }
@@ -125,6 +125,8 @@ h4 {
 }
 
 /* Responsive */
+
+/* Màn hình nhỏ: tối đa 768px */
 @media (max-width: 768px) {
     .cart-container {
         width: 95%;
@@ -146,5 +148,66 @@ h4 {
 
     .table td img {
         max-width: 60px;
+    }
+
+    .table th,
+    .table td {
+        font-size: 0.9rem;
+    }
+}
+
+/* Màn hình rất nhỏ: tối đa 576px */
+@media (max-width: 576px) {
+    .cart-container {
+        padding: 15px;
+    }
+
+        .cart-container h2 {
+            font-size: 1.5rem;
+        }
+
+    .table {
+        font-size: 0.8rem;
+    }
+
+        .table th,
+        .table td {
+            padding: 8px;
+        }
+
+            .table td img {
+                max-width: 50px;
+            }
+
+    .cart-summary {
+        font-size: 1rem;
+    }
+
+    h4 {
+        font-size: 1rem;
+    }
+}
+
+/* Màn hình trung bình: 768px đến 992px */
+@media (max-width: 992px) and (min-width: 769px) {
+    .cart-container {
+        width: 90%;
+    }
+
+        .cart-container h2 {
+            font-size: 1.8rem;
+        }
+
+    .table th,
+    .table td {
+        padding: 15px;
+    }
+
+        .table td img {
+            max-width: 70px;
+        }
+
+    .cart-summary {
+        font-size: 1.3rem;
     }
 }

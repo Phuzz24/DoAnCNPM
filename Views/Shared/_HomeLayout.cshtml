@@ -5,12 +5,13 @@
 <html>
 <head>
     <link href="~/font/fontawesome-free-6.6.0-web/css/all.css" rel="stylesheet" />
-    <link rel="stylesheet" href="~/css/main.css" />
+    <link rel="stylesheet" href="/css/main.css" />
     <script src="/js/main.js"></script>
     <title>Trang chủ</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
+
 <body>
     <div class="header">
         <div class="header-top">
@@ -30,16 +31,16 @@
                 <i class="fa-solid fa-house"></i>
                 Trang chủ
             </a>
-            <a href="">
+            <a href="/Home/GioiThieu">
                 <i class="fa-solid fa-circle-info"></i>
                 Giới thiệu
             </a>
-            <!-- Kiểm tra trạng thái đăng nhập từ Session -->
-            @if (Context.Session.GetString("Username") != null)
+            <!-- Kiểm tra trạng thái đăng nhập từ Identity -->
+            @if (User.Identity.IsAuthenticated)
             {
                 <div class="dropdown">
                     <a href="#" class="dropdown-toggle" id="userDropdown">
-                        <i class="fa-solid fa-user"></i> @Context.Session.GetString("Username")
+                        <i class="fa-solid fa-user"></i> @User.Identity.Name
                     </a>
                     <div class="dropdown-menu" aria-labelledby="userDropdown">
                         <a class="dropdown-item" href="/Account/EditInfo">Xem thông tin cá nhân</a>
@@ -56,6 +57,7 @@
                     Đăng nhập
                 </a>
             }
+
             <script>
                 var isLoggedIn = @isLoggedIn.ToString().ToLower(); // true nếu đã đăng nhập, false nếu chưa
             </script>
@@ -99,7 +101,7 @@
     <main>
         @RenderBody()
     </main>
-
+    <!-- Nút Quay Về Đầu Trang -->
     <footer>
         <div class="bottom">
             <div class="bottom-container">
@@ -111,9 +113,9 @@
                 <div class="social-icons">
                     <p><strong>Liên hệ với chúng tôi</strong></p>
                     <div class="icon">
-                        <a href="#"><i class="fa-brands fa-facebook"></i></a>
-                        <a href="#"><i class="fa-brands fa-youtube"></i></a>
-                        <a href="#"><i class="fa-brands fa-google"></i></a>
+                        <a href="#"><i class="fa-brands fa-facebook"></i>  Facebook</a>
+                        <a href="#"><i class="fa-brands fa-youtube"></i>  Youtube</a>
+                        <a href="#"><i class="fa-brands fa-google"></i>  Google</a>
                     </div>
                 </div>
                 <!-- Cột 2: Hệ thống cửa hàng -->
@@ -139,6 +141,8 @@
 
             </div>
     </footer>
+    <!-- Nút Quay Về Đầu Trang -->
+    <button onclick="scrollToTop()" id="backToTopBtn" title="Quay về đầu trang">↑</button>
 
     <!-- Kiểm tra trạng thái đăng nhập từ Razor vào JavaScript -->
     <script>
@@ -189,6 +193,24 @@
             });
         }
 
+        // Hiển thị nút khi người dùng cuộn xuống 100px và thêm hiệu ứng nhấp nháy
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            const backToTopBtn = document.getElementById("backToTopBtn");
+            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                backToTopBtn.style.display = "block";
+                backToTopBtn.classList.add("active"); // Thêm lớp nhấp nháy
+            } else {
+                backToTopBtn.style.display = "none";
+                backToTopBtn.classList.remove("active"); // Loại bỏ lớp nhấp nháy
+            }
+        }
+
+        // Hàm để cuộn về đầu trang khi nhấn nút
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     </script>
     @if (TempData["SuccessMessage"] != null)
     {
@@ -203,6 +225,10 @@
     }
 
 
+
     @RenderSection("Scripts", required: false)
+
 </body>
+
+
 </html>

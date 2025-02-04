@@ -1,0 +1,19 @@
+﻿@model DoAnCNPM.Models.Order
+
+@{
+    Layout = "_HomeLayout";
+    ViewData["Title"] = "Kết quả thanh toán";
+}
+
+<h2>Kết quả thanh toán</h2>
+
+<p><strong>Trạng thái:</strong> @ViewBag.Message</p>
+
+@if (Model != null)
+{
+    <p><strong>Mã đơn hàng:</strong> @Model.Order_ID</p>
+    <p><strong>Ngày thanh toán:</strong> @(Model.PaymentDate?.ToString("dd/MM/yyyy") ?? "N/A")</p>
+    <p><strong>Trạng thái thanh toán:</strong> @Model.PaymentStatus</p>
+}
+
+<a href="@Url.Action("OrderHistory", "Order")">Xem lịch sử đơn hàng</a>

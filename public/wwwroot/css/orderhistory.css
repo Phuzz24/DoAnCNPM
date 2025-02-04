@@ -1,0 +1,149 @@
+﻿.order-history {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+    /* Tiêu đề */
+    .order-history h2 {
+        font-size: 28px;
+        font-weight: bold;
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+/* Phần bộ lọc */
+.filter-section {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+    .filter-section input[type="text"],
+    .filter-section input[type="date"],
+    .filter-section select {
+        padding: 8px 12px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        transition: border-color 0.3s ease;
+    }
+
+        .filter-section input[type="text"]:focus,
+        .filter-section input[type="date"]:focus,
+        .filter-section select:focus {
+            border-color: #007bff;
+        }
+
+    .filter-section .btn {
+        padding: 10px 15px;
+        font-size: 14px;
+        color: #ffffff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .filter-section .btn:hover {
+            background-color: #0056b3;
+        }
+
+/* Bảng lịch sử đơn hàng */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+    table thead {
+        background-color: #f8f9fa;
+    }
+
+        table thead th {
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            border-bottom: 2px solid #ddd;
+        }
+
+    table tbody td {
+        padding: 12px;
+        text-align: center;
+        color: #555;
+        border-bottom: 1px solid #eee;
+    }
+
+    table tbody tr:hover {
+        background-color: #f1f3f5;
+    }
+
+/* Hình ảnh sản phẩm trong bảng chi tiết sản phẩm */
+.product-details img {
+    border-radius: 5px;
+    transition: transform 0.3s;
+}
+
+    .product-details img:hover {
+        transform: scale(1.1);
+    }
+
+/* Nút chức năng */
+.btn-info {
+    background-color: #28a745;
+    color: white;
+    padding: 8px 15px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+    .btn-info:hover {
+        background-color: #218838;
+    }
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    padding: 8px 15px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+
+/* Cảnh báo không có đơn hàng */
+.order-history p {
+    text-align: center;
+    color: #555;
+    font-size: 18px;
+    padding: 20px 0;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+/* Phần thông báo SweetAlert */
+.swal2-popup {
+    font-size: 16px !important;
+}
+.status-bold {
+    font-weight: bold;
+    color: #333;
+}

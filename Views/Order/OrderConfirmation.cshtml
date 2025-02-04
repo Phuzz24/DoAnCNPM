@@ -50,16 +50,31 @@
         <a href="@Url.Action("TrangChu", "Home")" class="btn-home">Trở về Trang chủ</a>
     </div>
 </div>
-@if (TempData["OrderSuccess"] != null && (bool)TempData["OrderSuccess"])
-{
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            Swal.fire({
-                title: 'Đặt hàng thành công!',
-                text: 'Cảm ơn bạn đã đặt hàng. Đơn hàng của bạn đang được xử lý.',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            });
+<script>
+    $(document).ready(function () {
+        $('#checkoutForm').on('submit', function (event) {
+            event.preventDefault();
+            var paymentMethod = $('#paymentMethod').val();
+
+            if (paymentMethod === 'Online') {
+                $.ajax({
+                    url: '@Url.Action("InitiateOnlinePayment", "Order")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        if (response.paymentUrl) {
+                            window.location.href = response.paymentUrl;
+                        } else {
+                            alert('Không thể khởi tạo thanh toán. Vui lòng thử lại.');
+                        }
+                    },
+                    error: function () {
+                        alert('Có lỗi xảy ra khi xử lý thanh toán.');
+                    }
+                });
+            } else {
+                this.submit();
+            }
         });
-    </script>
-}
+    });
+</script>

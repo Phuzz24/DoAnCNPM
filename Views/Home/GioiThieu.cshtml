@@ -1,143 +1,111 @@
-﻿<!DOCTYPE html>
-<head>
-    <link href="~/font/fontawesome-free-6.6.0-web/css/all.css" rel="stylesheet" />
-    <link rel="stylesheet" href="~/css/main.css" />
-    <script src="/js/main.js"></script>
-        <title>Trang chủ</title>
-    </head>
-    <body>
-        <div class="header">
-            <div class="header-top">
-            <div class="logo">
-            <img src="~/HinhAnh/LOGO1.jpg" href="" />
-        </div>
-            <form>
-                <div class="search-container">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" name="Timkiem" placeholder="Nhập sản phẩm bạn cần tìm..." />
-                </div>
-            </form>
+﻿@{
+    Layout = "_HomeLayout";
+}
+<title>Giới thiệu - 102 STORE</title>
 
-            <a href="/Home/TrangChu">
-                <i class="fa-solid fa-house"></i>   
-                Trang chủ
-                </a>
-            <a href="">
-                <i class="fa-solid fa-circle-info"></i>
-                Giới thiệu
-                </a>
-            <!-- Kiểm tra trạng thái đăng nhập từ Session -->
-            @if (Context.Session.GetString("Username") != null)
-            {
-                <div class="dropdown">
-                    <a href="#" class="dropdown-toggle" id="userDropdown">
-                        <i class="fa-solid fa-user"></i> @Context.Session.GetString("Username")
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="/Account/EditInfo">Xem thông tin cá nhân</a>
-                        <a class="dropdown-item" href="/Account/ChangePassword">Đổi mật khẩu</a>
-                        <a class="dropdown-item" href="/Account/Logout">Đăng xuất</a>
-                    </div>
-                </div>
-            }
-            else
-            {
-                <a href="/Account/Login">
-                    <i class="fa-solid fa-user"></i>
-                    Đăng nhập
-                </a>
-            }
-            <a href="">
-                <i class="fa-solid fa-cart-shopping"></i>
-                Giỏ hàng
-            </a>
-        </div>
-       <div class="header-center">
-           <hr />
-       </div>
-        <div class="header-bottom">
-            <div class="slideshow-container">
-                <!-- Slide 1 -->
-                <div class="text-slide active">
-                    Công nghệ trong tầm tay, đẳng cấp từng giây
-                </div>
-                <!-- Slide 2 -->
-                <div class="text-slide">
-                    Điện thoại chuẩn công nghệ, dịch vụ chuẩn niềm tin
-                </div>
-                <!-- Slide 3 -->
-                <div class="text-slide">
-                    Khám phá thế giới công nghệ di động
-                </div>
+<!-- Thư viện CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+<!-- Thư viện JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<style>
+    .header-section {
+        background: url('https://via.placeholder.com/1600x400') no-repeat center center/cover;
+    }
 
-                <!-- Chấm điều hướng -->
-                <div class="dots">
-                    <span class="dot active" onclick="currentSlide(1)"></span>
-                    <span class="dot" onclick="currentSlide(2)"></span>
-                    <span class="dot" onclick="currentSlide(3)"></span>
+    .why-us-section i {
+        transition: color 0.3s;
+    }
+
+        .why-us-section i:hover {
+            color: #ff5722;
+        }
+
+    .gallery-section img {
+        transition: transform 0.3s;
+    }
+
+        .gallery-section img:hover {
+            transform: scale(1.05);
+        }
+</style>
+    <!-- Phần đầu trang -->
+    <header class="header-section text-center py-5 bg-dark text-light">
+        <h1 class="display-4 animate__animated animate__fadeInDown">Chào mừng đến với 102 STORE</h1>
+        <p class="lead animate__animated animate__fadeInUp">Điểm đến lý tưởng cho các sản phẩm công nghệ đỉnh cao</p>
+    </header>
+
+    <!-- Giới thiệu về cửa hàng -->
+    <section class="about-section py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6" data-aos="fade-right">
+                    <h2 class="display-5 mb-4">Về 102 STORE</h2>
+                    <p class="lead">
+                        Tại 102 STORE, chúng tôi luôn cam kết cung cấp những sản phẩm điện thoại và phụ kiện công nghệ chất lượng nhất với giá cả hợp lý. Với đội ngũ nhân viên nhiệt tình và chuyên nghiệp, 102 STORE đã trở thành nơi tin cậy của khách hàng khi mua sắm sản phẩm công nghệ.
+                    </p>
+                    <p>
+                        Chúng tôi luôn cập nhật những mẫu mã mới nhất từ các thương hiệu hàng đầu thế giới, mang đến cho khách hàng trải nghiệm mua sắm hoàn hảo và dịch vụ sau bán hàng tận tâm.
+                    </p>
+                </div>
+                <div class="col-md-6 text-center" data-aos="fade-left">
+                    <img src="/HinhAnh/laptop1.jpg" alt="102 Store" class="img-fluid rounded shadow">
                 </div>
             </div>
         </div>
-    </div>
-
-    <header class="header">
-        <h1>Chào mừng bạn đến với <span>[Tên Cửa Hàng Điện Thoại]</span></h1>
-        <p>Nơi bạn tìm thấy những sản phẩm công nghệ chất lượng cao với dịch vụ tận tâm.</p>
-    </header>
-
-    <section class="mission">
-        <h2>Sứ Mệnh Của Chúng Tôi</h2>
-        <p>[Tên Cửa Hàng Điện Thoại] mang đến sản phẩm công nghệ tiên tiến, chất lượng và giá cả cạnh tranh để khách hàng dễ dàng tiếp cận với công nghệ hiện đại.</p>
     </section>
 
-    <section class="vision">
-        <h2>Tầm Nhìn</h2>
-        <p>Trở thành hệ thống bán lẻ điện thoại và thiết bị công nghệ hàng đầu tại Việt Nam, với các sản phẩm chất lượng và dịch vụ tốt nhất.</p>
+    <!-- Tại sao chọn chúng tôi -->
+    <section class="why-us-section py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5" data-aos="zoom-in">Tại sao chọn 102 STORE?</h2>
+            <div class="row text-center">
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <i class="fas fa-mobile-alt fa-3x text-primary mb-3"></i>
+                    <h4>Sản phẩm chất lượng</h4>
+                    <p>Chúng tôi chỉ cung cấp các sản phẩm chính hãng từ những thương hiệu uy tín nhất.</p>
+                </div>
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <i class="fas fa-users fa-3x text-success mb-3"></i>
+                    <h4>Dịch vụ khách hàng tận tâm</h4>
+                    <p>Đội ngũ nhân viên sẵn sàng hỗ trợ khách hàng với phong cách phục vụ chuyên nghiệp.</p>
+                </div>
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <i class="fas fa-shipping-fast fa-3x text-warning mb-3"></i>
+                    <h4>Giao hàng nhanh chóng</h4>
+                    <p>Dịch vụ giao hàng nhanh chóng và tiện lợi đến tận tay khách hàng.</p>
+                </div>
+            </div>
+        </div>
     </section>
 
-    <section class="values">
-        <h2>Giá Trị Cốt Lõi</h2>
-        <ul>
-            <li><strong>Chất Lượng Uy Tín:</strong> Sản phẩm chính hãng từ các thương hiệu nổi tiếng.</li>
-            <li><strong>Dịch Vụ Chuyên Nghiệp:</strong> Đội ngũ nhân viên tận tâm và giàu kinh nghiệm.</li>
-            <li><strong>Giá Cả Cạnh Tranh:</strong> Giá hợp lý nhất trên thị trường.</li>
-            <li><strong>Hậu Mãi Chu Đáo:</strong> Dịch vụ hậu mãi tận tình và hỗ trợ bảo hành, sửa chữa.</li>
-        </ul>
+    <!-- Hình ảnh cửa hàng -->
+    <section class="gallery-section py-5">
+        <div class="container">
+            <h2 class="text-center mb-5" data-aos="zoom-in">Khám phá 102 STORE qua hình ảnh</h2>
+            <div class="row g-4">
+                <div class="col-md-4" data-aos="zoom-in">
+                    <img src="~/HinhAnh/Mac/macbookair15..png" alt="Hình ảnh 1" class="img-fluid rounded shadow">
+                </div>
+                <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
+                    <img src="~/HinhAnh/Iphone/ip15promax.png" alt="Hình ảnh 2" class="img-fluid rounded shadow">
+                </div>
+                <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
+                    <img src="~/HinhAnh/Ipad/ipadair6m2.png" alt="Hình ảnh 3" class="img-fluid rounded shadow">
+                </div>
+            </div>
+        </div>
     </section>
 
-    <section class="products">
-        <h2>Sản Phẩm Của Chúng Tôi</h2>
-        <p>Đa dạng sản phẩm từ điện thoại di động, máy tính bảng, phụ kiện chính hãng đến các thiết bị thông minh.</p>
-        <ul>
-            <li>Apple: iPhone, iPad, MacBook và phụ kiện.</li>
-            <li>Samsung: Galaxy Series, Galaxy Tab, Galaxy Watch và phụ kiện.</li>
-            <li>Xiaomi: Điện thoại, phụ kiện và thiết bị thông minh.</li>
-            <li>Và nhiều thương hiệu uy tín khác...</li>
-        </ul>
-    </section>
-
-    <section class="why-choose-us">
-        <h2>Lý Do Bạn Nên Chọn [Tên Cửa Hàng Điện Thoại]</h2>
-        <ul>
-            <li>Sản phẩm chính hãng, bảo hành đầy đủ.</li>
-            <li>Mua sắm trực tuyến dễ dàng với dịch vụ giao hàng toàn quốc.</li>
-            <li>Dịch vụ chăm sóc khách hàng 24/7 luôn sẵn sàng hỗ trợ.</li>
-            <li>Nhiều chương trình khuyến mãi hấp dẫn.</li>
-        </ul>
-    </section>
-
-    <section class="contact">
-        <h2>Liên Hệ Với Chúng Tôi</h2>
-        <p><strong>Địa chỉ:</strong> [Địa chỉ của cửa hàng]</p>
-        <p><strong>Hotline:</strong> [Số điện thoại liên hệ]</p>
-        <p><strong>Email:</strong> [Địa chỉ email]</p>
-        <p><strong>Website:</strong> [Tên miền website của cửa hàng]</p>
-        <p><strong>Facebook:</strong> [Link Facebook]</p>
-        <p><strong>Instagram:</strong> [Link Instagram]</p>
-    </section>
-
-    <footer class="footer">
-        <p>© [Năm hiện tại] [Tên Cửa Hàng Điện Thoại] - All rights reserved.</p>
+    <!-- Phần chân trang -->
+    <footer class="footer-section text-center py-4 bg-dark text-light">
+        <p>&copy; 2024 102 STORE. Tất cả các quyền được bảo lưu.</p>
     </footer>
-</body>
-</html>
+
+    <!-- JavaScript -->
+    <script>
+        AOS.init(); // Khởi tạo AOS (Animate on Scroll)
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>

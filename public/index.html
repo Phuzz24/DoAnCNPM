@@ -1,0 +1,257 @@
+﻿
+<html>
+ <head>
+     <link href="/font/fontawesome-free-6.6.0-web/css/all.css" rel="stylesheet" />
+     <link rel="stylesheet" href="/css/main.css" />
+     <script src="/js/main.js"></script>
+     <title>Trang chủ</title>
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ </head>
+<body>
+    <div class="header">
+        <div class="header-top">
+            <div class="logo">
+                <img src="/HinhAnh/LOGO1.jpg" href="" />
+                <form action="/Product/SanPham" method="get">
+                    <div class="search-container">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" name="searchTerm" placeholder="Nhập sản phẩm bạn cần tìm..." />
+                        <button type="submit" class="search-button">Tìm kiếm</button>
+                    </div>
+                </form>
+
+
+                <a href="/Home/TrangChu">
+                    <i class="fa-solid fa-house"></i>
+                    Trang chủ
+                </a>
+                <a href="/Home/GioiThieu">
+                    <i class="fa-solid fa-circle-info"></i>
+                    Giới thiệu
+                </a>
+                <!-- Kiểm tra trạng thái đăng nhập từ Identity -->
+                @if (User.Identity.IsAuthenticated)
+                {
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" id="userDropdown">
+                        <i class="fa-solid fa-user"></i> @User.Identity.Name
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="/Account/EditInfo">Xem thông tin cá nhân</a>
+                        <a class="dropdown-item" href="/Order/OrderHistory">Xem lịch sử đơn hàng</a>
+                        <a class="dropdown-item" href="/Account/ChangePassword">Đổi mật khẩu</a>
+                        <a href="javascript:void(0);" class="dropdown-item" id="logoutLink">Đăng xuất</a> <!-- Thay đổi href để không chuyển trang -->
+                    </div>
+                </div>
+                }
+                else
+                {
+                <a href="/Account/Login">
+                    <i class="fa-solid fa-user"></i>
+                    Đăng nhập
+                </a>
+                }
+
+                <script>
+                    var isLoggedIn = @isLoggedIn.ToString().ToLower(); // true nếu đã đăng nhập, false nếu chưa
+                </script>
+
+                <!-- Thêm liên kết giỏ hàng -->
+                <a href="@Url.Action(" GioHang", "Cart" )" id="cartLink">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Giỏ hàng
+                </a>
+
+            </div>
+            <div class="header-center">
+                <hr />
+            </div>
+            <div class="header-bottom">
+                <div class="slideshow-container">
+                    <!-- Slide 1 -->
+                    <div class="text-slide active">
+                        Công nghệ trong tầm tay, đẳng cấp từng giây
+                    </div>
+                    <!-- Slide 2 -->
+                    <div class="text-slide">
+                        Điện thoại chuẩn công nghệ, dịch vụ chuẩn niềm tin
+                    </div>
+                    <!-- Slide 3 -->
+                    <div class="text-slide">
+                        Khám phá thế giới công nghệ di động
+                    </div>
+
+                    <!-- Chấm điều hướng -->
+                    <div class="dots">
+                        <span class="dot active" onclick="currentSlide(1)"></span>
+                        <span class="dot" onclick="currentSlide(2)"></span>
+                        <span class="dot" onclick="currentSlide(3)"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+        <!--Hovercss  là thư viện CSS cho phép bạn thêm hiệu ứng di chuột vào các phần tử, rất phù hợp cho các nút hoặc hình ảnh.-->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover-min.css" />
+
+
+        <div class="slider-content">
+            <div class="slider">
+                <div class="image-slide active">
+                    <img src="/HinhAnh/banner3.png" alt="Banner 1">
+                </div>
+                <div class="image-slide">
+                    <img src="/HinhAnh/Ip16.jpg" alt="Banner 2">
+                </div>
+                <div class="image-slide">
+                    <img src="/HinhAnh/Airpod.jpg" alt="Banner 3">
+                </div>
+                <div class="image-slide">
+                    <img src="/HinhAnh/banner4.png" alt="Banner 4">
+                </div>
+            </div>
+        </div>
+
+        <!-- Nút điều hướng -->
+        <button class="prev" onclick="moveImageSlide(-1)">&#10094;</button>
+        <button class="next" onclick="moveImageSlide(1)">&#10095;</button>
+    </div>
+        <div class="maincontent">
+            <div class="list-product">
+                <ul class="choose">
+                    <li>
+                        <a href="https://localhost:44315/Product/SanPham?searchName=&brandId=&categoryId=1&priceRange=">
+                            <div class="product-img">
+                                <img src="~/HinhAnh/ip.png" />
+                            </div>
+                            <span>Điện thoại</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://localhost:44315/Product/SanPham?searchName=&brandId=&categoryId=3&priceRange=">
+                            <div class="product-img">
+                                <img src="~/HinhAnh/mac.png" />
+                            </div>
+                            <span>Macbook</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://localhost:44315/Product/SanPham?searchName=&brandId=&categoryId=2&priceRange=">
+                            <div class="product-img">
+                                <img src="~/HinhAnh/lap.png" style="height:212px;width:212px;" />
+                            </div>
+                            <span>Laptop</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://localhost:44315/Product/SanPham?searchName=&brandId=&categoryId=4&priceRange=">
+                            <div class="product-img">
+                                <img src="~/HinhAnh/ipad.png" />
+                            </div>
+                            <span>iPad</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <h2>Các sản phẩm bán chạy</h2>
+
+            <div class="product-slider">
+
+                <button class="prev-btn" onclick="prevPage()">&#10094;</button>
+                <div class="product-list">
+                    @foreach (var product in ViewBag.TopSellingProducts as List<DoAnCNPM.Models.Product>
+                        )
+                        {
+                        <div class="product-item animate__animated animate__fadeInUp">
+
+                            <div class="product-item" data-aos="fade-up">
+                                <div class="product-img">
+                                    <img src="@product.Image" alt="@product.NamePro" />
+                                </div>
+                                <div class="product-info">
+                                    <h3>@product.NamePro</h3>
+                                    <p class="price">@product.Price.ToString("N0") đ</p>
+                                    <p class="status">@((product.Quantity > 0) ? "Còn hàng" : "Tạm hết hàng")</p>
+                                    <div class="product-buttons">
+                                        <a href="@Url.Action(" ChiTietSanPham", "Product" , new { id=product.Product_ID })" class="btn btn-primary hvr-bounce-to-right">Xem chi tiết</a>
+                                        <form action="@Url.Action(" AddToCart", "Cart" )" method="post">
+                                            <input type="hidden" name="productId" value="@product.Product_ID" />
+                                            <button type="submit" class="btn btn-success hvr-bounce-to-right">Thêm vào giỏ</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        }
+                </div>
+                <button class="next-btn" onclick="nextPage()">&#10095;</button>
+            </div>
+
+
+            <div class="check-all">
+                <a href="/Product/SanPham" class="btn btn-primary">Xem tất cả sản phẩm</a>
+            </div>
+        </div>
+
+
+
+        <script>
+            // Đảm bảo biến isLoggedIn được truyền từ Razor vào JavaScript
+            var isLoggedIn = @((Context.Session.GetString("Username") != null).ToString().ToLower());
+
+            // Kiểm tra sự tồn tại của phần tử logoutLink trước khi gán sự kiện
+            var logoutLink = document.getElementById("logoutLink");
+            if (logoutLink) {
+                logoutLink.addEventListener("click", function () {
+                    Swal.fire({
+                        title: "Bạn có chắc chắn muốn đăng xuất?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Có, đăng xuất",
+                        cancelButtonText: "Hủy"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Chuyển hướng đến trang đăng xuất nếu người dùng xác nhận
+                            window.location.href = "/Account/Logout";
+                        }
+                    });
+                });
+            }
+
+            AOS.init({
+                duration: 1200, // Thời gian cho hiệu ứng (ms)
+                once: true, // Chỉ chạy hiệu ứng một lần khi cuộn tới
+            });
+
+            // Kiểm tra sự tồn tại của phần tử cartLink trước khi gán sự kiện
+            var cartLink = document.getElementById("cartLink");
+            if (cartLink) {
+                cartLink.addEventListener("click", function (event) {
+                    if (!isLoggedIn) {
+                        // Ngăn chuyển hướng mặc định
+                        event.preventDefault();
+
+                        // Hiển thị thông báo SweetAlert yêu cầu đăng nhập
+                        Swal.fire({
+                            title: "Bạn cần đăng nhập!",
+                            text: "Vui lòng đăng nhập để xem giỏ hàng của bạn.",
+                            icon: "warning",
+                            confirmButtonText: "Đăng nhập"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Chuyển hướng đến trang đăng nhập nếu người dùng chọn "Đăng nhập"
+                                window.location.href = "@Url.Action("Login", "Account")";
+                            }
+                        });
+                    }
+                });
+            }
+        </script>
+</body>
+</html>

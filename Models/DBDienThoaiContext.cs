@@ -19,6 +19,8 @@ namespace DoAnCNPM.Models
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<RevenueStatistic> RevenueStatistics { get; set; }
+        public DbSet<AdminActivity> AdminActivities { get; set; }
+
         public DbSet<Cart> Carts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

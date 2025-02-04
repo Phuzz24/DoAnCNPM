@@ -1,0 +1,316 @@
+﻿body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.product-image {
+    width: 50px; /* Đặt chiều rộng phù hợp */
+    height: 50px;
+    border-radius: 5px;
+    object-fit: cover; /* Giữ tỉ lệ và căn giữa hình ảnh */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+.btn btn-delete delete-item {
+    border: none;
+}
+
+.page-title {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    color: #007bff;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.search-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.btn-delete-selected {
+    margin-left: auto; /* Đẩy nút sang bên phải */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #dc3545;
+    color: #fff;
+    font-size: 16px;
+    display: none; /* Ẩn mặc định */
+    transition: background-color 0.3s ease;
+}
+
+    .btn-delete-selected:hover {
+        background-color: #c82333;
+    }
+
+.search-form {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.search-input, .price-filter {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 250px;
+}
+
+    .search-input:focus, .price-filter:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+        outline: none;
+    }
+
+.btn-search, .btn-reset {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-search {
+    background-color: #28a745;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+    .btn-search:hover {
+        background-color: #218838;
+    }
+
+.btn-reset {
+    background-color: #dc3545;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+    .btn-reset:hover {
+        background-color: #c82333;
+    }
+
+
+.btn-add {
+    display: block;
+    width: 200px;
+    margin: 0 auto 20px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+    .btn-add:hover {
+        background-color: #0056b3;
+    }
+
+.table-container {
+    overflow-x: auto;
+    padding: 0 20px;
+}
+
+.table-products {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+    .table-products th, .table-products td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .table-products th {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .table-products tr:hover {
+        background-color: #f1f1f1;
+    }
+
+.description {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.actions .btn {
+    padding: 7px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    margin-right: 5px;
+    transition: background-color 0.3s;
+}
+
+.btn-view {
+    background-color: #17a2b8;
+}
+
+    .btn-view:hover {
+        background-color: #138496;
+    }
+
+.btn-edit {
+    background-color: #ffc107;
+    color: black;
+}
+
+    .btn-edit:hover {
+        background-color: #e0a800;
+    }
+
+.btn-delete {
+    background-color: #dc3545;
+}
+
+    .btn-delete:hover {
+        background-color: #c82333;
+    }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    list-style: none;
+    padding: 0;
+}
+
+    .pagination .page-item {
+        margin: 0 5px;
+    }
+
+    .pagination .page-link {
+        display: block;
+        padding: 10px 15px;
+        color: #007bff;
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+        .pagination .page-link:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+    .pagination .active .page-link {
+        background-color: #007bff;
+        color: #fff;
+        border-color: #007bff;
+    }
+/* Làm mờ nền khi modal mở */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Nền mờ */
+    z-index: 999; /* Phải cao hơn mọi phần tử */
+    display: none; /* Ẩn theo mặc định */
+}
+.modal {
+    position: fixed;
+    z-index: 1000;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 700px; /* Giới hạn chiều rộng tối đa */
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: none; /* Ẩn theo mặc định */
+    overflow: hidden;
+}
+
+.modal-content {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+    max-height: 100%; /* Giới hạn chiều cao tối đa */
+    overflow-y: auto; /* Cuộn khi nội dung quá dài */
+}
+
+    .modal-content h2 {
+        text-align: center;
+        margin-bottom: 15px;
+        font-size: 1.5rem;
+        color: #007bff; /* Màu xanh nổi bật */
+    }
+
+    .modal-content p {
+        margin-bottom: 10px;
+        line-height: 1.6;
+    }
+
+    .modal-content img {
+        display: block;
+        width: 100%; /* Đáp ứng kích thước modal */
+        max-width: 200px;
+        margin: 15px auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+/* Nút đóng */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    color: #fff;
+    background: #dc3545;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 30%;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    z-index: 1010;
+}
+
+    .close-btn:hover {
+        background: #bd2130;
+    }
+
+/* Hiệu ứng hiển thị modal */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.modal.show {
+    display: block;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-overlay.show {
+    display: block;
+}

@@ -1,0 +1,68 @@
+﻿@model DoAnCNPM.Models.Product
+
+<div>
+    <h5>Thông tin chi tiết sản phẩm</h5>
+    <p><strong>Tên sản phẩm:</strong> @Model.NamePro</p>
+    <p><strong>Giá:</strong> @Model.Price.ToString("N0") đ</p>
+    <p><strong>Số lượng:</strong> @Model.Quantity</p>
+    <p><strong>Mô tả:</strong> @Model.Description</p>
+    @if (!string.IsNullOrEmpty(Model.Image))
+    {
+        <img src="@Model.Image" alt="@Model.NamePro" style="max-width:100%; border-radius:10px;" />
+    }
+</div>
+
+<style>
+    /* Modal Styling */
+    .modal-content {
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+        background-color: #007bff;
+        color: white;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        padding: 15px;
+    }
+
+    .modal-title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .modal-body {
+        padding: 20px;
+        font-size: 16px;
+        line-height: 1.6;
+        color: #333;
+    }
+
+        .modal-body img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .modal-body p {
+            margin-bottom: 10px;
+        }
+
+    /* Button Styling */
+    .btn-close {
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: white;
+    }
+
+        .btn-close:hover {
+            color: #ff4d4d;
+        }
+
+    .highlight-text {
+        font-weight: bold;
+        color: #007bff;
+    }
+</style>

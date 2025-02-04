@@ -4,25 +4,42 @@
     ViewData["Title"] = "Quản lý Sản phẩm";
     Layout = "_DashboardLayout";
 }
-
+<link href="~/css/productmanagement.css" rel="stylesheet" />
 <h2 class="page-title">Danh sách Sản phẩm</h2>
 
 <!-- Form tìm kiếm -->
 <form method="get" action="@Url.Action("DSSanPham")" class="search-form">
-    <input type="text" name="searchTerm" placeholder="Tìm kiếm sản phẩm..." class="search-input" />
+    <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" placeholder="Tìm kiếm theo tên hoặc mã sản phẩm..." class="search-input" />
+    <select name="priceRange" class="price-filter">
+        <option value="" @(ViewBag.PriceRange == "" ? "selected" : "")>Tất cả</option>
+        <option value="0-1000000" @(ViewBag.PriceRange == "0-1000000" ? "selected" : "")>Dưới 1 triệu</option>
+        <option value="1000000-5000000" @(ViewBag.PriceRange == "1000000-5000000" ? "selected" : "")>1 triệu - 5 triệu</option>
+        <option value="5000000-10000000" @(ViewBag.PriceRange == "5000000-10000000" ? "selected" : "")>5 triệu - 10 triệu</option>
+        <option value="10000000-30000000" @(ViewBag.PriceRange == "10000000-30000000" ? "selected" : "")>10 triệu - 30 triệu</option>
+        <option value="30000000" @(ViewBag.PriceRange == "30000000" ? "selected" : "")>Trên 30 triệu</option>
+    </select>
     <button type="submit" class="btn-search">Tìm kiếm</button>
+    <button type="button" class="btn-reset" id="resetSearch">Đặt lại</button>
 </form>
 
-<!-- Chỉ hiển thị nút Thêm sản phẩm nếu người dùng là Admin -->
-@if (User.IsInRole("Admin"))
-{
-    <a href="@Url.Action("Create")" class="btn btn-add">Thêm sản phẩm mới</a>
-}
+<!-- Nút Thêm sản phẩm -->
+<div class="search-actions">
+    @if (User.IsInRole("Admin"))
+    {
+        <a href="@Url.Action("Create")" class="btn btn-add">Thêm sản phẩm mới</a>
+        <button type="button" class="btn btn-danger btn-delete-selected" id="deleteSelected" style="display: none;">
+            <i class="fas fa-trash-alt"></i> Xóa đã chọn
+        </button>
+    }
+</div>
 
+
+<!-- Danh sách sản phẩm -->
 <div class="table-container">
     <table class="table-products">
         <thead>
             <tr>
+                <th><input type="checkbox" id="selectAll" /></th>
                 <th>ID</th>
                 <th>Hình ảnh</th>
                 <th>Tên sản phẩm</th>
@@ -36,9 +53,9 @@
             @foreach (var product in Model)
             {
                 <tr>
+                    <td><input type="checkbox" class="product-checkbox" value="@product.Product_ID" /></td>
                     <td>@product.Product_ID</td>
                     <td>
-                        <!-- Hiển thị ảnh sản phẩm -->
                         @if (!string.IsNullOrEmpty(product.Image))
                         {
                             <img src="@Url.Content(product.Image)" alt="Hình ảnh sản phẩm" class="product-image">
@@ -52,23 +69,59 @@
                     <td>@product.Price.ToString("N0") đ</td>
                     <td>@product.Quantity</td>
                     <td class="description">@product.Description</td>
-                    <!-- Ví dụ trong danh sách sản phẩm -->
                     <td class="actions">
-                        <a href="@Url.Action("Details", new { id = product.Product_ID })" class="btn btn-view">Xem</a>
+                        <!-- Nút hiển thị chi tiết sử dụng Modal -->
+                        <a href="@Url.Action("Details","Product")" class="btn btn-view" data-id="@product.Product_ID">
+                            <i class="fas fa-eye"></i>
+                        </a>
 
+
+
+                        <!-- Nút chỉnh sửa -->
                         @if (User.IsInRole("Admin"))
                         {
-                            <a href="@Url.Action("Edit", new { id = product.Product_ID })" class="btn btn-edit">Sửa</a>
-                            <button type="button" class="btn btn-delete delete-item" data-id="@product.Product_ID" data-url="@Url.Action("Delete", "Product")">Xóa</button>
+                            <a href="@Url.Action("Edit", new { id = product.Product_ID })" class="btn btn-edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <!-- Nút xóa -->
+                            <button type="button" class="btn btn-delete delete-item" data-id="@product.Product_ID"
+                                    data-url="@Url.Action("Delete", "Product")">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
                         }
                     </td>
 
-
                 </tr>
             }
+
         </tbody>
     </table>
 </div>
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+        {
+            <li class="page-item @(ViewBag.CurrentPage == i ? "active" : "")">
+                <a class="page-link" href="?page=@i">@i</a>
+            </li>
+        }
+    </ul>
+</nav>
+<div class="modal-overlay"></div>
+
+<div id="productDetailsModal" class="modal">
+    <button class="close-btn">&times;</button>
+    <div class="modal-content">
+        <h2>Chi tiết sản phẩm</h2>
+        <div id="modalProductContent">
+            <!-- Nội dung chi tiết sản phẩm sẽ được chèn từ JavaScript -->
+        </div>
+    </div>
+</div>
+
+
+
+
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success">
@@ -79,159 +132,78 @@
 
 <!-- CSS Hiện Đại cho Giao Diện -->
 <style>
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f8f9fa;
-        color: #333;
-    }
-
-    .product-image {
-        width: 50px; /* Đặt chiều rộng phù hợp */
-        height: 50px;
-        border-radius: 5px;
-        object-fit: cover; /* Giữ tỉ lệ và căn giữa hình ảnh */
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
+  
 
 
-    .btn btn-delete delete-item
-    {
-        border:none;
-    }
-    .page-title {
-        text-align: center;
-        margin-top: 20px;
-        margin-bottom: 20px;
-        color: #007bff;
-        font-size: 24px;
-        font-weight: 700;
-    }
 
-    .search-form {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 20px;
-    }
-
-    .search-input {
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        width: 300px;
-        transition: all 0.3s;
-    }
-
-        .search-input:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
-            outline: none;
-        }
-
-    .btn-search {
-        padding: 10px 15px;
-        border: none;
-        background-color: #28a745;
-        color: white;
-        border-radius: 5px;
-        margin-left: 10px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-        .btn-search:hover {
-            background-color: #218838;
-        }
-
-    .btn-add {
-        display: block;
-        width: 200px;
-        margin: 0 auto 20px;
-        padding: 10px;
-        background-color: #007bff;
-        color: white;
-        text-align: center;
-        border-radius: 5px;
-        text-decoration: none;
-        transition: background-color 0.3s;
-    }
-
-        .btn-add:hover {
-            background-color: #0056b3;
-        }
-
-    .table-container {
-        overflow-x: auto;
-        padding: 0 20px;
-    }
-
-    .table-products {
-        width: 100%;
-        border-collapse: collapse;
-        background-color: white;
-        border-radius: 5px;
-        overflow: hidden;
-        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    }
-
-        .table-products th, .table-products td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .table-products th {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .table-products tr:hover {
-            background-color: #f1f1f1;
-        }
-
-    .description {
-        max-width: 200px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .actions .btn {
-        padding: 7px 12px;
-        border-radius: 5px;
-        text-decoration: none;
-        color: white;
-        margin-right: 5px;
-        transition: background-color 0.3s;
-    }
-
-    .btn-view {
-        background-color: #17a2b8;
-    }
-
-        .btn-view:hover {
-            background-color: #138496;
-        }
-
-    .btn-edit {
-        background-color: #ffc107;
-        color: black;
-    }
-
-        .btn-edit:hover {
-            background-color: #e0a800;
-        }
-
-    .btn-delete {
-        background-color: #dc3545;
-    }
-
-        .btn-delete:hover {
-            background-color: #c82333;
-        }
 </style>
 
 <!-- JavaScript để Cải thiện Hiệu ứng -->
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById("productDetailsModal");
+        const overlay = document.querySelector(".modal-overlay");
+        const closeBtn = document.querySelector(".close-btn");
+        const viewButtons = document.querySelectorAll(".btn-view");
+
+        // Hiển thị modal khi nhấp vào nút "Xem chi tiết"
+        viewButtons.forEach(button => {
+            button.addEventListener("click", function (event) {
+                event.preventDefault();
+                const productId = this.getAttribute("data-id");
+
+                if (!productId) {
+                    console.error("Không tìm thấy productId.");
+                    return;
+                }
+
+                // Gửi yêu cầu AJAX để lấy chi tiết sản phẩm
+                fetch(`/Product/Details?id=${productId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Không thể lấy dữ liệu từ server");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Chèn dữ liệu sản phẩm vào modal
+                        const modalContent = `
+                            <p><strong>Tên sản phẩm:</strong> ${data.name}</p>
+                            <p><strong>Giá:</strong> ${data.price} đ</p>
+                            <p><strong>Số lượng:</strong> ${data.quantity}</p>
+                            <p><strong>Mô tả:</strong> ${data.description}</p>
+                            <img src="${data.image}" alt="${data.name}" style="max-width: 100%; height: auto;">
+                        `;
+                        document.getElementById("modalProductContent").innerHTML = modalContent;
+
+                        // Hiển thị modal và overlay
+                        modal.classList.add("show");
+                        overlay.classList.add("show");
+                    })
+                    .catch(error => {
+                        console.error("Có lỗi xảy ra:", error);
+                    });
+            });
+        });
+
+        // Đóng modal
+        closeBtn.addEventListener("click", function () {
+            modal.classList.remove("show");
+            overlay.classList.remove("show");
+        });
+
+        // Đóng modal khi nhấp ra ngoài
+        overlay.addEventListener("click", function () {
+            modal.classList.remove("show");
+            overlay.classList.remove("show");
+        });
+    });
+
+
+
+
+
+
     // Nếu muốn thêm các hiệu ứng JavaScript, chẳng hạn như làm nổi bật hàng khi click
     document.addEventListener("DOMContentLoaded", function () {
         const rows = document.querySelectorAll(".table-products tr");
@@ -242,4 +214,81 @@
             });
         });
     });
+   
+
+        // Reset tìm kiếm
+        document.getElementById("resetSearch").addEventListener("click", function () {
+            document.querySelector('input[name="searchTerm"]').value = '';
+            document.querySelector('select[name="priceRange"]').value = '';
+            document.querySelector(".search-form").submit();
+        });
+    document.addEventListener("DOMContentLoaded", function () {
+        const selectAllCheckbox = document.getElementById("selectAll");
+        const productCheckboxes = document.querySelectorAll(".product-checkbox");
+        const deleteSelectedButton = document.getElementById("deleteSelected");
+
+        // Kiểm tra để hiển thị hoặc ẩn nút "Xóa đã chọn"
+        function toggleDeleteButton() {
+            const anyChecked = Array.from(productCheckboxes).some(checkbox => checkbox.checked);
+            deleteSelectedButton.style.display = anyChecked ? "inline-block" : "none";
+        }
+
+        // Gắn sự kiện cho các checkbox
+        productCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", toggleDeleteButton);
+        });
+
+        selectAllCheckbox.addEventListener("change", function () {
+            productCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            toggleDeleteButton();
+        });
+
+        // Xử lý sự kiện nút "Xóa đã chọn"
+        deleteSelectedButton.addEventListener("click", function () {
+            const selectedIds = Array.from(productCheckboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => parseInt(checkbox.value));
+
+            if (selectedIds.length > 0) {
+                Swal.fire({
+                    title: 'Bạn có chắc chắn muốn xóa các sản phẩm đã chọn?',
+                    text: "Hành động này không thể hoàn tác!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Xóa',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch('@Url.Action("DeleteMultiple", "Product")', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'RequestVerificationToken': '@ViewBag.AntiForgeryToken'
+                            },
+                            body: JSON.stringify(selectedIds)
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire('Đã xóa!', data.message, 'success')
+                                        .then(() => location.reload());
+                                } else {
+                                    Swal.fire('Lỗi!', data.message, 'error');
+                                }
+                            })
+                            .catch(error => {
+                                Swal.fire('Lỗi!', 'Không thể xóa sản phẩm, vui lòng thử lại.', 'error');
+                            });
+                    }
+                });
+            } else {
+                Swal.fire('Chú ý!', 'Vui lòng chọn ít nhất một sản phẩm để xóa.', 'info');
+            }
+        });
+    });
+
 </script>

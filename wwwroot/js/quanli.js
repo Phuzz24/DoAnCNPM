@@ -1,6 +1,4 @@
-﻿@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+﻿@Html.Partial("_ValidationScriptsPartial")
 document.addEventListener("DOMContentLoaded", function () {
     const formGroups = document.querySelectorAll('.form-group');
     let delay = 0;
