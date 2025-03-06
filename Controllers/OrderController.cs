@@ -8,7 +8,9 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using static NuGet.Packaging.PackagingConstants;
+using System.Collections.Generic;
+using System.Linq;
+using System;
 
 namespace DoAnCNPM.Controllers
 {
@@ -34,34 +36,50 @@ namespace DoAnCNPM.Controllers
             _httpClientFactory = httpClientFactory;
         }
 
-        // Lấy danh sách tỉnh/thành phố
         private async Task<string> GetProvinceName(string provinceCode)
         {
-            var client = _httpClientFactory.CreateClient();
-            var response = await client.GetStringAsync($"https://provinces.open-api.vn/api/p/{provinceCode}");
-            var province = JsonConvert.DeserializeObject<Location>(response);
-            return province?.Name;
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+                var url = $"https://provinces.open-api.vn/api/p/{provinceCode}";
+                var response = await client.GetStringAsync(url);
+                return string.IsNullOrEmpty(response) ? null : JsonConvert.DeserializeObject<Location>(response)?.Name;
+            }
+            catch (HttpRequestException)
+            {
+                return null;
+            }
         }
 
-        // Lấy danh sách quận/huyện theo mã tỉnh
         private async Task<string> GetDistrictName(string districtCode)
         {
-            var client = _httpClientFactory.CreateClient();
-            var response = await client.GetStringAsync($"https://provinces.open-api.vn/api/d/{districtCode}");
-            var district = JsonConvert.DeserializeObject<Location>(response);
-            return district?.Name;
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+                var url = $"https://provinces.open-api.vn/api/d/{districtCode}";
+                var response = await client.GetStringAsync(url);
+                return string.IsNullOrEmpty(response) ? null : JsonConvert.DeserializeObject<Location>(response)?.Name;
+            }
+            catch (HttpRequestException)
+            {
+                return null;
+            }
         }
 
-        // Lấy danh sách xã/phường theo mã quận/huyện
         private async Task<string> GetWardName(string wardCode)
         {
-            var client = _httpClientFactory.CreateClient();
-            var response = await client.GetStringAsync($"https://provinces.open-api.vn/api/w/{wardCode}");
-            var ward = JsonConvert.DeserializeObject<Location>(response);
-            return ward?.Name;
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+                var url = $"https://provinces.open-api.vn/api/w/{wardCode}";
+                var response = await client.GetStringAsync(url);
+                return string.IsNullOrEmpty(response) ? null : JsonConvert.DeserializeObject<Location>(response)?.Name;
+            }
+            catch (HttpRequestException)
+            {
+                return null;
+            }
         }
-
-
 
         // Hiển thị trang thanh toán
         public async Task<IActionResult> Checkout()
@@ -124,27 +142,16 @@ namespace DoAnCNPM.Controllers
             }
 
             decimal totalAmount = cartItems.Sum(item => item.Product.Price * item.Quantity);
-
-            // Tính phí giao hàng dựa trên phương thức giao hàng
             decimal shippingFee = ShippingMethod == "express" ? 50000 : 30000;
-
-
-            // Lấy tên của địa phương
             string provinceName = await GetProvinceName(Province);
             string districtName = await GetDistrictName(District);
             string wardName = await GetWardName(Ward);
-
-            //Địa chỉ giao hàng
             string fullAddress = $"{DetailAddress}, {wardName}, {districtName}, {provinceName}";
 
-            // Tạo ngày đặt hàng và ngày giao hàng
             DateTime orderDate = DateTime.Now;
             DateTime deliveryDate = orderDate.AddDays(5);
-
-            // Tạo mã vận chuyển ngẫu nhiên
             string trackingNumber = Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
 
-            // Tạo mới đơn hàng
             var order = new Order
             {
                 Customer_ID = customer.Customer_ID,
@@ -162,35 +169,20 @@ namespace DoAnCNPM.Controllers
                 TotalAmount = totalAmount + shippingFee,
                 PaymentDate = PaymentMethod == "Online" ? DateTime.Now : null
             };
-            // Lưu đơn hàng trong cơ sở dữ liệu nếu là COD
-            if (PaymentMethod == "COD")
+
+            try
             {
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync();
             }
-            // Nếu phương thức thanh toán là Online, chuyển hướng đến trang thanh toán
-            else if (PaymentMethod == "Online")
+            catch (DbUpdateConcurrencyException ex)
             {
-                // Tạo thông tin thanh toán và URL
-                var paymentRequest = new
-                {
-                    amount = order.TotalAmount,
-                    currency = "VND",
-                    returnUrl = Url.Action("PaymentCallback", "Order", new { orderId = order.Order_ID }, Request.Scheme),
-                    orderId = order.Order_ID.ToString(),
-                    description = "Thanh toán đơn hàng tại 102 STORE"
-                };
-
-                // Tạo URL thanh toán
-                var paymentUrl = GeneratePaymentUrl(paymentRequest);
-                return Redirect(paymentUrl); // Chuyển hướng đến URL thanh toán
+                TempData["ErrorMessage"] = "Dữ liệu đã thay đổi. Vui lòng thử lại.";
+                return RedirectToAction("Checkout");
             }
 
-
-            // Lưu chi tiết từng sản phẩm trong giỏ hàng vào OrderDetail
             foreach (var item in cartItems)
             {
-                // Lấy sản phẩm từ cơ sở dữ liệu
                 var product = await _context.Products.FindAsync(item.Product_ID);
                 var orderDetail = new OrderDetail
                 {
@@ -198,12 +190,10 @@ namespace DoAnCNPM.Controllers
                     Product_ID = item.Product_ID,
                     Quantity = item.Quantity,
                     Price = item.Product.Price,
-                            NamePro = product?.NamePro // Gán tên sản phẩm từ Product
-
+                    NamePro = product?.NamePro
                 };
                 _context.OrderDetails.Add(orderDetail);
 
-                // Giảm số lượng sản phẩm trong bảng Product
                 if (product != null)
                 {
                     product.Quantity -= item.Quantity;
@@ -213,7 +203,6 @@ namespace DoAnCNPM.Controllers
 
             await _context.SaveChangesAsync();
 
-            // Xóa giỏ hàng sau khi đặt hàng thành công
             _context.Carts.RemoveRange(cartItems);
             await _context.SaveChangesAsync();
 
@@ -221,14 +210,12 @@ namespace DoAnCNPM.Controllers
             return RedirectToAction("OrderConfirmation", new { id = order.Order_ID });
         }
 
-
         [HttpGet]
         public async Task<IActionResult> OrderConfirmation(int id)
         {
-            // Lấy đơn hàng theo ID
             var order = await _context.Orders
-                .Include(o => o.OrderDetails) // Bao gồm chi tiết đơn hàng
-                .ThenInclude(od => od.Product) // Bao gồm sản phẩm trong mỗi chi tiết
+                .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Product)
                 .FirstOrDefaultAsync(o => o.Order_ID == id);
 
             if (order == null)
@@ -236,7 +223,6 @@ namespace DoAnCNPM.Controllers
                 return NotFound("Không tìm thấy đơn hàng.");
             }
 
-            // Kiểm tra các giá trị có thể là NULL
             order.CustomerName ??= "Tên khách hàng không có";
             order.ShippingAddress ??= "Địa chỉ không có";
             order.PaymentMethod ??= "Không xác định";
@@ -246,15 +232,17 @@ namespace DoAnCNPM.Controllers
             foreach (var detail in order.OrderDetails)
             {
                 detail.Product.NamePro ??= "Tên sản phẩm không có";
-                detail.Price ??= 0; // Gán giá trị mặc định nếu Price là NULL
+                detail.Price ??= 0;
             }
 
             return View(order);
         }
-        
 
-        //Tìm kiếm đơn hàng
-        [HttpGet]
+
+
+
+//Tìm kiếm đơn hàng
+[HttpGet]
         [Authorize]
         public async Task<IActionResult> FilterOrders(string search, string status, DateTime? startDate, DateTime? endDate)
         {
